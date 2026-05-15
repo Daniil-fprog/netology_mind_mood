@@ -1,15 +1,15 @@
 /* Уникальные стили для страницы истории */
 
 /* Контейнер записей истории */
-.entries-container {
+.history__entries-container {
     padding: var(--spacing-xl);
 }
 
-.date-group {
+.history__date-group {
     margin-bottom: var(--spacing-xl);
 }
 
-.date-title {
+.history__date-title {
     font-size: 12px;
     font-weight: 500;
     color: var(--muted);
@@ -19,7 +19,7 @@
 }
 
 /* Карточка записи истории */
-.entry-card {
+.history__entry-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
@@ -29,7 +29,7 @@
     height: 160px;
 }
 
-.entry-left {
+.history__entry-left {
     width: 80px;
     padding: var(--spacing-md);
     display: flex;
@@ -38,32 +38,32 @@
     position: relative;
 }
 
-.entry-time {
+.history__entry-time {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: var(--spacing-md);
 }
 
-.mood-indicator {
+.history__mood-indicator {
     width: 12px;
     height: 12px;
     border-radius: 50%;
     margin-bottom: var(--spacing-md);
 }
 
-.mood-indicator.calm {
+.history__mood-indicator--calm {
     background-color: #90cdf4;
 }
 
-.mood-indicator.joy {
+.history__mood-indicator--joy {
     background-color: #faf089;
 }
 
-.mood-indicator.tired {
+.history__mood-indicator--tired {
     background-color: #cbd5e0;
 }
 
-.mood-badge {
+.history__mood-badge {
     background-color: var(--bg);
     padding: 4px 12px;
     border-radius: 12px;
@@ -73,25 +73,25 @@
     width: 100%;
 }
 
-.entry-divider {
+.history__entry-divider {
     width: 1px;
     background-color: var(--border);
 }
 
-.entry-right {
+.history__entry-right {
     flex: 1;
     padding: var(--spacing-md);
     display: flex;
     flex-direction: column;
 }
 
-.entry-title {
+.history__entry-title {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: var(--spacing-sm);
 }
 
-.entry-text {
+.history__entry-text {
     font-size: 14px;
     color: var(--muted);
     margin-bottom: var(--spacing-md);
@@ -102,13 +102,13 @@
     overflow: hidden;
 }
 
-.entry-tags {
+.history__entry-tags {
     display: flex;
     gap: var(--spacing-sm);
     margin-top: auto;
 }
 
-.tag {
+.history__tag {
     background-color: var(--bg);
     padding: 4px 12px;
     border-radius: 12px;
@@ -118,26 +118,26 @@
 
 /* Адаптивность для страницы истории */
 @media (max-width: 900px) {
-    .entry-card {
+    .history__entry-card {
         flex-direction: column;
         height: auto;
     }
-    
-    .entry-left {
+
+    .history__entry-left {
         width: 100%;
         flex-direction: row;
         justify-content: space-between;
         padding: var(--spacing-md);
         border-bottom: 1px solid var(--border);
     }
-    
-    .entry-right {
+
+    .history__entry-right {
         padding: var(--spacing-md);
     }
 }
 
 @media (max-width: 600px) {
-    .entries-container {
+    .history__entries-container {
         padding: var(--spacing-md);
     }
 }
