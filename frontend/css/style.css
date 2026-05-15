@@ -1,0 +1,203 @@
+/* Уникальные стили для главной страницы */
+
+/* Хедер главной страницы */
+.header {
+    height: var(--header-height);
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-xl);
+}
+
+.header__title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Контент главной страницы */
+.content {
+    flex: 1;
+    padding: var(--spacing-xl);
+    overflow-y: auto;
+}
+
+.content__header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.content__title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.content__subtitle {
+    color: var(--muted);
+    font-size: 16px;
+}
+
+/* Карточка настроения для главной страницы */
+.mood-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    width: 820px;
+    max-width: 100%;
+    height: 350px;
+    margin: 0 auto var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mood-card__textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: var(--spacing-lg);
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
+.mood-card__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    border-top: 1px solid var(--border);
+}
+
+.mood-card__action-icons {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.mood-card__icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.mood-card__icon-btn:hover {
+    background-color: var(--bg);
+}
+
+.mood-card__save-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.mood-card__save-btn:hover {
+    background-color: #5a67d8;
+}
+
+/* Теги для главной страницы */
+.tags {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.tags__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.tags__list {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.tags__item {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+    background-color: var(--bg);
+    color: var(--muted);
+}
+
+.tags__item:hover {
+    background-color: var(--border);
+    color: var(--text);
+}
+
+.tags__item--calm {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.tags__item--calm:hover {
+    background-color: #bbdefb;
+}
+
+.tags__item--anxiety {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+.tags__item--anxiety:hover {
+    background-color: #f8bbd0;
+}
+
+.tags__item--focus {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+}
+
+.tags__item--focus:hover {
+    background-color: #c5cae9;
+}
+
+.tags__item--fatigue {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.tags__item--fatigue:hover {
+    background-color: #ffe0b2;
+}
+
+.tags__item--custom {
+    background-color: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text);
+}
+
+.tags__item--custom:hover {
+    background-color: var(--bg);
+}

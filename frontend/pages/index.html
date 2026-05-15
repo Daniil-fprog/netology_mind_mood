@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodSync - Ежедневный дневник настроения</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-[#faf7f8] text-[#2c3e50]">
+    <div class="app-container">
+        <!-- Левый сайдбар -->
+        <aside class="sidebar">
+            <!-- Блок профиля -->
+            <div class="sidebar__profile">
+                <div class="sidebar__avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="sidebar__app-info">
+                    <h1 class="sidebar__app-name">MoodSync</h1>
+                    <p class="sidebar__app-tagline">Ежедневный дневник настроения</p>
+                </div>
+            </div>
+
+            <!-- Вертикальное меню -->
+            <nav class="sidebar__menu">
+                <a href="#" class="sidebar__menu-item sidebar__menu-item--active">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>История</span>
+                </a>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Тренды</span>
+                </a>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Аналитика</span>
+                </a>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>AI-инсайты</span>
+                </a>
+            </nav>
+
+            <!-- Нижний блок -->
+            <div class="sidebar__bottom">
+                <div class="sidebar__divider"></div>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Настройки</span>
+                </a>
+                <a href="#" class="sidebar__menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Помощь</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Основная область -->
+        <main class="main-content">
+            <!-- Верхний header -->
+            <header class="header">
+                <h1 class="header__title">Главная</h1>
+                <div class="header__controls">
+                    <div class="header__search">
+                        <i class="fas fa-search header__search-icon"></i>
+                        <input type="text" class="header__search-input" placeholder="Поиск записей...">
+                    </div>
+                    <button class="header__icon-btn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="header__icon-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Центральная часть -->
+            <div class="content">
+                <div class="content__header">
+                    <h2 class="content__title">Как вы себя чувствуете сегодня?</h2>
+                    <p class="content__subtitle">Среда, 25 июня • 14:30</p>
+                </div>
+
+                <!-- Карточка формы -->
+                <div class="mood-card">
+                    <textarea 
+                        class="mood-card__textarea" 
+                        placeholder="Начните записывать свои мысли здесь... Позвольте им течь естественно."
+                    ></textarea>
+                    
+                    <div class="mood-card__actions">
+                        <div class="mood-card__action-icons">
+                            <button class="mood-card__icon-btn">
+                                <i class="fas fa-smile"></i>
+                            </button>
+                            <button class="mood-card__icon-btn">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="mood-card__icon-btn">
+                                <i class="fas fa-image"></i>
+                            </button>
+                        </div>
+                        <button class="mood-card__save-btn">
+                            <span>Сохранить запись</span>
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Быстрые теги -->
+                <div class="tags">
+                    <h3 class="tags__title">БЫСТРЫЕ ТЕГИ</h3>
+                    <div class="tags__list">
+                        <button class="tags__item tags__item--calm">Спокойствие</button>
+                        <button class="tags__item tags__item--anxiety">Тревога</button>
+                        <button class="tags__item tags__item--focus">Фокус</button>
+                        <button class="tags__item tags__item--fatigue">Усталость</button>
+                        <button class="tags__item tags__item--custom">+ Свой тег</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

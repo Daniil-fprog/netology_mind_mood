@@ -1,0 +1,201 @@
+/* Общие CSS переменные */
+:root {
+    --border-color: #e0e0e0;
+    --muted-text: #718096;
+    --card-bg: #ffffff;
+    --accent-color: #3498db;
+    --bg: #faf7f8;
+    --text: #2d3748;
+    --muted: #718096;
+    --border: #e2e8f0;
+    --accent: #667eea;
+    
+    /* Размеры */
+    --sidebar-width: 270px;
+    --header-height: 70px;
+    --border-radius: 12px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 36px;
+}
+
+/* Базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* Контейнер приложения */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Сайдбар */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.sidebar-profile {
+    padding: var(--spacing-lg);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-sm);
+    color: white;
+    font-size: 24px;
+}
+
+.app-info h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.app-info p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: var(--spacing-md) 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px var(--spacing-lg);
+    color: var(--text);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.nav-item:hover {
+    background-color: #f7fafc;
+}
+
+.nav-item.active {
+    background-color: #edf2f7;
+    color: var(--accent);
+}
+
+.nav-item i {
+    width: 20px;
+    margin-right: var(--spacing-sm);
+    font-size: 16px;
+}
+
+.sidebar-bottom {
+    padding: var(--spacing-md) 0;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 0 var(--spacing-lg);
+}
+
+/* Основная область */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+}
+
+.page-header {
+    height: var(--header-height);
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-xl);
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    background-color: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: var(--bg);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.icon-btn i {
+    font-size: 16px;
+}
+
+/* Адаптивность */
+@media (max-width: 900px) {
+    :root {
+        --sidebar-width: 100%;
+    }
+    
+    .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-header {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .page-header h1 {
+        font-size: 20px;
+    }
+}

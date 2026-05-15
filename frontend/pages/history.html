@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История - MoodSync</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/history.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Левый сайдбар -->
+        <aside class="sidebar">
+            <div class="sidebar-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="app-info">
+                    <h3>MoodSync</h3>
+                    <p>Ежедневный дневник настроения</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-calendar"></i>
+                    <span>История</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Тренды</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Аналитика</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>AI-инсайты</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-divider"></div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Настройки</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Помощь</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Основная область -->
+        <main class="main-content">
+            <!-- Верхний header -->
+            <header class="page-header">
+                <h1>История</h1>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Список записей -->
+            <div class="entries-container">
+                <!-- Группа "СЕГОДНЯ" -->
+                <div class="date-group">
+                    <h2 class="date-title">СЕГОДНЯ, 24 ОКТЯБРЯ</h2>
+
+                    <!-- Запись 1 -->
+                    <article class="entry-card">
+                        <div class="entry-left">
+                            <time class="entry-time">14:30</time>
+                            <div class="mood-indicator calm"></div>
+                            <div class="mood-badge">Спокойствие</div>
+                        </div>
+                        <div class="entry-divider"></div>
+                        <div class="entry-right">
+                            <h3 class="entry-title">Рабочий фокус</h3>
+                            <p class="entry-text">Удалось сосредоточиться на сложной задаче без отвлечений. Практика
+                                глубокого дыхания перед началом сессии помогла настроиться на нужный лад.</p>
+                            <div class="entry-tags">
+                                <span class="tag">Работа</span>
+                                <span class="tag">Фокус</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Запись 2 -->
+                    <article class="entry-card">
+                        <div class="entry-left">
+                            <time class="entry-time">09:00</time>
+                            <div class="mood-indicator joy"></div>
+                            <div class="mood-badge">Радость</div>
+                        </div>
+                        <div class="entry-divider"></div>
+                        <div class="entry-right">
+                            <h3 class="entry-title">Утренняя прогулка</h3>
+                            <p class="entry-text">Отличная погода. Прошёл 5 км в парке, слушая подкаст. Чувствую прилив
+                                энергии на весь день.</p>
+                            <div class="entry-tags">
+                                <span class="tag">Активность</span>
+                                <span class="tag">Природа</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Группа "ВЧЕРА" -->
+                <div class="date-group">
+                    <h2 class="date-title">ВЧЕРА, 23 ОКТЯБРЯ</h2>
+
+                    <!-- Запись 3 -->
+                    <article class="entry-card">
+                        <div class="entry-left">
+                            <time class="entry-time">21:15</time>
+                            <div class="mood-indicator tired"></div>
+                            <div class="mood-badge">Усталость</div>
+                        </div>
+                        <div class="entry-divider"></div>
+                        <div class="entry-right">
+                            <h3 class="entry-title">Вечернее чтение</h3>
+                            <p class="entry-text">Сложный день. Пытался расслабиться за книгой, но мысли постоянно
+                                возвращались к рабочим вопросам. Нужно лучше планировать отдых.</p>
+                            <div class="entry-tags">
+                                <span class="tag">Отдых</span>
+                                <span class="tag">Стресс</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
