@@ -77,7 +77,7 @@
             </header>
 
             <!-- Список записей -->
-            <div class="history__entries-container">
+            <div class="history__entries-container" id="historyList">
                 <!-- Группа "СЕГОДНЯ" -->
                 <div class="history__date-group">
                     <h2 class="history__date-title">СЕГОДНЯ, 24 ОКТЯБРЯ</h2>
@@ -92,7 +92,8 @@
                         <div class="history__entry-divider"></div>
                         <div class="history__entry-right">
                             <h3 class="history__entry-title">Рабочий фокус</h3>
-                            <p class="history__entry-text">Удалось сосредоточиться на сложной задаче без отвлечений. Практика
+                            <p class="history__entry-text">Удалось сосредоточиться на сложной задаче без отвлечений.
+                                Практика
                                 глубокого дыхания перед началом сессии помогла настроиться на нужный лад.</p>
                             <div class="history__entry-tags">
                                 <span class="history__tag">Работа</span>
@@ -111,7 +112,8 @@
                         <div class="history__entry-divider"></div>
                         <div class="history__entry-right">
                             <h3 class="history__entry-title">Утренняя прогулка</h3>
-                            <p class="history__entry-text">Отличная погода. Прошёл 5 км в парке, слушая подкаст. Чувствую прилив
+                            <p class="history__entry-text">Отличная погода. Прошёл 5 км в парке, слушая подкаст.
+                                Чувствую прилив
                                 энергии на весь день.</p>
                             <div class="history__entry-tags">
                                 <span class="history__tag">Активность</span>
@@ -135,7 +137,8 @@
                         <div class="history__entry-divider"></div>
                         <div class="history__entry-right">
                             <h3 class="history__entry-title">Вечернее чтение</h3>
-                            <p class="history__entry-text">Сложный день. Пытался расслабиться за книгой, но мысли постоянно
+                            <p class="history__entry-text">Сложный день. Пытался расслабиться за книгой, но мысли
+                                постоянно
                                 возвращались к рабочим вопросам. Нужно лучше планировать отдых.</p>
                             <div class="history__entry-tags">
                                 <span class="history__tag">Отдых</span>
@@ -147,6 +150,40 @@
             </div>
         </main>
     </div>
+
+    <!-- Шаблон группы -->
+    <template id="historyDateGroupTemplate">
+        <div class="history__date-group">
+            <h2 class="history__date-title"></h2>
+
+            <div class="history__entries"></div>
+        </div>
+    </template>
+
+     <!-- Шаблон элемента -->
+    <template id="historyEntryTemplate">
+        <article class="history__entry-card">
+            <div class="history__entry-left">
+                <time class="history__entry-time"></time>
+
+                <div class="history__mood-indicator"></div>
+
+                <div class="history__mood-badge"></div>
+            </div>
+
+            <div class="history__entry-divider"></div>
+
+            <div class="history__entry-right">
+                <h3 class="history__entry-title"></h3>
+
+                <p class="history__entry-text"></p>
+
+                <div class="history__entry-tags"></div>
+            </div>
+        </article>
+    </template>
+
+    <script src="../js/history.js"></script>
 </body>
 
 </html>

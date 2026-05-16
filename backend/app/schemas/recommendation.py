@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 class RecommendationCreate(BaseModel):
     rec_name: str
+    rec_text: str
     mood_type: str  # positive / negative
 
 
