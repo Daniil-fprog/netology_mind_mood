@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - MoodSync</title>
+    <title>Войти - MoodSync</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/auth.css">
@@ -38,7 +38,7 @@
                 </ul>
             </div>
 
-            <!-- Карточка формы регистрации -->
+            <!-- Карточка формы авторизации -->
             <div class="auth__card">
                 <div class="auth__logo">
                     <i class="fas fa-heart"></i>
@@ -47,61 +47,28 @@
                 <h2 class="auth__brand">MoodSync</h2>
                 <p class="auth__subtitle">Ежедневный дневник настроения</p>
                 
-                <h3 class="auth__form-title">Создать аккаунт</h3>
+                <h3 class="auth__form-title">Войти в аккаунт</h3>
                 <p class="auth__form-description">
-                    Введите имя и логин, чтобы начать вести дневник настроения.
+                    Введите номер телефона, чтобы продолжить работу с дневником.
                 </p>
-                
+
                 <!-- Сообщения об ошибках и успехе -->
                 <div id="auth-message" class="auth__message" style="display: none;"></div>
-                
-                <form class="auth__form" id="register-form">
-                    <!-- Поле имени -->
+
+                <form class="auth__form" id="login-form">
+                    <!-- Поле телефона -->
                     <div class="auth__field">
-                        <label class="auth__label" for="name">Имя</label>
+                        <label class="auth__label" for="phone">Телефон</label>
                         <div class="auth__input-wrapper">
-                            <i class="fas fa-user auth__input-icon"></i>
+                            <i class="fas fa-phone auth__input-icon"></i>
                             <input 
                                 class="auth__input" 
-                                type="text" 
-                                id="name" 
-                                name="name" 
-                                placeholder="Например, Даниил"
-                                autocomplete="name"
-                                required
-                            >
-                        </div>
-                    </div>
-                    
-                    <!-- Поле логина -->
-                    <div class="auth__field">
-                        <label class="auth__label" for="login">Логин</label>
-                        <div class="auth__input-wrapper">
-                            <i class="fas fa-user auth__input-icon"></i>
-                            <input
-                                class="auth__input"
-                                type="text"
-                                id="login"
-                                name="login"
-                                placeholder="Придумайте логин"
-                                autocomplete="username"
-                                required
-                            >
-                        </div>
-                    </div>
-                    
-                    <!-- Поле пароля -->
-                    <div class="auth__field">
-                        <label class="auth__label" for="password">Пароль</label>
-                        <div class="auth__input-wrapper">
-                            <i class="fas fa-lock auth__input-icon"></i>
-                            <input 
-                                class="auth__input" 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="Введите пароль"
-                                autocomplete="new-password"
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="+7 999 123-45-67"
+                                inputmode="tel"
+                                autocomplete="tel"
                                 required
                             >
                         </div>
@@ -109,14 +76,14 @@
                     
                     <!-- Кнопка отправки -->
                     <button type="submit" class="auth__button">
-                        Зарегистрироваться
+                        Войти
                     </button>
                 </form>
                 
                 <!-- Футер формы -->
                 <div class="auth__footer">
-                    <span class="auth__hint">Уже есть аккаунт?</span>
-                    <a href="login.html" class="auth__link">Войти</a>
+                    <span class="auth__hint">Нет аккаунта?</span>
+                    <a href="register.html" class="auth__link">Зарегистрироваться</a>
                 </div>
             </div>
         </div>
@@ -132,22 +99,20 @@
                 <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
                 ${message}
             `;
-            
+
             // Скрывать сообщение через 5 секунд
             setTimeout(() => {
                 messageEl.style.display = 'none';
             }, 5000);
         }
 
-        // Функция обработки формы регистрации
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
+        // Функция обработки формы авторизации
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                password: formData.get('password')
+                phone: formData.get('phone')
             };
 
             // Валидация телефона (простая проверка)
@@ -157,14 +122,8 @@
                 return;
             }
 
-            // Валидация пароля (минимум 6 символов)
-            if (data.password.length < 6) {
-                showMessage('Пароль должен содержать минимум 6 символов');
-                return;
-            }
-
             try {
-                const response = await fetch('/users/register', {
+                const response = await fetch('/users/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -175,12 +134,12 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    showMessage('Регистрация прошла успешно! Переход на главную страницу...', 'success');
+                    showMessage('Вход выполнен успешно! Переход на главную страницу...', 'success');
                     setTimeout(() => {
                         window.location.href = '/index.html';
                     }, 2000);
                 } else {
-                    showMessage(result.detail || 'Ошибка при регистрации');
+                    showMessage(result.detail || 'Ошибка при входе');
                 }
             } catch (error) {
                 console.error('Error:', error);

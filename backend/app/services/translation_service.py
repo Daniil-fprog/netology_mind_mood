@@ -11,15 +11,16 @@ device = torch.device("cpu")
 model.to(device)
 model.eval()
 
+
 def translate_to_english(text: str) -> str:
     """
-    Функция для перевода текста. 
+    Функция для перевода текста.
     Использует 'Helsinki-NLP/opus-mt-ru-en'
     """
 
     if not text or not text.strip():
         return ""
-    
+
     inputs = tokenizer(
         text,
         return_tensors="pt",
@@ -28,10 +29,7 @@ def translate_to_english(text: str) -> str:
         max_length=512,
     )
 
-    inputs = {
-        key: value.to(device)
-        for key, value in inputs.items()
-    }
+    inputs = {key: value.to(device) for key, value in inputs.items()}
 
     with torch.no_grad():
         output_tokens = model.generate(
@@ -47,5 +45,3 @@ def translate_to_english(text: str) -> str:
     )
 
     return translated_text
-
-
