@@ -20,7 +20,8 @@ class HistoryPage {
 
     async getHistoryData() {
         try {
-            const response = await fetch('/notes');
+            const response = await fetch("http://127.0.0.1:8000/notes");
+            // const response = await fetch('/notes');
 
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки данных: ${response.status}`);
