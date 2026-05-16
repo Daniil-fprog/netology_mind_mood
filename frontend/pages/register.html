@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - MoodSync</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+    <div class="auth">
+        <div class="auth__layout">
+            <!-- Визуальный блок -->
+            <div class="auth__visual">
+                <div class="auth__decor"></div>
+                <h1 class="auth__brand">MoodSync</h1>
+                <p class="auth__subtitle">Ежедневный дневник настроения</p>
+                
+                <h2 class="auth__title">Отслеживайте настроение каждый день</h2>
+                <p class="auth__description">
+                    Записывайте мысли, анализируйте эмоции и замечайте важные изменения в своём состоянии.
+                </p>
+                
+                <ul class="auth__feature-list">
+                    <li class="auth__feature-item">
+                        <i class="fas fa-check-circle auth__feature-icon"></i>
+                        <span>Быстрые записи</span>
+                    </li>
+                    <li class="auth__feature-item">
+                        <i class="fas fa-check-circle auth__feature-icon"></i>
+                        <span>AI-анализ текста</span>
+                    </li>
+                    <li class="auth__feature-item">
+                        <i class="fas fa-check-circle auth__feature-icon"></i>
+                        <span>История и аналитика</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Карточка формы регистрации -->
+            <div class="auth__card">
+                <div class="auth__logo">
+                    <i class="fas fa-heart"></i>
+                </div>
+                
+                <h2 class="auth__brand">MoodSync</h2>
+                <p class="auth__subtitle">Ежедневный дневник настроения</p>
+                
+                <h3 class="auth__form-title">Создать аккаунт</h3>
+                <p class="auth__form-description">
+                    Введите имя и номер телефона, чтобы начать вести дневник настроения.
+                </p>
+                
+                <form class="auth__form" action="#" method="POST">
+                    <!-- Поле имени -->
+                    <div class="auth__field">
+                        <label class="auth__label" for="name">Имя</label>
+                        <div class="auth__input-wrapper">
+                            <i class="fas fa-user auth__input-icon"></i>
+                            <input 
+                                class="auth__input" 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                placeholder="Например, Даниил"
+                                autocomplete="name"
+                                required
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Поле телефона -->
+                    <div class="auth__field">
+                        <label class="auth__label" for="phone">Телефон</label>
+                        <div class="auth__input-wrapper">
+                            <i class="fas fa-phone auth__input-icon"></i>
+                            <input 
+                                class="auth__input" 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="+7 999 123-45-67"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                required
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопка отправки -->
+                    <button type="submit" class="auth__button">
+                        Зарегистрироваться
+                    </button>
+                </form>
+                
+                <!-- Футер формы -->
+                <div class="auth__footer">
+                    <span class="auth__hint">Уже есть аккаунт?</span>
+                    <a href="login.html" class="auth__link">Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODO: Добавить JavaScript для валидации формы -->
+    <script>
+        // Здесь будет логика валидации и отправки формы
+    </script>
+</body>
+</html>

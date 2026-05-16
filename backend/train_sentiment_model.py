@@ -52,7 +52,6 @@ model = Pipeline(
             LogisticRegression(
                 max_iter=1000,
                 solver="saga",
-                n_jobs=-1,
             ),
         ),
     ]
@@ -64,7 +63,7 @@ best_params = {
     "tfidf__min_df": 3,
     "tfidf__max_features": 200_000,
     "tfidf__analyzer": "word",
-    "logreg__penalty": "l2",
+    "l1_ratio": 0.0,
     "logreg__C": 1.0,
 }
 
@@ -77,7 +76,9 @@ y_pred = model.predict(X_test)
 print(classification_report(y_test, y_pred))
 print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
 
+# Сохраняет модель в файл
 joblib.dump(model, "./models/sentiment_model.joblib")
-
 print("Модель сохранена в ./models/sentiment_model.joblib")
+
+# Результат выполнения
 print(f"Время выполнения: {time.time() - start:.2f} сек.")

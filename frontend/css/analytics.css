@@ -1,0 +1,426 @@
+/* Уникальные стили для страницы аналитики */
+
+/* Верх страницы */
+.analytics__header {
+    padding: var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-lg);
+}
+
+.analytics__heading {
+    flex: 1;
+}
+
+.analytics__title {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.analytics__subtitle {
+    font-size: 16px;
+    color: var(--muted);
+}
+
+.analytics__export-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border: 1px solid var(--border);
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.analytics__export-button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.analytics__export-button i {
+    font-size: 16px;
+}
+
+/* Основная сетка */
+.analytics__grid {
+    padding: 0 var(--spacing-xl) var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 32px;
+}
+
+/* Левая колонка */
+.analytics__main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Карточка среднего индекса настроения */
+.mood-index {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border);
+    padding: 28px;
+    height: 170px;
+}
+
+.mood-index__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.mood-index__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.mood-index__info {
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.mood-index__info:hover {
+    color: var(--accent);
+}
+
+.mood-index__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mood-index__value {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.mood-index__change {
+    font-size: 14px;
+    color: #10b981;
+    font-weight: 500;
+}
+
+.mood-index__progress {
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mood-index__progress-fill {
+    width: 78%;
+    height: 100%;
+    background-color: #a5b4fc;
+    border-radius: 4px;
+}
+
+/* Карточка динамики за 7 дней */
+.mood-chart {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border);
+    padding: 28px;
+    height: 420px;
+}
+
+.mood-chart__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.mood-chart__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.mood-chart__select {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--card-bg);
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.mood-chart__body {
+    width: 100%;
+    height: 100%;
+}
+
+.mood-chart__svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Правая колонка */
+.analytics__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Карточка нейро-инсайтов */
+.neural-insights {
+    background-color: #fafbfc;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border);
+    padding: 28px;
+}
+
+.neural-insights__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.neural-insights__icon {
+    color: var(--accent);
+    font-size: 20px;
+}
+
+.neural-insights__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.neural-insights__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.neural-insights__item {
+    display: flex;
+    gap: 12px;
+}
+
+.neural-insights__marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.neural-insights__marker:nth-child(1) {
+    background-color: #1f2937;
+}
+
+.neural-insights__marker:nth-child(2) {
+    background-color: #9ca3af;
+}
+
+.neural-insights__text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+/* Карточка распределения эмоций */
+.emotion-distribution {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border);
+    padding: 28px;
+}
+
+.emotion-distribution__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+}
+
+.emotion-distribution__list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.emotion-distribution__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.emotion-distribution__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.emotion-distribution__color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.emotion-distribution__color--calm {
+    background-color: #93c5fd;
+}
+
+.emotion-distribution__color--focus {
+    background-color: #60a5fa;
+}
+
+.emotion-distribution__color--tired {
+    background-color: #d1d5db;
+}
+
+.emotion-distribution__color--stress {
+    background-color: #9ca3af;
+}
+
+.emotion-distribution__name {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.emotion-distribution__percent {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.emotion-distribution__bar {
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.emotion-distribution__fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.emotion-distribution__fill--calm {
+    background-color: #93c5fd;
+}
+
+.emotion-distribution__fill--focus {
+    background-color: #60a5fa;
+}
+
+.emotion-distribution__fill--tired {
+    background-color: #d1d5db;
+}
+
+.emotion-distribution__fill--stress {
+    background-color: #9ca3af;
+}
+
+/* Адаптивность */
+@media (max-width: 900px) {
+    .analytics__header {
+        padding: var(--spacing-md);
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .analytics__title {
+        font-size: 24px;
+    }
+    
+    .analytics__grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+    
+    .analytics__main, .analytics__aside {
+        width: 100%;
+    }
+    
+    .mood-chart {
+        height: 350px;
+    }
+    
+    .mood-index {
+        height: 150px;
+    }
+    
+    .mood-index__value {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 600px) {
+    .analytics__header {
+        padding: var(--spacing-md);
+    }
+    
+    .analytics__title {
+        font-size: 20px;
+    }
+    
+    .analytics__subtitle {
+        font-size: 14px;
+    }
+    
+    .analytics__export-button {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    .analytics__export-button i {
+        font-size: 14px;
+    }
+    
+    .mood-index, .mood-chart, .neural-insights, .emotion-distribution {
+        padding: 20px;
+    }
+    
+    .mood-chart {
+        height: 300px;
+    }
+    
+    .mood-index__header, .mood-chart__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .neural-insights__item {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .neural-insights__marker {
+        margin-top: 0;
+        margin-bottom: 4px;
+    }
+    
+    .emotion-distribution__row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .emotion-distribution__percent {
+        align-self: flex-end;
+    }
+}
