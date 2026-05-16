@@ -12,8 +12,8 @@ venv/
 !/backend/data/.gitkeep
 
 # Backend model files
-/backend/model/*
-!/backend/model/.gitkeep
+/backend/models/*
+!/backend/models/.gitkeep
 
 # Local DB files
 /backend/db/*.sqlite
