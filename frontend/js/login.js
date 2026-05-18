@@ -45,7 +45,7 @@ form.addEventListener("submit", async (event) => {
         showMessage("Вход выполнен успешно", "success");
 
         setTimeout(() => {
-            window.location.href = "../index.html";
+            window.location.href = "../home.html";
         }, 1000);
     } catch (error) {
         showMessage(error.message, "error");

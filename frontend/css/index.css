@@ -1,0 +1,31 @@
+/* Styles for the new landing page (index.html) */
+
+/* Ensure consistent spacing and light theme */
+body {
+    background-color: #faf7f8;
+    color: #2c3e50;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+a {
+    color: #3b82f6; /* Tailwind blue-500 */
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Card container */
+section > div {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}

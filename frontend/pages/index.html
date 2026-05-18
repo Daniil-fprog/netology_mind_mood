@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodSync – Приложение для дневника настроения</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body class="bg-[#faf7f8] text-[#2c3e50]">
+    <!-- Hero-блок -->
+    <header class="bg-white shadow py-4 border-b border-gray-200">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">MoodSync</h1>
+            <nav class="space-x-4">
+                <a href="./login.html" class="text-gray-800 hover:text-blue-600 flex items-center"><i class="fas fa-sign-in-alt mr-1"></i>Войти</a>
+                <a href="./register.html" class="text-gray-800 hover:text-blue-600 flex items-center"><i class="fas fa-user-plus mr-1"></i>Регистрация</a>
+            </nav>
+        </div>
+    </header>
+    <section class="bg-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-2">MoodSync</h1>
+            <p class="text-lg text-gray-600 mb-6">Ежедневный дневник настроения и персональный AI‑помощник</p>
+            <div class="space-x-4">
+                <a href="./home.html" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Начать</a>
+                <a href="./history.html" class="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">Посмотреть историю</a>
+            </div>
+        </div>
+    </section>
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-2">MoodSync</h1>
+            <p class="text-lg text-gray-600 mb-6">Ежедневный дневник настроения и персональный AI‑помощник</p>
+            <div class="space-x-4">
+                <a href="./home.html" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Начать</a>
+                <a href="./history.html" class="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">Посмотреть историю</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Что дает приложение -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-2xl font-semibold mb-4">Что дает приложение</h2>
+        <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <li>Быстрая фиксация настроения каждый день</li>
+            <li>Текстовые заметки и теги для каждой записи</li>
+            <li>История эмоционального состояния во времени</li>
+            <li>Анализ настроения с помощью NLP‑моделей</li>
+            <li>Выявление повторяющихся эмоциональных паттернов</li>
+            <li>Персональные инсайты и рекомендации</li>
+        </ul>
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-4 border rounded bg-white">
+                <h3 class="font-medium mb-2">Ввод настроения</h3>
+                <p class="text-sm text-gray-600">Откройте <a href=\"./home.html\" class=\"text-blue-600 underline\">страницу ввода</a>, напишите свои мысли и выберите настроение.</p>
+            </div>
+            <div class="p-4 border rounded bg-white">
+                <h3 class="font-medium mb-2">Просмотр записей</h3>
+                <p class="text-sm text-gray-600">Исторический список доступен в <a href=\"./history.html\" class=\"text-blue-600 underline\">разделе истории</a>.</p>
+            </div>
+            <div class="p-4 border rounded bg-white">
+                <h3 class="font-medium mb-2">Детали записи</h3>
+                <p class="text-sm text-gray-600">Подробный AI‑анализ и рекомендации в <a href=\"./details.html\" class=\"text-blue-600 underline\">деталях</a>.</p>
+            </div>
+            <div class="p-4 border rounded bg-white">
+                <h3 class="font-medium mb-2">Аналитика</h3>
+                <p class="text-sm text-gray-600">Графики и среднее настроение за неделю, две недели или месяц в <a href=\"./analytics.html\" class=\"text-blue-600 underline\">аналитике</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как пользоваться -->
+    <section class="bg-gray-50 py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-semibold mb-4">Как пользоваться</h2>
+            <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                <li>Откройте страницу ввода настроения (кнопка «Начать»).</li>
+                <li>Опишите своё состояние в свободном тексте.</li>
+                <li>Сохраните запись.</li>
+                <li>Просмотрите историю, детали и аналитику в соответствующих разделах.</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- AI/NLP анализ -->
+    <section class="bg-gray-100 py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-semibold mb-4">AI / NLP анализ</h2>
+            <p class="text-gray-700">Приложение использует модели NLP для определения тона записи, настроения, эмоций, ключевых слов и выявления повторяющихся паттернов. Это персональный помощник для самонаблюдения, а не медицинский сервис.</p>
+        </div>
+    </section>
+
+    <!-- Финальный CTA -->
+    <footer class="bg-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-600 mb-4">Готовы начать вести дневник настроения?</p>
+            <a href="./home.html" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Начать запись</a>
+        </div>
+    </footer>
+</body>
+</html>

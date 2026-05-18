@@ -67,7 +67,7 @@ form.addEventListener("submit", async (event) => {
             showMessage("Регистрация выполнена успешно", "success");
 
             setTimeout(() => {
-                window.location.href = "../index.html";
+                window.location.href = "../home.html";
             }, 1000);
 
             return;
