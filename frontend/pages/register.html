@@ -49,64 +49,81 @@
                 
                 <h3 class="auth__form-title">Создать аккаунт</h3>
                 <p class="auth__form-description">
-                    Введите имя и логин, чтобы начать вести дневник настроения.
+                    Введите ваше имя, телефон и пароль для регистрации.
                 </p>
-                
+
                 <!-- Сообщения об ошибках и успехе -->
-                <div id="auth-message" class="auth__message" style="display: none;"></div>
-                
-                <form class="auth__form" id="register-form">
+                <div id="registerMessage" class="auth__message" style="display: none;"></div>
+
+                <form class="auth__form" id="registerForm">
                     <!-- Поле имени -->
                     <div class="auth__field">
-                        <label class="auth__label" for="name">Имя</label>
-                        <div class="auth__input-wrapper">
-                            <i class="fas fa-user auth__input-icon"></i>
-                            <input 
-                                class="auth__input" 
-                                type="text" 
-                                id="name" 
-                                name="name" 
-                                placeholder="Например, Даниил"
-                                autocomplete="name"
-                                required
-                            >
-                        </div>
-                    </div>
-                    
-                    <!-- Поле логина -->
-                    <div class="auth__field">
-                        <label class="auth__label" for="login">Логин</label>
+                        <label class="auth__label" for="name">Имя пользователя</label>
                         <div class="auth__input-wrapper">
                             <i class="fas fa-user auth__input-icon"></i>
                             <input
                                 class="auth__input"
                                 type="text"
-                                id="login"
-                                name="login"
-                                placeholder="Придумайте логин"
-                                autocomplete="username"
+                                id="name"
+                                name="name"
+                                placeholder="Введите ваше имя"
+                                autocomplete="name"
                                 required
                             >
                         </div>
                     </div>
-                    
+
+                    <!-- Поле телефона -->
+                    <div class="auth__field">
+                        <label class="auth__label" for="phone">Телефон</label>
+                        <div class="auth__input-wrapper">
+                            <i class="fas fa-phone auth__input-icon"></i>
+                            <input
+                                class="auth__input"
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                placeholder="+7 999 123-45-67"
+                                autocomplete="tel"
+                                required
+                            >
+                        </div>
+                    </div>
+
                     <!-- Поле пароля -->
                     <div class="auth__field">
                         <label class="auth__label" for="password">Пароль</label>
                         <div class="auth__input-wrapper">
                             <i class="fas fa-lock auth__input-icon"></i>
-                            <input 
-                                class="auth__input" 
-                                type="password" 
-                                id="password" 
-                                name="password" 
+                            <input
+                                class="auth__input"
+                                type="password"
+                                id="password"
+                                name="password"
                                 placeholder="Введите пароль"
                                 autocomplete="new-password"
                                 required
                             >
                         </div>
                     </div>
-                    
+
+                    <!-- Поле повтора пароля -->
+                    <div class="auth__field">
+                        <label class="auth__label" for="passwordRepeat">Повтор пароля</label>
+                        <div class="auth__input-wrapper">
+                            <i class="fas fa-lock auth__input-icon"></i>
+                            <input
+                                class="auth__input"
+                                type="password"
+                                id="passwordRepeat"
+                                name="passwordRepeat"
+                                placeholder="Повторите пароль"
+                                autocomplete="new-password"
+                                required
+                            >
+                        </div>
+                    </div>
+
                     <!-- Кнопка отправки -->
                     <button type="submit" class="auth__button">
                         Зарегистрироваться
@@ -122,71 +139,6 @@
         </div>
     </div>
 
-    <script>
-        // Функция для показа сообщений
-        function showMessage(message, type = 'error') {
-            const messageEl = document.getElementById('auth-message');
-            messageEl.style.display = 'block';
-            messageEl.className = `auth__message auth__message--${type}`;
-            messageEl.innerHTML = `
-                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
-                ${message}
-            `;
-            
-            // Скрывать сообщение через 5 секунд
-            setTimeout(() => {
-                messageEl.style.display = 'none';
-            }, 5000);
-        }
-
-        // Функция обработки формы регистрации
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                password: formData.get('password')
-            };
-
-            // Валидация телефона (простая проверка)
-            const phoneRegex = /^\+7\s\d{3}\s\d{3}-\d{2}-\d{2}$/;
-            if (!phoneRegex.test(data.phone)) {
-                showMessage('Пожалуйста, введите номер телефона в формате: +7 999 123-45-67');
-                return;
-            }
-
-            // Валидация пароля (минимум 6 символов)
-            if (data.password.length < 6) {
-                showMessage('Пароль должен содержать минимум 6 символов');
-                return;
-            }
-
-            try {
-                const response = await fetch('/users/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    showMessage('Регистрация прошла успешно! Переход на главную страницу...', 'success');
-                    setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 2000);
-                } else {
-                    showMessage(result.detail || 'Ошибка при регистрации');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Ошибка соединения с сервером');
-            }
-        });
-    </script>
+    <script src="../js/register.js" defer></script>
 </body>
 </html>

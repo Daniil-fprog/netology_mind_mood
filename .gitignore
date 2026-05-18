@@ -19,6 +19,7 @@ venv/
 /backend/db/*.sqlite
 /backend/db/*.sqlite3
 /backend/db/*.db
+!/backend/db/.gitkeep
 
 # Environment variables
 .env

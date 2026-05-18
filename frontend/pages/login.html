@@ -49,31 +49,47 @@
                 
                 <h3 class="auth__form-title">Войти в аккаунт</h3>
                 <p class="auth__form-description">
-                    Введите номер телефона, чтобы продолжить работу с дневником.
+                    Введите ваш логин и пароль для входа.
                 </p>
 
                 <!-- Сообщения об ошибках и успехе -->
-                <div id="auth-message" class="auth__message" style="display: none;"></div>
+                <div id="loginMessage" class="auth__message" style="display: none;"></div>
 
-                <form class="auth__form" id="login-form">
-                    <!-- Поле телефона -->
+                <form class="auth__form" id="loginForm">
+                    <!-- Поле логина -->
                     <div class="auth__field">
-                        <label class="auth__label" for="phone">Телефон</label>
+                        <label class="auth__label" for="login">Логин</label>
                         <div class="auth__input-wrapper">
-                            <i class="fas fa-phone auth__input-icon"></i>
-                            <input 
-                                class="auth__input" 
-                                type="tel" 
-                                id="phone" 
-                                name="phone" 
-                                placeholder="+7 999 123-45-67"
-                                inputmode="tel"
-                                autocomplete="tel"
+                            <i class="fas fa-user auth__input-icon"></i>
+                            <input
+                                class="auth__input"
+                                type="text"
+                                id="login"
+                                name="login"
+                                placeholder="Введите логин"
+                                autocomplete="username"
                                 required
                             >
                         </div>
                     </div>
-                    
+
+                    <!-- Поле пароля -->
+                    <div class="auth__field">
+                        <label class="auth__label" for="password">Пароль</label>
+                        <div class="auth__input-wrapper">
+                            <i class="fas fa-lock auth__input-icon"></i>
+                            <input
+                                class="auth__input"
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Введите пароль"
+                                autocomplete="current-password"
+                                required
+                            >
+                        </div>
+                    </div>
+
                     <!-- Кнопка отправки -->
                     <button type="submit" class="auth__button">
                         Войти
@@ -89,63 +105,6 @@
         </div>
     </div>
 
-    <script>
-        // Функция для показа сообщений
-        function showMessage(message, type = 'error') {
-            const messageEl = document.getElementById('auth-message');
-            messageEl.style.display = 'block';
-            messageEl.className = `auth__message auth__message--${type}`;
-            messageEl.innerHTML = `
-                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
-                ${message}
-            `;
-
-            // Скрывать сообщение через 5 секунд
-            setTimeout(() => {
-                messageEl.style.display = 'none';
-            }, 5000);
-        }
-
-        // Функция обработки формы авторизации
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(e.target);
-            const data = {
-                phone: formData.get('phone')
-            };
-
-            // Валидация телефона (простая проверка)
-            const phoneRegex = /^\+7\s\d{3}\s\d{3}-\d{2}-\d{2}$/;
-            if (!phoneRegex.test(data.phone)) {
-                showMessage('Пожалуйста, введите номер телефона в формате: +7 999 123-45-67');
-                return;
-            }
-
-            try {
-                const response = await fetch('/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    showMessage('Вход выполнен успешно! Переход на главную страницу...', 'success');
-                    setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 2000);
-                } else {
-                    showMessage(result.detail || 'Ошибка при входе');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Ошибка соединения с сервером');
-            }
-        });
-    </script>
+    <script src="../js/login.js" defer></script>
 </body>
 </html>
