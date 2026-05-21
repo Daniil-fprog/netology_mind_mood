@@ -242,8 +242,40 @@ body {
     .page-header {
         padding: 0 var(--spacing-md);
     }
-    
+
     .page-header h1 {
         font-size: 20px;
     }
+}
+
+/* Кнопка выхода из профиля */
+.sidebar__logout-btn {
+    display: none;
+    width: 100%;
+    padding: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    background-color: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.sidebar__logout-btn:hover {
+    background-color: #fee;
+    border-color: #f56565;
+    color: #f56565;
+}
+
+.sidebar__logout-btn i {
+    font-size: 14px;
+}
+
+/* Показываем кнопку выхода при авторизации */
+.sidebar__profile:hover .sidebar__logout-btn {
+    display: flex;
 }

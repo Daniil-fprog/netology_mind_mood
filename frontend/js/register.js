@@ -1,7 +1,13 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
-
 const form = document.querySelector("#registerForm");
 const messageBox = document.querySelector("#registerMessage");
+
+// Проверка состояния авторизации при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    // Если уже авторизованы, перенаправляем на главную
+    if (Auth.isAuth()) {
+        window.location.href = "../home.html";
+    }
+});
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -42,41 +48,16 @@ form.addEventListener("submit", async (event) => {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                phone,
-                password,
-            }),
+        const data = await Auth.register({
+            name,
+            phone,
+            password,
         });
 
-        const data = await safeParseJson(response);
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Ошибка регистрации");
-        }
-
-        if (data.access_token) {
-            localStorage.setItem("access_token", data.access_token);
-            localStorage.setItem("token_type", data.token_type || "bearer");
-
-            showMessage("Регистрация выполнена успешно", "success");
-
-            setTimeout(() => {
-                window.location.href = "../home.html";
-            }, 1000);
-
-            return;
-        }
+        showMessage("Регистрация выполнена успешно", "success");
 
         if (data.login) {
-            showMessage(`Регистрация выполнена успешно. Ваш логин: ${data.login}`, "success");
-        } else {
-            showMessage("Регистрация выполнена успешно. Теперь войдите в аккаунт.", "success");
+            showMessage(`Ваш логин: ${data.login}`, "success");
         }
 
         setTimeout(() => {
@@ -86,14 +67,6 @@ form.addEventListener("submit", async (event) => {
         showMessage(error.message, "error");
     }
 });
-
-async function safeParseJson(response) {
-    try {
-        return await response.json();
-    } catch {
-        return {};
-    }
-}
 
 function showMessage(text, type) {
     messageBox.textContent = text;

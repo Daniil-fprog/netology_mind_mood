@@ -1,7 +1,13 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
-
 const form = document.querySelector("#loginForm");
 const messageBox = document.querySelector("#loginMessage");
+
+// Проверка состояния авторизации при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    // Если уже авторизованы, перенаправляем на главную
+    if (Auth.isAuth()) {
+        window.location.href = "../home.html";
+    }
+});
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -20,28 +26,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                login,
-                password,
-            }),
-        });
-
-        const data = await safeParseJson(response);
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Ошибка авторизации");
-        }
-
-        if (data.access_token) {
-            localStorage.setItem("access_token", data.access_token);
-            localStorage.setItem("token_type", data.token_type || "bearer");
-        }
-
+        const data = await Auth.login(login, password);
         showMessage("Вход выполнен успешно", "success");
 
         setTimeout(() => {
@@ -51,14 +36,6 @@ form.addEventListener("submit", async (event) => {
         showMessage(error.message, "error");
     }
 });
-
-async function safeParseJson(response) {
-    try {
-        return await response.json();
-    } catch {
-        return {};
-    }
-}
 
 function showMessage(text, type) {
     messageBox.textContent = text;
