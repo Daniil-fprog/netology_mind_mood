@@ -30,6 +30,29 @@ def get_current_user_notes_service(
     return db.query(NoteModel).filter(NoteModel.user_id == current_user.id).all()
 
 
+def get_current_user_note_by_id_service(
+    note_id: int,
+    current_user: UserModel,
+    db: Session,
+) -> NoteModel:
+    note = (
+        db.query(NoteModel)
+        .filter(
+            NoteModel.id == note_id,
+            NoteModel.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if note is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Запись не найдена",
+        )
+
+    return note
+
+
 def update_note_service(
     note_id: int,
     note_data: NoteUpdate,

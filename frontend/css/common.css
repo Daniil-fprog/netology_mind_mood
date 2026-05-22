@@ -117,10 +117,14 @@ body {
 }
 
 .sidebar__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: var(--spacing-md) 0;
 }
 
 .sidebar__divider {
+    width: 100%;
     height: 1px;
     background-color: var(--border);
     margin: 0 var(--spacing-lg);
@@ -250,9 +254,9 @@ body {
 
 /* Кнопка выхода из профиля */
 .sidebar__logout-btn {
-    display: none;
-    width: 100%;
+    width: 80%;
     padding: var(--spacing-sm);
+    margin: 0 auto;
     margin-top: var(--spacing-md);
     background-color: transparent;
     border: 1px solid var(--border);
@@ -273,9 +277,4 @@ body {
 
 .sidebar__logout-btn i {
     font-size: 14px;
-}
-
-/* Показываем кнопку выхода при авторизации */
-.sidebar__profile:hover .sidebar__logout-btn {
-    display: flex;
 }

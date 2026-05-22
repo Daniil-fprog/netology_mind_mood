@@ -8,6 +8,7 @@ from app.schemas.note import NoteCreate, NoteOut, NoteUpdate
 from app.services.note_service import (
     create_note_service,
     get_current_user_notes_service,
+    get_current_user_note_by_id_service,
     update_note_service,
 )
 from app.tasks.note_tasks import translate_note_background
@@ -36,6 +37,15 @@ def get_notes(
     current_user: UserModel = Depends(get_current_user),
 ):
     return get_current_user_notes_service(current_user, db)
+
+
+@router.get("/{note_id}", response_model=list[NoteOut])
+def get_note(
+    note_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    return get_current_user_note_by_id_service(note_id, current_user, db)
 
 
 @router.patch("/{note_id}", response_model=NoteOut)

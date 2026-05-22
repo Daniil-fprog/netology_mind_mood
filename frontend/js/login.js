@@ -5,7 +5,7 @@ const messageBox = document.querySelector("#loginMessage");
 document.addEventListener('DOMContentLoaded', () => {
     // Если уже авторизованы, перенаправляем на главную
     if (Auth.isAuth()) {
-        window.location.href = "../home.html";
+        window.location.href = "../pages/home.html";
     }
 });
 
@@ -30,7 +30,7 @@ form.addEventListener("submit", async (event) => {
         showMessage("Вход выполнен успешно", "success");
 
         setTimeout(() => {
-            window.location.href = "../home.html";
+            window.location.href = "../pages/home.html";
         }, 1000);
     } catch (error) {
         showMessage(error.message, "error");

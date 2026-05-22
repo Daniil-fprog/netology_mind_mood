@@ -27,12 +27,14 @@ class HistoryPage {
             }
 
             const response = await Auth.authenticatedFetch("http://127.0.0.1:8000/notes/");
-
+            
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки данных: ${response.status}`);
             }
 
             const notes = await response.json();
+            console.log(notes);
+            
             return this.groupNotesByDate(notes);
         } catch (error) {
             console.error('Error:', error);
@@ -69,6 +71,7 @@ class HistoryPage {
         time.textContent = entry.time;
         moodBadge.textContent = entry.mood;
         title.textContent = entry.title;
+        title.href = `../pages/details.html?id=${entry.id}`;
         text.textContent = entry.text;
 
         // Очищаем предыдущие классы настроения
