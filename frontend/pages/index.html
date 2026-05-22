@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoodSync – Приложение для дневника настроения</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/index.css">
 </head>
@@ -25,7 +27,11 @@
                     <li class="nav__item"><a href="#for-whom" class="nav__link">Для кого</a></li>
                 </ul>
             </nav>
-            <a href="./home.html" class="btn btn--black header__cta">Открыть дневник</a>
+
+            <div>
+                <a href="./register.html" class="btn btn--black header__cta mr-4">Регистрация</a>
+                <a href="./login.html" class="btn btn--light header__cta">Войти</a>
+            </div>
         </div>
     </header>
 
@@ -321,11 +327,10 @@
                     <h4 class="footer__subtitle">Продукт</h4>
                     <ul class="footer__list">
                         <li class="footer__item"><a href="#features" class="footer__link">Возможности</a></li>
-                        <li class="footer__item"><a href="./history.html" class="footer__link">История</a></li>
                         <li class="footer__item"><a href="#analytics" class="footer__link">Аналитика</a></li>
                     </ul>
                 </div>
-                <div class="footer__column">
+                <!-- <div class="footer__column">
                     <h4 class="footer__subtitle">Проект</h4>
                     <ul class="footer__list">
                         <li class="footer__item"><a href="#" class="footer__link">О нас</a></li>
@@ -340,7 +345,7 @@
                         <li class="footer__item"><a href="#" class="footer__link">Конфиденциальность</a></li>
                         <li class="footer__item"><a href="#" class="footer__link">Помощь</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
             <div class="footer__bottom">
                 <p class="footer__copyright">© 2026 MoodSync. Учебный проект.</p>

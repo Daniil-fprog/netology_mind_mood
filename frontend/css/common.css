@@ -58,17 +58,31 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
-.sidebar__avatar {
-    width: 64px;
-    height: 64px;
+.header__account {
+    display: flex;
+    align-items: center;
+}
+
+.header__account p {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.header__account-avatar {
+    width: 48px;
+    height: 48px;
     background-color: var(--accent);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto var(--spacing-sm);
     color: white;
     font-size: 24px;
+    margin-right: 10px;
+}
+
+.header__account .fa-user {
+    font-size: 20px;
 }
 
 .sidebar__app-info {
@@ -76,7 +90,7 @@ body {
 }
 
 .sidebar__app-name {
-    font-size: 18px;
+    font-size: 26px;
     font-weight: 600;
     margin-bottom: 4px;
 }

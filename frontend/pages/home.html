@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,17 +10,15 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body class="bg-[#faf7f8] text-[#2c3e50]">
     <div class="app-container">
         <!-- Левый сайдбар -->
         <aside class="sidebar">
             <!-- Блок профиля -->
             <div class="sidebar__profile">
-                <div class="sidebar__avatar">
-                    <i class="fas fa-user"></i>
-                </div>
                 <div class="sidebar__app-info">
-                    <h1 class="sidebar__app-name">MoodSync</h1>
+                    <a href="./index.html" class="sidebar__app-name">MoodSync</a>
                     <p class="sidebar__app-tagline">Ежедневный дневник настроения</p>
                 </div>
             </div>
@@ -44,7 +43,7 @@
             <div class="sidebar__bottom">
                 <div class="sidebar__divider"></div>
 
-                 <button id="logoutBtn" class="sidebar__logout-btn">
+                <button id="logoutBtn" class="sidebar__logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Выход</span>
                 </button>
@@ -56,6 +55,29 @@
             <!-- Верхний header -->
             <header class="header">
                 <h1 class="header__title">Главная</h1>
+
+                <div class="header__account">
+                    <div class="header__account-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <div class="header__account-info">
+                        <p>
+                            Логин:
+                            <span id="user-login">
+                                user_a77b1a86
+                            </span>
+                        </p>
+
+                        <p>
+                            Имя: 
+                            <span id="user-name">
+                                Даниил
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
                 <!-- <div class="header__controls">
                     <div class="header__search">
                         <i class="fas fa-search header__search-icon"></i>
@@ -63,7 +85,7 @@
                     </div>
                     <button class="header__icon-btn">
                         <i class="fas fa-bell"></i>
-                    </button>
+                    </button>`
                     <button class="header__icon-btn">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
@@ -79,10 +101,8 @@
 
                 <!-- Карточка формы -->
                 <form id="noteForm" class="mood-card">
-                    <textarea
-                        class="mood-card__textarea"
-                        placeholder="Начните записывать свои мысли здесь... Позвольте им течь естественно."
-                    ></textarea>
+                    <textarea class="mood-card__textarea"
+                        placeholder="Начните записывать свои мысли здесь... Позвольте им течь естественно."></textarea>
 
                     <div class="mood-card__actions">
                         <div class="mood-card__action-icons">
@@ -118,5 +138,48 @@
             </div>
         </main>
     </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        // Получение данных текущего пользователя
+        async function getCurrentUser() {
+            try {
+                const response = await authenticatedFetch('/users/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    return user;
+                } else {
+                    console.error('Failed to fetch user data');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                return null;
+            }
+        }
+
+        // Отображение данных пользователя в header__account
+        async function displayUserInfo() {
+            const user = await getCurrentUser();
+            
+            if (user) {
+                // Обновляем логин и имя пользователя
+                const userLoginElement = document.getElementById('user-login');
+                const userNameElement = document.getElementById('user-name');
+                
+                if (userLoginElement) {
+                    userLoginElement.textContent = user.login || 'Не указан';
+                }
+                
+                if (userNameElement) {
+                    userNameElement.textContent = user.name || 'Не указан';
+                }
+            }
+        }
+
+        // Выполняем загрузку данных пользователя при загрузке страницы
+        document.addEventListener('DOMContentLoaded', displayUserInfo);
+    </script>
 </body>
+
 </html>
