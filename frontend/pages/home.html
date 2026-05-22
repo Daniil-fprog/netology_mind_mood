@@ -65,14 +65,12 @@
                         <p>
                             Логин:
                             <span id="user-login">
-                                user_a77b1a86
                             </span>
                         </p>
 
                         <p>
                             Имя: 
                             <span id="user-name">
-                                Даниил
                             </span>
                         </p>
                     </div>
@@ -144,7 +142,7 @@
         // Получение данных текущего пользователя
         async function getCurrentUser() {
             try {
-                const response = await authenticatedFetch('/users/me');
+                const response = await authenticatedFetch(`${API_BASE_URL}/users/me`);
                 if (response.ok) {
                     const user = await response.json();
                     return user;

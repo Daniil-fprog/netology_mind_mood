@@ -39,7 +39,7 @@ def get_notes(
     return get_current_user_notes_service(current_user, db)
 
 
-@router.get("/{note_id}", response_model=list[NoteOut])
+@router.get("/{note_id}", response_model=NoteOut)
 def get_note(
     note_id: int,
     db: Session = Depends(get_db),

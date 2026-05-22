@@ -26,6 +26,7 @@ class DetailsPage {
         this.noteId = this.getNoteIdFromUrl();
 
         if (!this.noteId) {
+            window.location.href = "../pages/history.html";
             throw new Error("В URL не найден параметр id");
         }
     }
