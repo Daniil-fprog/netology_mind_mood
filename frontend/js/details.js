@@ -1,3 +1,5 @@
+import Auth from './auth.js';
+
 class DetailsPage {
     constructor() {
         this.apiBaseUrl = "http://127.0.0.1:8000";
@@ -26,7 +28,7 @@ class DetailsPage {
         this.noteId = this.getNoteIdFromUrl();
 
         if (!this.noteId) {
-            window.location.href = "../pages/history.html";
+            window.location.href = "../history.html";
             throw new Error("В URL не найден параметр id");
         }
     }
@@ -39,7 +41,7 @@ class DetailsPage {
     async getNoteData() {
         try {
             if (!Auth.isAuth()) {
-                window.location.href = "../pages/login.html";
+                window.location.href = "../login.html";
                 return null;
             }
 
@@ -265,7 +267,7 @@ class DetailsPage {
     initEvents() {
         if (this.backButton) {
             this.backButton.addEventListener("click", () => {
-                window.location.href = "../pages/history.html";
+                window.location.href = "../history.html";
             });
         }
 
@@ -286,7 +288,7 @@ class DetailsPage {
 
 document.addEventListener("DOMContentLoaded", () => {
     if (!Auth.isAuth()) {
-        window.location.href = "../pages/login.html";
+        window.location.href = "../login.html";
         return;
     }
 

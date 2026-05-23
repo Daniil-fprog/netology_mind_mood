@@ -1,3 +1,5 @@
+import Auth from './auth.js';
+
 const form = document.querySelector("#registerForm");
 const messageBox = document.querySelector("#registerMessage");
 
@@ -5,7 +7,7 @@ const messageBox = document.querySelector("#registerMessage");
 document.addEventListener('DOMContentLoaded', () => {
     // Если уже авторизованы, перенаправляем на главную
     if (Auth.isAuth()) {
-        window.location.href = "../home.html";
+        window.location.href = "./home.html";
     }
 });
 
@@ -61,7 +63,7 @@ form.addEventListener("submit", async (event) => {
         }
 
         setTimeout(() => {
-            window.location.href = "login.html";
+            window.location.href = "./login.html";
         }, 2500);
     } catch (error) {
         showMessage(error.message, "error");

@@ -1,4 +1,6 @@
 
+import Auth from './auth.js';
+
 class HistoryPage {
     constructor() {
         this.historyList = document.querySelector("#historyList");
@@ -71,7 +73,7 @@ class HistoryPage {
         time.textContent = entry.time;
         moodBadge.textContent = entry.mood;
         title.textContent = entry.title;
-        title.href = `../pages/details.html?id=${entry.id}`;
+        title.href = `../details.html?id=${entry.id}`;
         text.textContent = entry.text;
 
         // Очищаем предыдущие классы настроения
@@ -213,7 +215,7 @@ class HistoryPage {
 document.addEventListener('DOMContentLoaded', () => {
     // Проверяем авторизацию пользователя
     if (!Auth.isAuth()) {
-        window.location.href = "../pages/login.html";
+        window.location.href = "../login.html";
         return;
     }
 
