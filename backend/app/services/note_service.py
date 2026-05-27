@@ -93,14 +93,13 @@ def filter_notes_service(
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     sentiment_label: Optional[str] = None,
+    sort: str = "newest",
 ) -> list[NoteModel]:
     query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
 
     # Поиск по тексту
     if search:
-        query = query.filter(
-            NoteModel.orig_text.ilike(f"%{search}%")
-        )
+        query = query.filter(NoteModel.orig_text.ilike(f"%{search}%"))
 
     # Фильтрация по дате от
     if date_from:
@@ -121,5 +120,14 @@ def filter_notes_service(
     # Фильтрация по sentiment_label
     if sentiment_label:
         query = query.filter(NoteModel.sentiment_label == sentiment_label)
+
+    # Cортировка по дате (новый, старый)
+    if sort:
+        if sort == "newest":
+            query = query.order_by(NoteModel.created_at.desc())
+        elif sort == "oldest":
+            query = query.order_by(NoteModel.created_at.asc())
+        else:
+            query = query.order_by(NoteModel.created_at.desc())
 
     return query.all()

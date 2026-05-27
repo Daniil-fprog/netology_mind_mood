@@ -265,14 +265,6 @@
     color: white;
 }
 
-.history__filter-apply {
-    background-color: var(--primary);
-}
-
-.history__filter-apply:hover {
-    background-color: var(--primary-hover);
-}
-
 .history__filter-reset {
     background-color: var(--bg);
     border: 1px solid var(--border);

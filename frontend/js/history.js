@@ -19,207 +19,258 @@ class HistoryPage {
             throw new Error("Не найден шаблон #historyEntryTemplate");
         }
 
-        this.initFilters();
-    }
+        this.searchInput = document.getElementById("searchInput");
+        this.searchClear = document.getElementById("searchClear");
+        this.filterBtn = document.getElementById("filterBtn");
+        this.filterPopup = document.getElementById("filterPopup");
+        this.filterPopupContent = document.querySelector(".history__filter-popup-content");
+        this.filterPopupClose = document.getElementById("filterPopupClose");
+        this.filterReset = document.getElementById("filterReset");
+        this.filterApply = document.getElementById("filterApply");
+        this.filterBadge = document.getElementById("filterBadge");
 
-    initFilters() {
-        // Создаем контейнер фильтров
-        const pageHeader = document.querySelector(".history__page-header");
-        if (!pageHeader) return;
-
-        const actionsContainer = pageHeader.querySelector(".history__header-actions");
-        if (!actionsContainer) return;
-
-        // Добавляем кнопку поиска и фильтрации
-        const headerActions = pageHeader.querySelector(".history__header-actions");
-        
-        // Добавляем кнопку поиска с выпадающим полем
-        const searchBtn = headerActions.querySelector(".history__icon-btn:first-of-type");
-        searchBtn.onclick = (e) => {
-            e.preventDefault();
-            this.toggleSearch();
+        this.filters = {
+            search: "",
+            period: "all",
+            sort: "newest",
+            mood: "all"
         };
 
-        // Добавляем кнопку фильтра с выпадающим полем
-        const filterBtn = headerActions.querySelector(".history__icon-btn:last-of-type");
-        filterBtn.onclick = (e) => {
-            e.preventDefault();
-            this.toggleFilter();
-        };
-
-        // Создаем элементы поиска и фильтра
-        this.createFilterUI();
+        this.initEventListeners();
     }
 
-    createFilterUI() {
-        const pageHeader = document.querySelector(".history__page-header");
-        if (!pageHeader) return;
-
-        const headerActions = pageHeader.querySelector(".history__header-actions");
-        if (!headerActions) return;
-
-        // Создаем контейнер поиска
-        this.searchContainer = document.createElement("div");
-        this.searchContainer.className = "history__search-container";
-        this.searchContainer.innerHTML = `
-            <div class="history__search-wrapper">
-                <i class="fas fa-search history__search-icon"></i>
-                <input 
-                    type="text" 
-                    class="history__search-input" 
-                    placeholder="Поиск по заметкам..."
-                    id="searchInput"
-                >
-                <button class="history__search-clear" id="searchClear">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-
-        // Создаем контейнер фильтров
-        this.filterContainer = document.createElement("div");
-        this.filterContainer.className = "history__filter-container";
-        this.filterContainer.innerHTML = `
-            <div class="history__filter-wrapper">
-                <div class="history__filter-group">
-                    <label class="history__filter-label">
-                        <i class="fas fa-calendar-alt"></i>
-                        <select class="history__filter-select" id="dateFrom">
-                            <option value="">С даты</option>
-                            ${this.getdateRangeOptions()}
-                        </select>
-                    </label>
-                    <label class="history__filter-label">
-                        <i class="fas fa-calendar-check"></i>
-                        <select class="history__filter-select" id="dateTo">
-                            <option value="">По дату</option>
-                            ${this.getdateRangeOptions()}
-                        </select>
-                    </label>
-                </div>
-                <div class="history__filter-group">
-                    <label class="history__filter-label">
-                        <i class="fas fa-smile"></i>
-                        <select class="history__filter-select" id="sentimentFilter">
-                            <option value="">Настроение</option>
-                            <option value="positive">Хорошее</option>
-                            <option value="negative">Плохое</option>
-                        </select>
-                    </label>
-                </div>
-                <button class="history__filter-apply" id="applyFilters">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button class="history__filter-reset" id="resetFilters">
-                    <i class="fas fa-redo"></i>
-                </button>
-            </div>
-        `;
-
-        // Вставляем контейнеры в header
-        headerActions.parentNode.insertBefore(this.searchContainer, headerActions);
-        headerActions.parentNode.insertBefore(this.filterContainer, headerActions);
-
-        // Добавляем обработчики событий
-        this.setupEventListeners();
-    }
-
-    getdateRangeOptions() {
-        const options = [''];
-        const today = new Date();
-        
-        for (let i = 0; i < 30; i++) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const displayDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            options.push(`<option value="${dateStr}">${displayDate}</option>`);
-        }
-        
-        return options.join('');
-    }
-
-    setupEventListeners() {
+    initEventListeners() {
         // События для поиска
-        const searchInput = document.getElementById("searchInput");
-        const searchClear = document.getElementById("searchClear");
-
-        if (searchInput) {
-            searchInput.addEventListener("input", (e) => {
-                this.applyFilters({
-                    search: e.target.value,
-                    dateFrom: document.getElementById("dateFrom")?.value || "",
-                    dateTo: document.getElementById("dateTo")?.value || "",
-                    sentimentLabel: document.getElementById("sentimentFilter")?.value || ""
-                });
+        if (this.searchInput) {
+            this.searchInput.addEventListener("input", (e) => {
+                this.filters.search = e.target.value;
+                this.updateSearchClear();
+                this.applyFilters();
             });
         }
 
-        if (searchClear) {
-            searchClear.addEventListener("click", () => {
-                const searchInput = document.getElementById("searchInput");
-                if (searchInput) {
-                    searchInput.value = "";
-                    this.applyFilters({ search: "" });
+        if (this.searchClear) {
+            this.searchClear.addEventListener("click", () => {
+                this.searchInput.value = "";
+                this.filters.search = "";
+                this.updateSearchClear();
+                this.applyFilters();
+            });
+        }
+
+        // События для кнопки фильтра
+        if (this.filterBtn) {
+            this.filterBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.toggleFilterPopup();
+            });
+        }
+
+        if (this.filterPopupClose) {
+            this.filterPopupClose.addEventListener("click", () => {
+                this.closeFilterPopup();
+            });
+        }
+
+        // Закрытие попапа при клике вне
+        document.addEventListener("click", (e) => {
+            if (this.filterPopup && this.filterPopup.classList.contains("active")) {
+                const isClickInsidePopup = this.filterPopupContent.contains(e.target);
+                const isClickOnFilterBtn = e.target.closest("#filterBtn");
+
+                if (!isClickInsidePopup && !isClickOnFilterBtn) {
+                    this.closeFilterPopup();
                 }
+            }
+        });
+
+        // Закрытие при Escape
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && this.filterPopup.classList.contains("active")) {
+                this.closeFilterPopup();
+            }
+        });
+
+        // Кнопки попапа
+        if (this.filterApply) {
+            this.filterApply.addEventListener("click", (e) => {
+                e.stopPropagation();
+
+                this.syncFiltersFromPopup();
+                this.applyFilters();
+                this.closeFilterPopup();
             });
         }
 
-        // События для фильтров
-        document.getElementById("applyFilters")?.addEventListener("click", () => {
-            this.applyFilters({
-                search: document.getElementById("searchInput")?.value || "",
-                dateFrom: document.getElementById("dateFrom")?.value || "",
-                dateTo: document.getElementById("dateTo")?.value || "",
-                sentimentLabel: document.getElementById("sentimentFilter")?.value || ""
+        if (this.filterReset) {
+            this.filterReset.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.resetFilters();
             });
-        });
-
-        document.getElementById("resetFilters")?.addEventListener("click", () => {
-            document.getElementById("dateFrom").value = "";
-            document.getElementById("dateTo").value = "";
-            document.getElementById("sentimentFilter").value = "";
-            this.applyFilters({});
-        });
-    }
-
-    toggleSearch() {
-        if (this.searchContainer.classList.contains("history__search-container--active")) {
-            this.searchContainer.classList.remove("history__search-container--active");
-        } else {
-            this.searchContainer.classList.add("history__search-container--active");
-            document.getElementById("searchInput")?.focus();
         }
     }
 
-    toggleFilter() {
-        if (this.filterContainer.classList.contains("history__filter-container--active")) {
-            this.filterContainer.classList.remove("history__filter-container--active");
-        } else {
-            this.filterContainer.classList.add("history__filter-container--active");
+    updateSearchClear() {
+        if (this.searchClear && this.searchInput) {
+            this.searchClear.style.display = this.searchInput.value ? "flex" : "none";
         }
     }
 
-    async applyFilters(filters = {}) {
+    toggleFilterPopup() {
+        if (this.filterPopup) {
+            if (this.filterPopup.classList.contains("active")) {
+                this.closeFilterPopup();
+            } else {
+                this.openFilterPopup();
+            }
+        }
+    }
+
+    openFilterPopup() {
+        if (this.filterPopup) {
+            this.filterPopup.classList.add("active");
+        }
+    }
+
+    closeFilterPopup() {
+        if (this.filterPopup) {
+            this.filterPopup.classList.remove("active");
+        }
+    }
+
+    resetFilters() {
+        // Сброс поиска
+        if (this.searchInput) {
+            this.searchInput.value = "";
+        }
+        this.filters.search = "";
+
+        // Сброс радио-кнопок
+        const periodRadios = document.querySelectorAll('input[name="period"]');
+        periodRadios.forEach(radio => {
+            if (radio.value === "all") {
+                radio.checked = true;
+            }
+        });
+        this.filters.period = "all";
+
+        const sortRadios = document.querySelectorAll('input[name="sort"]');
+        sortRadios.forEach(radio => {
+            if (radio.value === "newest") {
+                radio.checked = true;
+            }
+        });
+        this.filters.sort = "newest";
+
+        const moodRadios = document.querySelectorAll('input[name="mood"]');
+        moodRadios.forEach(radio => {
+            if (radio.value === "all") {
+                radio.checked = true;
+            }
+        });
+        this.filters.mood = "all";
+
+        this.updateFilterBadge();
+        this.applyFilters();
+    }
+
+    getPeriodDateRange() {
+        const today = new Date();
+        let startDate;
+
+        switch (this.filters.period) {
+            case "today":
+                startDate = new Date(today);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+            case "week":
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7);
+                break;
+            case "month":
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 1);
+                break;
+            default:
+                return { dateFrom: "", dateTo: "" };
+        }
+
+        const dateFrom = startDate.toISOString().split('T')[0];
+        return { dateFrom, dateTo: "" };
+    }
+
+    getActiveFiltersCount() {
+        let count = 0;
+        if (this.filters.search) count++;
+        if (this.filters.period !== "all") count++;
+        if (this.filters.mood !== "all") count++;
+        return count;
+    }
+
+    updateFilterBadge() {
+        if (this.filterBadge) {
+            const count = this.getActiveFiltersCount();
+            this.filterBadge.textContent = count;
+            this.filterBadge.style.display = count > 0 ? "inline-block" : "none";
+        }
+
+        if (this.filterBtn) {
+            if (this.getActiveFiltersCount() > 0) {
+                this.filterBtn.classList.add("active");
+            } else {
+                this.filterBtn.classList.remove("active");
+            }
+        }
+    }
+
+    syncFiltersFromPopup() {
+        const selectedPeriod = document.querySelector('input[name="period"]:checked');
+        const selectedSort = document.querySelector('input[name="sort"]:checked');
+        const selectedMood = document.querySelector('input[name="mood"]:checked');
+
+        if (selectedPeriod) {
+            this.filters.period = selectedPeriod.value;
+        }
+
+        if (selectedSort) {
+            this.filters.sort = selectedSort.value;
+        }
+
+        if (selectedMood) {
+            this.filters.mood = selectedMood.value;
+        }
+    }
+
+    async applyFilters() {
         try {
             if (!Auth.isAuth()) {
                 console.error('Пользователь не авторизован');
                 return;
             }
 
+            // Получаем даты из периода
+            const { dateFrom, dateTo } = this.getPeriodDateRange();
+
             // Формируем URL с параметрами фильтрации
             let url = `${Auth.API_BASE_URL}/notes/`;
             const params = new URLSearchParams();
 
-            if (filters.search) params.append("search", filters.search);
-            if (filters.dateFrom) params.append("date_from", filters.dateFrom);
-            if (filters.dateTo) params.append("date_to", filters.dateTo);
-            if (filters.sentimentLabel) params.append("sentiment_label", filters.sentimentLabel);
+            if (this.filters.search) params.append("search", this.filters.search);
+            if (dateFrom) params.append("date_from", dateFrom);
+            if (dateTo) params.append("date_to", dateTo);
+
+            if (this.filters.mood !== "all") {
+                params.append("sentiment_label", this.filters.mood);
+            }
+           
+            if (this.filters.sort) params.append("sort", this.filters.sort);
 
             const queryString = params.toString();
+
             if (queryString) {
                 url += `?${queryString}`;
             }
+            // console.log("URL: ", url);
 
             const response = await Auth.authenticatedFetch(url);
 
@@ -230,6 +281,7 @@ class HistoryPage {
             const notes = await response.json();
             console.log("Отфильтрованные заметки:", notes);
 
+            this.updateFilterBadge();
             this.renderGroups(notes);
         } catch (error) {
             console.error("Error applying filters:", error);
@@ -238,7 +290,6 @@ class HistoryPage {
 
     async getHistoryData() {
         try {
-            // Проверяем, авторизован ли пользователь
             if (!Auth.isAuth()) {
                 console.error('Пользователь не авторизован');
                 return [];
@@ -251,7 +302,6 @@ class HistoryPage {
             }
 
             const notes = await response.json();
-            console.log(notes);
 
             return this.groupNotesByDate(notes);
         } catch (error) {
@@ -318,8 +368,6 @@ class HistoryPage {
         tagsContainer.innerHTML = "";
 
         const tags = entry.tags || [];
-        console.log(tags);
-        
 
         tags.forEach((tag) => {
             const tagElement = document.createElement("span");
@@ -354,29 +402,26 @@ class HistoryPage {
     groupNotesByDate(notes) {
         // Группируем заметки по датам
         const groups = {};
-        
+
         notes.forEach(note => {
             // Преобразуем дату из ISO формата в объект Date
             const date = new Date(note.created_at);
             const dateKey = date.toISOString().split('T')[0]; // Получаем YYYY-MM-DD
-            
+
             if (!groups[dateKey]) {
                 groups[dateKey] = {
                     dateTitle: this.formatDateTitle(date),
                     entries: []
                 };
             }
-            
+
             // Форматируем время как HH:MM
             const timeString = date.toTimeString().substring(0, 5);
-            
+
             // Определяем тип настроения на основе sentiment_label
             // В реальной реализации это может быть более сложной логикой
             const moodType = this.getMoodType(note.sentiment_label);
 
-            console.log(moodType);
-            
-            
             groups[dateKey].entries.push({
                 id: note.id,
                 time: timeString,
@@ -387,7 +432,7 @@ class HistoryPage {
                 tags: this.extractTags(note.orig_text)
             });
         });
-        
+
         // Преобразуем объект в массив и сортируем по дате (новые первыми)
         return Object.keys(groups)
             .map(key => groups[key])
@@ -395,15 +440,15 @@ class HistoryPage {
                 return new Date(b.dateTitle.split(', ')[1]) - new Date(a.dateTitle.split(', ')[1]);
             });
     }
-    
+
     formatDateTitle(date) {
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        
+
         const options = { day: 'numeric', month: 'long' };
         const dateString = date.toLocaleDateString('ru-RU', options).toUpperCase();
-        
+
         // Проверяем, является ли дата сегодняшней или вчерашней
         if (date.toDateString() === today.toDateString()) {
             return `СЕГОДНЯ, ${dateString}`;
@@ -416,32 +461,33 @@ class HistoryPage {
             return `${weekday}, ${dateString}`;
         }
     }
-    
+
     getMoodType(sentimentLabel) {
         // Простое сопоставление типов настроения
         const moodMap = {
             'negative': 'Плохое',
             'positive': 'Хорошее',
+            'neutral': 'Спокойное',
         };
 
         return moodMap[sentimentLabel] || 'Не определено';
     }
-    
+
     generateTitle(text) {
         // Простое создание заголовка из первых слов текста
         if (!text) return 'Без названия';
-        
+
         // Берем первые 3 слова или до точки
         const words = text.split(' ');
         const titleWords = words.slice(0, 3).join(' ');
         return titleWords.length > 30 ? titleWords.substring(0, 30) + '...' : titleWords;
     }
-    
+
     extractTags(text) {
         // Простое извлечение тегов из текста
         // В реальной реализации это может быть более сложной логикой
         if (!text) return [];
-        
+
         // Ищем слова в нижнем регистре, начинающиеся с #
         const tags = text.match(/#[а-яА-ЯёЁa-zA-Z0-9]+/g);
         return tags ? tags.map(tag => tag.substring(1)) : [];

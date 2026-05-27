@@ -267,7 +267,7 @@ class DetailsPage {
     initEvents() {
         if (this.backButton) {
             this.backButton.addEventListener("click", () => {
-                window.location.href = "../history.html";
+                window.location.href = "./history.html";
             });
         }
 
