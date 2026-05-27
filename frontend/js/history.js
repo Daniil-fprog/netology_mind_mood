@@ -28,7 +28,7 @@ class HistoryPage {
                 return [];
             }
 
-            const response = await Auth.authenticatedFetch("http://127.0.0.1:8000/notes/");
+            const response = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/notes/`);
             
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки данных: ${response.status}`);
@@ -71,9 +71,9 @@ class HistoryPage {
         const tagsContainer = entryElement.querySelector(".history__entry-tags");
 
         time.textContent = entry.time;
-        moodBadge.textContent = entry.mood;
+        moodBadge.textContent = entry.moodType;
         title.textContent = entry.title;
-        title.href = `../details.html?id=${entry.id}`;
+        title.href = `./details.html?id=${entry.id}`;
         text.textContent = entry.text;
 
         // Очищаем предыдущие классы настроения
@@ -84,6 +84,8 @@ class HistoryPage {
         tagsContainer.innerHTML = "";
 
         const tags = entry.tags || [];
+        console.log(tags);
+        
 
         tags.forEach((tag) => {
             const tagElement = document.createElement("span");
@@ -137,6 +139,9 @@ class HistoryPage {
             // Определяем тип настроения на основе sentiment_label
             // В реальной реализации это может быть более сложной логикой
             const moodType = this.getMoodType(note.sentiment_label);
+
+            console.log(moodType);
+            
             
             groups[dateKey].entries.push({
                 id: note.id,
@@ -181,12 +186,11 @@ class HistoryPage {
     getMoodType(sentimentLabel) {
         // Простое сопоставление типов настроения
         const moodMap = {
-            'POSITIVE': 'happy',
-            'NEGATIVE': 'anxiety',
-            'NEUTRAL': 'calm'
+            'negative': 'Плохое',
+            'positive': 'Хорошее',
         };
-        
-        return moodMap[sentimentLabel] || 'calm';
+
+        return moodMap[sentimentLabel] || 'Не определено';
     }
     
     generateTitle(text) {
@@ -215,7 +219,7 @@ class HistoryPage {
 document.addEventListener('DOMContentLoaded', () => {
     // Проверяем авторизацию пользователя
     if (!Auth.isAuth()) {
-        window.location.href = "../login.html";
+        window.location.href = "./login.html";
         return;
     }
 

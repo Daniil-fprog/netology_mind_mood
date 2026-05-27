@@ -1,1 +1,1 @@
-from app.api.routers import auth, notes, recommendations, users
+from app.api.routers import auth, notes, recommendations, users, analytics
