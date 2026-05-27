@@ -1,5 +1,6 @@
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from app.core.security import get_current_user
 from app.db.database import get_db
@@ -7,9 +8,9 @@ from app.models.user import UserModel
 from app.schemas.note import NoteCreate, NoteOut, NoteUpdate
 from app.services.note_service import (
     create_note_service,
-    get_current_user_notes_service,
     get_current_user_note_by_id_service,
     update_note_service,
+    filter_notes_service,
 )
 from app.tasks.note_tasks import translate_note_background
 
@@ -35,8 +36,18 @@ def create_note(
 def get_notes(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
+    search: Optional[str] = Query(None, description="Поиск по тексту заметки"),
+    date_from: Optional[str] = Query(None, description="Дата начала фильтрации (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="Дата окончания фильтрации (YYYY-MM-DD)"),
+    sentiment_label: Optional[str] = Query(None, description="Фильтрация по настроению (positive/negative)"),
 ):
-    return get_current_user_notes_service(current_user, db)
+    return filter_notes_service(
+        current_user, db,
+        search=search,
+        date_from=date_from,
+        date_to=date_to,
+        sentiment_label=sentiment_label
+    )
 
 
 @router.get("/{note_id}", response_model=NoteOut)

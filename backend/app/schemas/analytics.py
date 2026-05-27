@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 
 class NoteAnalytics(BaseModel):
@@ -33,10 +33,23 @@ class MoodDistribution(BaseModel):
     neutral: float = 0.0
 
 
+class TrendAnalysis(BaseModel):
+    """Анализ трендов настроения"""
+    current_avg: float
+    previous_avg: float
+    change_percent: float
+
+
+class NeuralInsights(BaseModel):
+    """Нейро-инсайты с анализом трендов"""
+    insights: list[str]
+    trend_analysis: Optional[Dict[str, Any]] = None
+
+
 class AnalyticsOut(BaseModel):
     """Ответ аналитики"""
     average_mood_index: float
     mood_chart_data: list[MoodChartPoint]
     emotion_distribution: MoodDistribution
-    neural_insights: list[str]
+    neural_insights: NeuralInsights
     notes: list[NoteAnalytics]

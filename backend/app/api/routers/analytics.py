@@ -8,7 +8,12 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.db.database import get_db
 from app.models.user import UserModel
-from app.schemas.analytics import AnalyticsOut, NoteAnalytics
+from app.schemas.analytics import (
+    AnalyticsOut,
+    NoteAnalytics,
+    NeuralInsights,
+    TrendAnalysis
+)
 from app.services.analytics_service import (
     get_analytics_data,
     get_notes_for_export,
@@ -45,11 +50,18 @@ def get_analytics(
     """
     analytics_data = get_analytics_data(current_user, db, days)
     
+    # Получаем инсайты и данные трендов
+    neural_insights_list = analytics_data["neural_insights"]
+    trend_analysis = analytics_data.get("trend_analysis", {})
+    
     return AnalyticsOut(
         average_mood_index=analytics_data["average_mood_index"],
         mood_chart_data=analytics_data["mood_chart_data"],
         emotion_distribution=analytics_data["emotion_distribution"],
-        neural_insights=analytics_data["neural_insights"],
+        neural_insights=NeuralInsights(
+            insights=neural_insights_list,
+            trend_analysis=trend_analysis if trend_analysis else None
+        ),
         notes=notes_to_analytics_list(analytics_data["notes"])
     )
 

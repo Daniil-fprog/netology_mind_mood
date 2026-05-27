@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/frontend/**)",
+      "Read(//Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/app/services/**)",
+      "Read(//Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/app/routers/**)",
+      "Read(//Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/app/api/routers/**)"
+    ]
+  },
+  "$version": 4
+}

@@ -1,12 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.database import Base, engine
+
+from app.db.database import Base, engine, SessionLocal
 from app.api.routers import auth, notes, recommendations, users
+from app.db.seed import seed_test_data
 from app import models
 
 
 # Создаём таблицы, если их ещё нет
 Base.metadata.create_all(bind=engine)
+
+
+# Заполняем БД тестовыми данными
+db = SessionLocal()
+try:
+    seed_test_data(db)
+finally:
+    db.close()
+
 
 # === Инициализация FastAPI ===
 app = FastAPI(title="MindMOOD App")

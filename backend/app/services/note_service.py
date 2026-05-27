@@ -1,5 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from datetime import datetime
+from typing import Optional
 
 from app.models.note import NoteModel
 from app.models.user import UserModel
@@ -82,3 +84,42 @@ def update_note_service(
     db.refresh(note)
 
     return note
+
+
+def filter_notes_service(
+    current_user: UserModel,
+    db: Session,
+    search: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    sentiment_label: Optional[str] = None,
+) -> list[NoteModel]:
+    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
+
+    # Поиск по тексту
+    if search:
+        query = query.filter(
+            NoteModel.orig_text.ilike(f"%{search}%")
+        )
+
+    # Фильтрация по дате от
+    if date_from:
+        try:
+            date_from_obj = datetime.strptime(date_from, "%Y-%m-%d")
+            query = query.filter(NoteModel.created_at >= date_from_obj)
+        except ValueError:
+            pass
+
+    # Фильтрация по дате до
+    if date_to:
+        try:
+            date_to_obj = datetime.strptime(date_to, "%Y-%m-%d")
+            query = query.filter(NoteModel.created_at <= date_to_obj)
+        except ValueError:
+            pass
+
+    # Фильтрация по sentiment_label
+    if sentiment_label:
+        query = query.filter(NoteModel.sentiment_label == sentiment_label)
+
+    return query.all()

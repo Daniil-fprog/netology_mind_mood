@@ -18,6 +18,222 @@ class HistoryPage {
         if (!this.entryTemplate) {
             throw new Error("Не найден шаблон #historyEntryTemplate");
         }
+
+        this.initFilters();
+    }
+
+    initFilters() {
+        // Создаем контейнер фильтров
+        const pageHeader = document.querySelector(".history__page-header");
+        if (!pageHeader) return;
+
+        const actionsContainer = pageHeader.querySelector(".history__header-actions");
+        if (!actionsContainer) return;
+
+        // Добавляем кнопку поиска и фильтрации
+        const headerActions = pageHeader.querySelector(".history__header-actions");
+        
+        // Добавляем кнопку поиска с выпадающим полем
+        const searchBtn = headerActions.querySelector(".history__icon-btn:first-of-type");
+        searchBtn.onclick = (e) => {
+            e.preventDefault();
+            this.toggleSearch();
+        };
+
+        // Добавляем кнопку фильтра с выпадающим полем
+        const filterBtn = headerActions.querySelector(".history__icon-btn:last-of-type");
+        filterBtn.onclick = (e) => {
+            e.preventDefault();
+            this.toggleFilter();
+        };
+
+        // Создаем элементы поиска и фильтра
+        this.createFilterUI();
+    }
+
+    createFilterUI() {
+        const pageHeader = document.querySelector(".history__page-header");
+        if (!pageHeader) return;
+
+        const headerActions = pageHeader.querySelector(".history__header-actions");
+        if (!headerActions) return;
+
+        // Создаем контейнер поиска
+        this.searchContainer = document.createElement("div");
+        this.searchContainer.className = "history__search-container";
+        this.searchContainer.innerHTML = `
+            <div class="history__search-wrapper">
+                <i class="fas fa-search history__search-icon"></i>
+                <input 
+                    type="text" 
+                    class="history__search-input" 
+                    placeholder="Поиск по заметкам..."
+                    id="searchInput"
+                >
+                <button class="history__search-clear" id="searchClear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+
+        // Создаем контейнер фильтров
+        this.filterContainer = document.createElement("div");
+        this.filterContainer.className = "history__filter-container";
+        this.filterContainer.innerHTML = `
+            <div class="history__filter-wrapper">
+                <div class="history__filter-group">
+                    <label class="history__filter-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        <select class="history__filter-select" id="dateFrom">
+                            <option value="">С даты</option>
+                            ${this.getdateRangeOptions()}
+                        </select>
+                    </label>
+                    <label class="history__filter-label">
+                        <i class="fas fa-calendar-check"></i>
+                        <select class="history__filter-select" id="dateTo">
+                            <option value="">По дату</option>
+                            ${this.getdateRangeOptions()}
+                        </select>
+                    </label>
+                </div>
+                <div class="history__filter-group">
+                    <label class="history__filter-label">
+                        <i class="fas fa-smile"></i>
+                        <select class="history__filter-select" id="sentimentFilter">
+                            <option value="">Настроение</option>
+                            <option value="positive">Хорошее</option>
+                            <option value="negative">Плохое</option>
+                        </select>
+                    </label>
+                </div>
+                <button class="history__filter-apply" id="applyFilters">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="history__filter-reset" id="resetFilters">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        `;
+
+        // Вставляем контейнеры в header
+        headerActions.parentNode.insertBefore(this.searchContainer, headerActions);
+        headerActions.parentNode.insertBefore(this.filterContainer, headerActions);
+
+        // Добавляем обработчики событий
+        this.setupEventListeners();
+    }
+
+    getdateRangeOptions() {
+        const options = [''];
+        const today = new Date();
+        
+        for (let i = 0; i < 30; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const displayDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            options.push(`<option value="${dateStr}">${displayDate}</option>`);
+        }
+        
+        return options.join('');
+    }
+
+    setupEventListeners() {
+        // События для поиска
+        const searchInput = document.getElementById("searchInput");
+        const searchClear = document.getElementById("searchClear");
+
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                this.applyFilters({
+                    search: e.target.value,
+                    dateFrom: document.getElementById("dateFrom")?.value || "",
+                    dateTo: document.getElementById("dateTo")?.value || "",
+                    sentimentLabel: document.getElementById("sentimentFilter")?.value || ""
+                });
+            });
+        }
+
+        if (searchClear) {
+            searchClear.addEventListener("click", () => {
+                const searchInput = document.getElementById("searchInput");
+                if (searchInput) {
+                    searchInput.value = "";
+                    this.applyFilters({ search: "" });
+                }
+            });
+        }
+
+        // События для фильтров
+        document.getElementById("applyFilters")?.addEventListener("click", () => {
+            this.applyFilters({
+                search: document.getElementById("searchInput")?.value || "",
+                dateFrom: document.getElementById("dateFrom")?.value || "",
+                dateTo: document.getElementById("dateTo")?.value || "",
+                sentimentLabel: document.getElementById("sentimentFilter")?.value || ""
+            });
+        });
+
+        document.getElementById("resetFilters")?.addEventListener("click", () => {
+            document.getElementById("dateFrom").value = "";
+            document.getElementById("dateTo").value = "";
+            document.getElementById("sentimentFilter").value = "";
+            this.applyFilters({});
+        });
+    }
+
+    toggleSearch() {
+        if (this.searchContainer.classList.contains("history__search-container--active")) {
+            this.searchContainer.classList.remove("history__search-container--active");
+        } else {
+            this.searchContainer.classList.add("history__search-container--active");
+            document.getElementById("searchInput")?.focus();
+        }
+    }
+
+    toggleFilter() {
+        if (this.filterContainer.classList.contains("history__filter-container--active")) {
+            this.filterContainer.classList.remove("history__filter-container--active");
+        } else {
+            this.filterContainer.classList.add("history__filter-container--active");
+        }
+    }
+
+    async applyFilters(filters = {}) {
+        try {
+            if (!Auth.isAuth()) {
+                console.error('Пользователь не авторизован');
+                return;
+            }
+
+            // Формируем URL с параметрами фильтрации
+            let url = `${Auth.API_BASE_URL}/notes/`;
+            const params = new URLSearchParams();
+
+            if (filters.search) params.append("search", filters.search);
+            if (filters.dateFrom) params.append("date_from", filters.dateFrom);
+            if (filters.dateTo) params.append("date_to", filters.dateTo);
+            if (filters.sentimentLabel) params.append("sentiment_label", filters.sentimentLabel);
+
+            const queryString = params.toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+
+            const response = await Auth.authenticatedFetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки данных: ${response.status}`);
+            }
+
+            const notes = await response.json();
+            console.log("Отфильтрованные заметки:", notes);
+
+            this.renderGroups(notes);
+        } catch (error) {
+            console.error("Error applying filters:", error);
+        }
     }
 
     async getHistoryData() {
@@ -29,19 +245,35 @@ class HistoryPage {
             }
 
             const response = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/notes/`);
-            
+
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки данных: ${response.status}`);
             }
 
             const notes = await response.json();
             console.log(notes);
-            
+
             return this.groupNotesByDate(notes);
         } catch (error) {
             console.error('Error:', error);
             return [];
         }
+    }
+
+    async renderGroups(notes) {
+        this.historyList.innerHTML = "";
+
+        if (!notes.length) {
+            this.historyList.innerHTML = "<p>Записей не найдено</p>";
+            return;
+        }
+
+        const groups = this.groupNotesByDate(notes);
+
+        groups.forEach((group) => {
+            const groupElement = this.createDateGroup(group);
+            this.historyList.append(groupElement);
+        });
     }
 
     async renderHistoryData() {
@@ -78,7 +310,9 @@ class HistoryPage {
 
         // Очищаем предыдущие классы настроения
         moodIndicator.className = "history__mood-indicator";
-        moodIndicator.classList.add(`history__mood-indicator--${entry.moodType}`);
+        if (entry.moodType !== "Не определено") {
+            moodIndicator.classList.add(`history__mood-indicator--${entry.moodType}`);
+        }
 
         // Очищаем предыдущие теги
         tagsContainer.innerHTML = "";

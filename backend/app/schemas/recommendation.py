@@ -14,6 +14,9 @@ class RecommendationOut(BaseModel):
     rec_name: str
     rec_text: str
     mood_type: str
+    score_from: int
+    score_to: int
+    
     created_at: datetime
     updated_at: datetime
 

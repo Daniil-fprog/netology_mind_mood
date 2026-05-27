@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/analytics.css">
-    <script type="module" src="./js/auth.js"></script>
-    <script type="module" src="./js/analytics.js"></script>
 </head>
+
 <body>
     <div class="app-container">
         <!-- Левый сайдбар -->
         <aside class="sidebar">
-            <!-- Блок профиля -->
+            <!-- Блок Главная -->
             <div class="sidebar__profile">
-                <div class="sidebar__avatar">
-                    <i class="fas fa-user"></i>
-                </div>
                 <div class="sidebar__app-info">
-                    <h1 class="sidebar__app-name">MoodSync</h1>
+                    <a href="./index.html" class="sidebar__app-name">MoodSync</a>
                     <p class="sidebar__app-tagline">Ежедневный дневник настроения</p>
                 </div>
             </div>
@@ -35,32 +32,21 @@
                     <i class="fas fa-calendar"></i>
                     <span>История</span>
                 </a>
-                <a href="#" class="sidebar__menu-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Тренды</span>
-                </a>
-                <a href="#" class="sidebar__menu-item sidebar__menu-item--active">
+                <a href="./analytics.html" class="sidebar__menu-item sidebar__menu-item--active">
                     <i class="fas fa-chart-bar"></i>
                     <span>Аналитика</span>
-                </a>
-                <a href="#" class="sidebar__menu-item">
-                    <i class="fas fa-lightbulb"></i>
-                    <span>AI-инсайты</span>
                 </a>
             </nav>
 
             <!-- Нижний блок -->
-            <!-- <div class="sidebar__bottom">
+            <div class="sidebar__bottom">
                 <div class="sidebar__divider"></div>
-                <a href="#" class="sidebar__menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Настройки</span>
-                </a>
-                <a href="#" class="sidebar__menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Помощь</span>
-                </a>
-            </div> -->
+
+                <button id="logoutBtn" class="sidebar__logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Выход</span>
+                </button>
+            </div>
         </aside>
 
         <!-- Основная область -->
@@ -103,64 +89,39 @@
                         <div class="mood-chart__header">
                             <h2 class="mood-chart__title">Динамика за 7 дней</h2>
                             <select class="mood-chart__select">
-                                <option>Неделя</option>
-                                <option>Месяц</option>
-                                <option>Квартал</option>
+                                <option value="7">Неделя</option>
+                                <option value="30">Месяц</option>
+                                <option value="90">Квартал</option>
                             </select>
                         </div>
                         <div class="mood-chart__body">
-                            <svg class="mood-chart__svg" viewBox="0 0 700 300">
+                            <svg class="mood-chart__svg" viewBox="0 0 700 300" preserveAspectRatio="none">
                                 <!-- Сетка -->
-                                <line x1="50" y1="50" x2="50" y2="250" stroke="#e5e7eb" stroke-width="1"/>
-                                <line x1="50" y1="250" x2="650" y2="250" stroke="#e5e7eb" stroke-width="1"/>
-                                
+                                <line x1="50" y1="50" x2="50" y2="250" stroke="#e5e7eb" stroke-width="1" />
+                                <line x1="50" y1="250" x2="650" y2="250" stroke="#e5e7eb" stroke-width="1" />
+
                                 <!-- Горизонтальные линии сетки -->
-                                <line x1="50" y1="50" x2="650" y2="50" stroke="#f3f4f6" stroke-width="1"/>
-                                <line x1="50" y1="100" x2="650" y2="100" stroke="#f3f4f6" stroke-width="1"/>
-                                <line x1="50" y1="150" x2="650" y2="150" stroke="#f3f4f6" stroke-width="1"/>
-                                <line x1="50" y1="200" x2="650" y2="200" stroke="#f3f4f6" stroke-width="1"/>
-                                
+                                <line x1="50" y1="50" x2="650" y2="50" stroke="#f3f4f6" stroke-width="1" />
+                                <line x1="50" y1="100" x2="650" y2="100" stroke="#f3f4f6" stroke-width="1" />
+                                <line x1="50" y1="150" x2="650" y2="150" stroke="#f3f4f6" stroke-width="1" />
+                                <line x1="50" y1="200" x2="650" y2="200" stroke="#f3f4f6" stroke-width="1" />
+
                                 <!-- Пунктирные линии значений -->
-                                <line x1="50" y1="75" x2="650" y2="75" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
-                                <line x1="50" y1="125" x2="650" y2="125" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
-                                <line x1="50" y1="175" x2="650" y2="175" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
-                                <line x1="50" y1="225" x2="650" y2="225" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
-                                
-                                <!-- Линия графика -->
-                                <polyline points="50,180 150,160 250,170 350,70 450,120 550,100 650,90" 
-                                         fill="none" stroke="#667eea" stroke-width="3" stroke-linejoin="round"/>
-                                
-                                <!-- Точки -->
-                                <circle cx="50" cy="180" r="5" fill="#667eea"/>
-                                <circle cx="150" cy="160" r="5" fill="#667eea"/>
-                                <circle cx="250" cy="170" r="5" fill="#667eea"/>
-                                <circle cx="350" cy="70" r="5" fill="#667eea"/>
-                                <circle cx="450" cy="120" r="5" fill="#667eea"/>
-                                <circle cx="550" cy="100" r="5" fill="#667eea"/>
-                                <circle cx="650" cy="90" r="5" fill="#667eea"/>
-                                
-                                <!-- Подписи по оси X -->
-                                <text x="50" y="270" text-anchor="middle" font-size="12" fill="#718096">ПН</text>
-                                <text x="150" y="270" text-anchor="middle" font-size="12" fill="#718096">ВТ</text>
-                                <text x="250" y="270" text-anchor="middle" font-size="12" fill="#718096">СР</text>
-                                <text x="350" y="270" text-anchor="middle" font-size="12" fill="#718096">ЧТ</text>
-                                <text x="450" y="270" text-anchor="middle" font-size="12" fill="#718096">ПТ</text>
-                                <text x="550" y="270" text-anchor="middle" font-size="12" fill="#718096">СБ</text>
-                                <text x="650" y="270" text-anchor="middle" font-size="12" fill="#718096">ВС</text>
-                                
+                                <line x1="50" y1="75" x2="650" y2="75" stroke="#e5e7eb" stroke-width="1"
+                                    stroke-dasharray="5,5" />
+                                <line x1="50" y1="125" x2="650" y2="125" stroke="#e5e7eb" stroke-width="1"
+                                    stroke-dasharray="5,5" />
+                                <line x1="50" y1="175" x2="650" y2="175" stroke="#e5e7eb" stroke-width="1"
+                                    stroke-dasharray="5,5" />
+                                <line x1="50" y1="225" x2="650" y2="225" stroke="#e5e7eb" stroke-width="1"
+                                    stroke-dasharray="5,5" />
+
                                 <!-- Подписи по оси Y -->
                                 <text x="40" y="55" text-anchor="end" font-size="12" fill="#718096">10</text>
                                 <text x="40" y="105" text-anchor="end" font-size="12" fill="#718096">8</text>
                                 <text x="40" y="155" text-anchor="end" font-size="12" fill="#718096">6</text>
                                 <text x="40" y="205" text-anchor="end" font-size="12" fill="#718096">4</text>
                                 <text x="40" y="255" text-anchor="end" font-size="12" fill="#718096">2</text>
-                                
-                                <!-- Tooltip для ЧТ -->
-                                <g>
-                                    <rect x="320" y="30" width="60" height="30" rx="4" fill="#1f2937" opacity="0.9"/>
-                                    <text x="350" y="50" text-anchor="middle" font-size="14" fill="white" font-weight="600">8.5</text>
-                                    <line x1="350" y1="60" x2="350" y2="70" stroke="#1f2937" stroke-width="2"/>
-                                </g>
                             </svg>
                         </div>
                     </div>
@@ -175,18 +136,7 @@
                             <h2 class="neural-insights__title">Нейро-инсайты</h2>
                         </div>
                         <div class="neural-insights__list">
-                            <div class="neural-insights__item">
-                                <div class="neural-insights__marker"></div>
-                                <p class="neural-insights__text">
-                                    Ваш уровень спокойствия вырос на 12% по сравнению с прошлой неделей. Чаще всего позитивные записи появляются после прогулок и периодов глубокого фокуса.
-                                </p>
-                            </div>
-                            <div class="neural-insights__item">
-                                <div class="neural-insights__marker"></div>
-                                <p class="neural-insights__text">
-                                    В середине недели заметно повышается усталость. Рекомендуется планировать короткие перерывы в среду и четверг.
-                                </p>
-                            </div>
+                            <!-- Инсайты будут отрендерены динамически через JS -->
                         </div>
                     </div>
 
@@ -201,7 +151,8 @@
                                     <span class="emotion-distribution__percent">45%</span>
                                 </div>
                                 <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--calm" style="width: 45%"></div>
+                                    <div class="emotion-distribution__fill emotion-distribution__fill--calm"
+                                        style="width: 45%"></div>
                                 </div>
                             </div>
                             <div class="emotion-distribution__item">
@@ -211,7 +162,8 @@
                                     <span class="emotion-distribution__percent">30%</span>
                                 </div>
                                 <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--focus" style="width: 30%"></div>
+                                    <div class="emotion-distribution__fill emotion-distribution__fill--focus"
+                                        style="width: 30%"></div>
                                 </div>
                             </div>
                             <div class="emotion-distribution__item">
@@ -221,7 +173,8 @@
                                     <span class="emotion-distribution__percent">15%</span>
                                 </div>
                                 <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--tired" style="width: 15%"></div>
+                                    <div class="emotion-distribution__fill emotion-distribution__fill--tired"
+                                        style="width: 15%"></div>
                                 </div>
                             </div>
                             <div class="emotion-distribution__item">
@@ -231,7 +184,8 @@
                                     <span class="emotion-distribution__percent">10%</span>
                                 </div>
                                 <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--stress" style="width: 10%"></div>
+                                    <div class="emotion-distribution__fill emotion-distribution__fill--stress"
+                                        style="width: 10%"></div>
                                 </div>
                             </div>
                         </div>
@@ -240,5 +194,9 @@
             </div>
         </main>
     </div>
+
+    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/analytics.js"></script>
 </body>
+
 </html>

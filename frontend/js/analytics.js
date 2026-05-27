@@ -13,6 +13,8 @@ class AnalyticsPage {
         this.neuralInsightsList = document.querySelector(".neural-insights__list");
         this.emotionDistributionList = document.querySelector(".emotion-distribution__list");
         this.chartSvg = document.querySelector(".mood-chart__svg");
+        this.neuralInsightsHeader = document.querySelector(".neural-insights__header");
+        this.moodIndexChangeEl = document.querySelector(".mood-index__change");
 
         this.currentPeriod = "week"; // week, month, quarter
         this.chartData = [];
@@ -49,9 +51,9 @@ class AnalyticsPage {
         }
 
         this.renderMoodIndex(data);
-        this.renderChart(data.chart_data);
+        this.renderChart(data.mood_chart_data || data.chart_data);
         this.renderEmotionDistribution(data.emotion_distribution);
-        this.renderNeuralInsights(data.neural_insights);
+        this.renderNeuralInsights(data.neural_insights || data.neural_insights);
     }
 
     renderMoodIndex(data) {
@@ -60,18 +62,22 @@ class AnalyticsPage {
         const average = data.average_mood_index;
         this.moodIndexValue.textContent = average;
 
-        // Рассчитываем изменение (простая логика - в реальном приложении нужно сравнение с прошлым периодом)
-        const last7Days = data.mood_chart_data.slice(-7);
-        if (last7Days.length >= 2) {
-            const firstScore = last7Days[0].score;
-            const lastScore = last7Days[last7Days.length - 1].score;
-            const change = lastScore - firstScore;
-            const sign = change >= 0 ? "↗" : "↘";
-            const changeText = `${sign} ${Math.abs(change).toFixed(1)} за неделю`;
+        // Получаем данные трендов
+        let changePercent = 0;
+        if (data.neural_insights?.trend_analysis) {
+            changePercent = data.neural_insights.trend_analysis.change_percent || 0;
+        } else if (data.trend_analysis) {
+            changePercent = data.trend_analysis.change_percent || 0;
+        }
 
-            if (this.moodIndexChange) {
-                this.moodIndexChange.textContent = changeText;
-            }
+        // Рассчитываем изменение на основе трендов
+        const sign = changePercent >= 0 ? "↗" : "↘";
+        const changeText = `${sign} ${Math.abs(changePercent).toFixed(1)}% за неделю`;
+
+        if (this.moodIndexChange) {
+            this.moodIndexChange.textContent = changeText;
+            // Меняем цвет в зависимости от направления
+            this.moodIndexChange.style.color = changePercent >= 0 ? "#10b981" : "#ef4444";
         }
 
         // Обновляем прогресс-бар
@@ -79,6 +85,15 @@ class AnalyticsPage {
             // Нормализуем значение 0-10 в 0-100%
             const percentage = (average / 10) * 100;
             this.moodIndexProgressFill.style.width = `${percentage}%`;
+            
+            // Меняем цвет прогресс-бара в зависимости от значения
+            if (average >= 7) {
+                this.moodIndexProgressFill.style.backgroundColor = "#4ade80";
+            } else if (average >= 4) {
+                this.moodIndexProgressFill.style.backgroundColor = "#facc15";
+            } else {
+                this.moodIndexProgressFill.style.backgroundColor = "#ef4444";
+            }
         }
     }
 
@@ -266,11 +281,24 @@ class AnalyticsPage {
         });
     }
 
-    renderNeuralInsights(insights) {
+    renderNeuralInsights(insightsObj) {
         if (!this.neuralInsightsList) return;
 
         // Очищаем список
         this.neuralInsightsList.innerHTML = "";
+
+        // Получаем массив инсайтов (может быть как объектом, так и массивом для обратной совместимости)
+        let insights = [];
+        if (Array.isArray(insightsObj)) {
+            insights = insightsObj;
+        } else if (insightsObj?.insights) {
+            insights = insightsObj.insights;
+        }
+
+        if (!insights.length) {
+            this.neuralInsightsList.innerHTML = '<p class="neural-insights__text">Недостаточно данных для анализа. Добавьте больше заметок.</p>';
+            return;
+        }
 
         insights.forEach(text => {
             const item = document.createElement("div");

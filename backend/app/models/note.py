@@ -17,9 +17,15 @@ class NoteModel(Base):
     translate_status = Column(String, default="pending")
 
     sentiment_label = Column(String, nullable=True)
-    sentiment_score = Column(Integer, nullable=True)
+    sentiment_score = Column(Integer, nullable=True) # скор от 0 до 100
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("UserModel", back_populates="notes")
+
+    recommendations = relationship(
+        "RecommendationModel",
+        secondary="note_recommendation",
+        back_populates="notes",
+    )
