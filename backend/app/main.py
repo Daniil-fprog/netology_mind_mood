@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import Base, engine, SessionLocal
-from app.api.routers import auth, notes, recommendations, users
+from app.api.routers import analytics, auth, notes, recommendations, users
 from app.db.seed import seed_test_data
 from app import models
 
@@ -43,3 +43,4 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(notes.router)
 app.include_router(recommendations.router)
+app.include_router(analytics.router)
