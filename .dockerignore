@@ -1,0 +1,14 @@
+.git
+.qwen
+.vscode
+.DS_Store
+__pycache__/
+*.py[cod]
+*.log
+
+backend/venv/
+backend/.venv/
+backend/db/*.db
+backend/db/*.sqlite
+backend/db/*.sqlite3
+backend/train/data/
