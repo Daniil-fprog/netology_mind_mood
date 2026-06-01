@@ -1,6 +1,6 @@
 import io
 import csv
-from datetime import datetime, timedelta
+from datetime import date, datetime, time
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -12,15 +12,36 @@ from app.schemas.analytics import (
     AnalyticsOut,
     NoteAnalytics,
     NeuralInsights,
-    TrendAnalysis
 )
 from app.services.analytics_service import (
+    calculate_average_mood_index,
     get_analytics_data,
     get_notes_for_export,
-    get_emotion_category,
+    get_current_user_notes_service,
+    get_mood_chart_data,
+    get_emotion_distribution as calculate_emotion_distribution,
+    get_neural_insights,
 )
 
+
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
+
+
+def get_date_range(
+    start_date: date = Query(..., description="Дата начала периода в формате YYYY-MM-DD"),
+    end_date: date = Query(..., description="Дата конца периода в формате YYYY-MM-DD"),
+) -> tuple[datetime, datetime]:
+    """Возвращает включительный диапазон дат для аналитики."""
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=400,
+            detail="Дата начала периода не может быть позже даты конца периода."
+        )
+
+    return (
+        datetime.combine(start_date, time.min),
+        datetime.combine(end_date, time.max),
+    )
 
 
 def notes_to_analytics_list(notes: list) -> list[NoteAnalytics]:
@@ -39,16 +60,23 @@ def notes_to_analytics_list(notes: list) -> list[NoteAnalytics]:
 
 @router.get("/", response_model=AnalyticsOut)
 def get_analytics(
-    days: int = Query(7, ge=1, le=365),
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
     """
-    Получает аналитику по заметкам пользователя за указанный период.
+    Получает полную аналитику по заметкам пользователя за произвольный период.
     
-    - **days**: Количество дней для анализа (по умолчанию 7)
+    - **start_date**: дата начала периода в формате YYYY-MM-DD
+    - **end_date**: дата конца периода в формате YYYY-MM-DD
     """
-    analytics_data = get_analytics_data(current_user, db, days)
+    start_datetime, end_datetime = date_range
+    analytics_data = get_analytics_data(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
     
     # Получаем инсайты и данные трендов
     neural_insights_list = analytics_data["neural_insights"]
@@ -66,21 +94,43 @@ def get_analytics(
     )
 
 
-@router.get("/export")
-def export_analytics_csv(
-    days: int = Query(7, ge=1, le=365),
+@router.get("/summary")
+def get_analytics_summary(
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
     """
-    Экспортирует данные аналитики в CSV файл.
+    Получает средний индекс настроения за произвольный период.
+    """
+    start_datetime, end_datetime = date_range
+    notes = get_current_user_notes_service(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
+
+    return {"average_mood_index": calculate_average_mood_index(notes)}
+
+
+@router.get("/export")
+def export_analytics_csv(
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    """
+    Экспортирует данные аналитики в CSV файл за произвольный период.
     
-    - **days**: Количество дней для экспорта (по умолчанию 7)
+    - **start_date**: дата начала периода в формате YYYY-MM-DD
+    - **end_date**: дата конца периода в формате YYYY-MM-DD
     
     Возвращает CSV файл с колонками:
     - ID, Текст, Настроение, Скор, Дата
     """
-    notes = get_notes_for_export(current_user, db)
+    start_datetime, end_datetime = date_range
+    notes = get_notes_for_export(current_user, db, start_datetime, end_datetime)
     
     if not notes:
         raise HTTPException(
@@ -126,38 +176,84 @@ def export_analytics_csv(
 
 @router.get("/chart-data")
 def get_chart_data(
-    days: int = Query(7, ge=1, le=365),
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
     """
-    Получает данные только для графика настроения.
+    Получает данные только для графика настроения за произвольный период.
     
-    - **days**: Количество дней для анализа (по умолчанию 7)
+    - **start_date**: дата начала периода в формате YYYY-MM-DD
+    - **end_date**: дата конца периода в формате YYYY-MM-DD
     """
-    notes = get_current_user_notes_service(current_user, db)
-    chart_data = get_mood_chart_data(notes, days)
+    start_datetime, end_datetime = date_range
+    notes = get_current_user_notes_service(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
+    chart_data = get_mood_chart_data(notes)
     
     return {"chart_data": chart_data}
 
 
 @router.get("/distribution")
-def get_emotion_distribution(
+def get_distribution(
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
     """
-    Получает распределение эмоций по всем заметкам пользователя.
+    Получает распределение эмоций за произвольный период.
     """
-    notes = get_current_user_notes_service(current_user, db)
-    distribution = get_emotion_distribution(notes)
+    start_datetime, end_datetime = date_range
+    notes = get_current_user_notes_service(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
+    distribution = calculate_emotion_distribution(notes)
     
     return {"distribution": distribution}
 
 
-# Импорты для функций
-from app.services.analytics_service import (
-    get_current_user_notes_service,
-    get_mood_chart_data,
-    get_emotion_distribution,
-)
+@router.get("/insights")
+def get_insights(
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    """
+    Получает нейро-инсайты и анализ трендов за произвольный период.
+    """
+    start_datetime, end_datetime = date_range
+    notes = get_current_user_notes_service(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
+
+    return get_neural_insights(notes)
+
+
+@router.get("/notes", response_model=list[NoteAnalytics])
+def get_notes_analytics(
+    date_range: tuple[datetime, datetime] = Depends(get_date_range),
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    """
+    Получает список заметок с аналитическими полями за произвольный период.
+    """
+    start_datetime, end_datetime = date_range
+    notes = get_current_user_notes_service(
+        current_user,
+        db,
+        start_datetime,
+        end_datetime,
+    )
+
+    return notes_to_analytics_list(notes)

@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from app.models.note import NoteModel
 from app.models.user import UserModel
@@ -44,7 +43,7 @@ def calculate_average_mood_index(notes: list[NoteModel]) -> float:
     return round(sum(valid_scores) / len(valid_scores), 1)
 
 
-def get_mood_chart_data(notes: list[NoteModel], days: int = 7) -> list[dict]:
+def get_mood_chart_data(notes: list[NoteModel]) -> list[dict]:
     """Получает данные для графика настроения за указанный период"""
     if not notes:
         return []
@@ -71,7 +70,7 @@ def get_mood_chart_data(notes: list[NoteModel], days: int = 7) -> list[dict]:
     
     # Считаем среднее по каждому дню
     chart_data = []
-    for day_key in sorted(daily_scores.keys())[-days:]:
+    for day_key in sorted(daily_scores.keys()):
         scores = daily_scores[day_key]
         avg_score = round(sum(scores) / len(scores), 1)
         
@@ -116,7 +115,7 @@ def get_emotion_distribution(notes: list[NoteModel]) -> dict:
     return {key: round((count / total) * 100, 1) for key, count in categories.items()}
 
 
-def get_neural_insights(notes: list[NoteModel], days: int = 7) -> dict:
+def get_neural_insights(notes: list[NoteModel]) -> dict:
     """
     Генерирует нейро-инсайты на основе заметок с выявлением трендов.
     
@@ -161,7 +160,7 @@ def get_neural_insights(notes: list[NoteModel], days: int = 7) -> dict:
 
     # Считаем среднее по дням
     daily_averages = []
-    for day_key in sorted(daily_scores.keys())[-days:]:
+    for day_key in sorted(daily_scores.keys()):
         scores = daily_scores[day_key]
         avg = round(sum(scores) / len(scores), 1)
         daily_averages.append({"date": day_key, "score": avg})
@@ -331,16 +330,17 @@ def get_notes_for_export(
 def get_analytics_data(
     current_user: UserModel,
     db: Session,
-    days: int = 7
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
 ) -> dict:
     """Получает полную аналитику для пользователя"""
-    notes = get_current_user_notes_service(current_user, db)
+    notes = get_current_user_notes_service(current_user, db, start_date, end_date)
 
-    neural_result = get_neural_insights(notes, days)
+    neural_result = get_neural_insights(notes)
 
     return {
         "average_mood_index": calculate_average_mood_index(notes),
-        "mood_chart_data": get_mood_chart_data(notes, days),
+        "mood_chart_data": get_mood_chart_data(notes),
         "emotion_distribution": get_emotion_distribution(notes),
         "neural_insights": neural_result["insights"],
         "trend_analysis": neural_result.get("trend_analysis", {}),
@@ -352,5 +352,15 @@ def get_analytics_data(
 def get_current_user_notes_service(
     current_user: UserModel,
     db: Session,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
 ) -> list[NoteModel]:
-    return db.query(NoteModel).filter(NoteModel.user_id == current_user.id).all()
+    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
+
+    if start_date:
+        query = query.filter(NoteModel.created_at >= start_date)
+
+    if end_date:
+        query = query.filter(NoteModel.created_at <= end_date)
+
+    return query.order_by(NoteModel.created_at.asc()).all()

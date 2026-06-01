@@ -27,16 +27,41 @@ class AnalyticsPage {
                 return null;
             }
 
-            const periodDays = this.getDaysByPeriod();
-            const response = await Auth.authenticatedFetch(
-                `${this.apiBaseUrl}/analytics/?days=${periodDays}`
-            );
+            const dateQuery = this.getDateRangeQuery();
+            const [
+                summaryResponse,
+                chartResponse,
+                distributionResponse,
+                insightsResponse,
+            ] = await Promise.all([
+                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`),
+                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`),
+                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/distribution?${dateQuery}`),
+                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`),
+            ]);
 
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки данных: ${response.status}`);
+            const responses = [
+                summaryResponse,
+                chartResponse,
+                distributionResponse,
+                insightsResponse,
+            ];
+
+            const failedResponse = responses.find(response => !response.ok);
+            if (failedResponse) {
+                throw new Error(`Ошибка загрузки данных: ${failedResponse.status}`);
             }
 
-            return await response.json();
+            const [summary, chart, distribution, insights] = await Promise.all(
+                responses.map(response => response.json())
+            );
+
+            return {
+                average_mood_index: summary.average_mood_index,
+                mood_chart_data: chart.chart_data,
+                emotion_distribution: distribution.distribution,
+                neural_insights: insights,
+            };
         } catch (error) {
             console.error("Error fetching analytics:", error);
             return null;
@@ -316,14 +341,35 @@ class AnalyticsPage {
     getDaysByPeriod() {
         switch (this.currentPeriod) {
             case "week":
+            case "7":
                 return 7;
             case "month":
+            case "30":
                 return 30;
             case "quarter":
+            case "90":
                 return 90;
             default:
                 return 7;
         }
+    }
+
+    getDateRangeQuery() {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - this.getDaysByPeriod() + 1);
+
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
+        return new URLSearchParams({
+            start_date: formatDate(startDate),
+            end_date: formatDate(endDate),
+        }).toString();
     }
 
     handlePeriodChange(event) {
@@ -338,9 +384,9 @@ class AnalyticsPage {
                 return;
             }
 
-            const periodDays = this.getDaysByPeriod();
+            const dateQuery = this.getDateRangeQuery();
             const response = await Auth.authenticatedFetch(
-                `${this.apiBaseUrl}/analytics/export?days=${periodDays}`
+                `${this.apiBaseUrl}/analytics/export?${dateQuery}`
             );
 
             if (!response.ok) {
