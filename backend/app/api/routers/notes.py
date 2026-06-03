@@ -56,7 +56,8 @@ def get_note(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
-    return get_current_user_note_by_id_service(note_id, current_user, db)
+    note = get_current_user_note_by_id_service(note_id, current_user, db)
+    return note
 
 
 @router.patch("/{note_id}", response_model=NoteOut)

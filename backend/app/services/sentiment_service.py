@@ -5,6 +5,10 @@ from app.core.config import SENTIMENT_MODEL_PATH
 
 sentiment_model = joblib.load(SENTIMENT_MODEL_PATH)
 
+# Метки класса
+# neutral
+# negative
+# positive
 
 def predict_sentimental(text: str) -> tuple[str, int]:
     if not text or not text.strip():

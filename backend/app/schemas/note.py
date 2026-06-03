@@ -1,8 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from typing import Optional
+from typing import Optional, List
 
 from datetime import datetime
+
+from app.schemas.recommendation import RecommendationOutWithNote
 
 
 class NoteCreate(BaseModel):
@@ -26,4 +28,6 @@ class NoteOut(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    recommendations: List[RecommendationOutWithNote] = []
+
+    model_config = ConfigDict(from_attributes=True)

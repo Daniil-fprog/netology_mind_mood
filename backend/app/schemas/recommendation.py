@@ -21,3 +21,11 @@ class RecommendationOut(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class RecommendationOutWithNote(BaseModel):
+    id: int
+    rec_name: str
+    rec_text: str
+
+    model_config = ConfigDict(from_attributes=True)

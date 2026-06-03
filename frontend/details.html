@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/details.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Левый сайдбар -->
@@ -37,7 +39,7 @@
             </nav>
 
             <!-- Нижний блок -->
-               <div class="sidebar__bottom">
+            <div class="sidebar__bottom">
                 <div class="sidebar__divider"></div>
 
                 <button id="logoutBtn" class="sidebar__logout-btn">
@@ -54,9 +56,10 @@
                 <button class="details__back-button">
                     <i class="fas fa-arrow-left"></i>
                 </button>
+
                 <div class="details__heading">
-                    <h1 class="details__title">Детали записи</h1>
-                    <p class="details__date">Октябрь 24, 2023 • 09:15 AM</p>
+                    <h1 class="details__title"></h1>
+                    <p class="details__date"></p>
                 </div>
             </div>
 
@@ -68,13 +71,13 @@
                     <div class="mood-card">
                         <div class="mood-card__header">
                             <h2 class="mood-card__title">Уровень энергии</h2>
-                            <span class="mood-card__badge">Стабильное</span>
+                            <span class="mood-card__badge"></span>
                         </div>
                         <div class="mood-card__body">
                             <div class="mood-card__progress">
                                 <div class="mood-card__progress-fill"></div>
                             </div>
-                            <span class="mood-card__value">6 / 10</span>
+                            <span class="mood-card__value"></span>
                         </div>
                     </div>
 
@@ -82,19 +85,9 @@
                     <div class="note-text">
                         <h2 class="note-text__title">Текст записи</h2>
                         <div class="note-text__divider"></div>
+
                         <div class="note-text__content">
-                            Сегодня утро началось достаточно спокойно. Проснулся без будильника, что уже хорошая новость. Выпил кофе, посмотрел в окно — погода пасмурная, но это не вызывает грусти, скорее наоборот, хочется завернуться в плед и работать над задачами без суеты.
-
-                            На работе было несколько сложных звонков, но я заметил, что реагировал на них гораздо спокойнее, чем на прошлой неделе. Кажется, практика дыхания начинает приносить плоды.
-
-                            Вечером планирую почитать и лечь спать пораньше. Чувствую лёгкую усталость, но она приятная, продуктивная.
                         </div>
-                        
-                        <!-- <div class="note-text__tags">
-                            <span class="note-text__tag">Спокойствие</span>
-                            <span class="note-text__tag">Продуктивность</span>
-                            <span class="note-text__tag">Усталость</span>
-                        </div> -->
                     </div>
                 </div>
 
@@ -106,16 +99,16 @@
                             <i class="fas fa-bolt ai-analysis__icon"></i>
                             <h2 class="ai-analysis__title">AI-анализ</h2>
                         </div>
-                        
+
                         <!-- Две маленькие карточки -->
                         <div class="ai-analysis__cards">
                             <div class="ai-analysis__stat ai-analysis__stat--accent">
                                 <span class="ai-analysis__stat-label">Уверенность оценки</span>
-                                <span class="ai-analysis__stat-value">92 %</span>
+                                <span class="ai-analysis__stat-value" id="stat-percent"></span>
                             </div>
                             <div class="ai-analysis__stat">
                                 <span class="ai-analysis__stat-label">Доминирующая эмоция</span>
-                                <span class="ai-analysis__stat-value">Спокойствие</span>
+                                <span class="ai-analysis__stat-value" id="stat-label"></span>
                             </div>
                         </div>
 
@@ -126,7 +119,9 @@
                                 Ключевые выводы
                             </h3>
                             <p class="insight-card__text">
-                                Анализ паттернов речи указывает на снижение уровня стресса по сравнению с предыдущими 3 днями. Упоминание «спокойной реакции на сложные звонки» свидетельствует о повышении эмоциональной устойчивости.
+                                Анализ паттернов речи указывает на снижение уровня стресса по сравнению с предыдущими 3
+                                днями. Упоминание «спокойной реакции на сложные звонки» свидетельствует о повышении
+                                эмоциональной устойчивости.
                             </p>
                         </div>
 
@@ -134,23 +129,11 @@
                         <div class="recommendation-card">
                             <h3 class="recommendation-card__title">
                                 <i class="fas fa-star"></i>
-                                Рекомендации на вечер
+                                Рекомендации
                             </h3>
-                            <div class="recommendation-card__list">
-                                <div class="recommendation-card__item">
-                                    <i class="fas fa-book recommendation-card__icon"></i>
-                                    <div class="recommendation-card__content">
-                                        <h4 class="recommendation-card__item-title">Чтение (30 мин)</h4>
-                                        <p class="recommendation-card__item-text">Поддержит текущее состояние фокуса</p>
-                                    </div>
-                                </div>
-                                <div class="recommendation-card__item">
-                                    <i class="fas fa-moon recommendation-card__icon"></i>
-                                    <div class="recommendation-card__content">
-                                        <h4 class="recommendation-card__item-title">Ранний отход ко сну</h4>
-                                        <p class="recommendation-card__item-text">Для закрепления «продуктивной усталости»</p>
-                                    </div>
-                                </div>
+
+                            <div class="recommendation-card__list" id="recommendation-list">
+
                             </div>
                         </div>
                     </div>
@@ -159,7 +142,20 @@
         </main>
     </div>
 
+    <!-- Шаблон элемента -->
+    <template id="recommendationCardTemplate">
+        <div class="recommendation-card__item">
+            <!-- <i class="fas fa-book recommendation-card__icon"></i> -->
+
+            <div class="recommendation-card__content">
+                <h4 class="recommendation-card__item-title">Чтение (30 мин)</h4>
+                <p class="recommendation-card__item-text">Поддержит текущее состояние фокуса</p>
+            </div>
+        </div>
+    </template>
+
     <script type="module" src="./js/auth.js"></script>
     <script type="module" src="./js/details.js"></script>
 </body>
+
 </html>

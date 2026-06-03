@@ -1,10 +1,13 @@
+from datetime import datetime
+from typing import Optional, List
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
-from typing import Optional
 
 from app.models.note import NoteModel
 from app.models.user import UserModel
+from app.models.recommendation import RecommendationModel
+from app.models.note_recommendation import NoteRecommendationModel
 from app.schemas.note import NoteCreate, NoteUpdate
 
 
@@ -36,9 +39,10 @@ def get_current_user_note_by_id_service(
     note_id: int,
     current_user: UserModel,
     db: Session,
-) -> NoteModel:
+) -> tuple[NoteModel, List[dict]]:
     note = (
         db.query(NoteModel)
+        # .options(joinedload(NoteModel.recommendations))
         .filter(
             NoteModel.id == note_id,
             NoteModel.user_id == current_user.id,
@@ -51,8 +55,31 @@ def get_current_user_note_by_id_service(
             status_code=404,
             detail="Запись не найдена",
         )
-
+    
     return note
+
+    # Получаем рекомендации через промежуточную таблицу
+    recommendations = (
+        db.query(RecommendationModel)
+        .join(
+            NoteRecommendationModel,
+            RecommendationModel.id == NoteRecommendationModel.recommendation_id,
+        )
+        .filter(NoteRecommendationModel.note_id == note_id)
+        .all()
+    )
+
+    # Формируем массив рекомендаций (только id, name, text)
+    recommendations_list = [
+        {
+            "id": rec.id,
+            "name": rec.rec_name,
+            "text": rec.rec_text,
+        }
+        for rec in recommendations
+    ]
+
+    return note, recommendations_list
 
 
 def update_note_service(

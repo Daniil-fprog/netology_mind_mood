@@ -1,6 +1,8 @@
 import Auth from './auth.js';
 
 class DetailsPage {
+    negative = "negative"
+
     constructor() {
         this.apiBaseUrl = "http://127.0.0.1:8000";
 
@@ -13,17 +15,15 @@ class DetailsPage {
         this.moodValue = document.querySelector(".mood-card__value");
 
         this.noteContent = document.querySelector(".note-text__content");
-        this.tagsContainer = document.querySelector(".note-text__tags");
 
-        this.confidenceValue = document.querySelector(
-            ".ai-analysis__stat--accent .ai-analysis__stat-value"
-        );
-
-        this.emotionValue = document.querySelector(
-            ".ai-analysis__cards .ai-analysis__stat:not(.ai-analysis__stat--accent) .ai-analysis__stat-value"
-        );
+        this.confidenceValue = document.querySelector("#stat-percent");
+        this.confidenceLabel = document.querySelector("#stat-label");
 
         this.insightText = document.querySelector(".insight-card__text");
+
+        this.recommendationList = document.querySelector("#recommendation-list");
+        this.recommendationCardTemplate = document.querySelector("#recommendationCardTemplate");
+
 
         this.noteId = this.getNoteIdFromUrl();
 
@@ -37,6 +37,90 @@ class DetailsPage {
         const params = new URLSearchParams(window.location.search);
         return params.get("id");
     }
+
+
+    init() {
+        this.initEvents();
+        this.renderNote();
+    }
+
+    initEvents() {
+        if (this.backButton) {
+            this.backButton.addEventListener("click", () => {
+                window.location.href = "./history.html";
+            });
+        }
+
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                Auth.logout();
+            });
+        }
+    }
+
+    async renderNote() {
+        const note = await this.getNoteData();
+        console.log(note);
+
+        if (!note) {
+            return;
+        }
+
+        const date = new Date(note.created_at);
+
+        this.pageTitle.textContent = this.generateTitle(note.orig_text);
+        this.dateElement.textContent = this.formatDateTime(date);
+        this.noteContent.textContent = note.orig_text || "Текст записи отсутствует";
+
+        const sentimentLabel = note.sentiment_label || "NEUTRAL";
+        const emotionText = this.getEmotionText(sentimentLabel);
+        const sentimentScore = note.sentiment_score / 10;
+
+        this.moodBadge.textContent = emotionText;
+        this.moodValue.textContent = `${sentimentScore} / 10`;
+
+        if (this.moodProgressFill) {
+            this.moodProgressFill.style.width = `${note.sentiment_score}%`;
+        }
+
+        if (this.confidenceValue) {
+            this.confidenceValue.textContent = `${Math.round(note.sentiment_score)} %`;
+        }
+
+        if (this.confidenceLabel) {
+            this.confidenceLabel.textContent = emotionText;
+        }
+
+
+
+        if (this.insightText) {
+            this.insightText.textContent = this.generateInsight(note);
+        }
+
+        // Рендерит рекомендации
+        if (note.recommendations.length > 0) {
+            note.recommendations.forEach((recommendation) => {
+                const recomendationElement = this.createRecomendation(recommendation);
+                this.recommendationList.append(recomendationElement);
+            });
+        }
+    }
+
+
+    createRecomendation(recomendation) {
+        const recomendationElement = this.recommendationCardTemplate.content.cloneNode(true);
+
+        const title = recomendationElement.querySelector(".recommendation-card__item-title");
+        const text = recomendationElement.querySelector(".recommendation-card__item-text");
+
+        title.textContent = recomendation.rec_name;
+        text.textContent = recomendation.rec_text;
+
+        return recomendationElement;
+    }
+
 
     async getNoteData() {
         try {
@@ -65,142 +149,34 @@ class DetailsPage {
         }
     }
 
-    async renderNote() {
-        const note = await this.getNoteData();
-
-        if (!note) {
-            return;
+    renderError(message) {
+        if (this.pageTitle) {
+            this.pageTitle.textContent = "Ошибка загрузки";
         }
 
-        const date = new Date(note.created_at);
-
-        this.pageTitle.textContent = this.generateTitle(note.orig_text);
-        this.dateElement.textContent = this.formatDateTime(date);
-
-        this.noteContent.textContent = note.orig_text || "Текст записи отсутствует";
-
-        const sentimentLabel = note.sentiment_label || "NEUTRAL";
-        const emotionText = this.getEmotionText(sentimentLabel);
-        const moodScore = this.normalizeMoodScore(note.sentiment_score, sentimentLabel);
-
-        this.moodBadge.textContent = emotionText;
-        this.moodValue.textContent = `${moodScore} / 10`;
-
-        if (this.moodProgressFill) {
-            this.moodProgressFill.style.width = `${moodScore * 10}%`;
+        if (this.dateElement) {
+            this.dateElement.textContent = "";
         }
 
-        if (this.confidenceValue) {
-            this.confidenceValue.textContent = this.getConfidenceText(note.sentiment_score);
+        if (this.noteContent) {
+            this.noteContent.textContent = message || "Не удалось загрузить запись";
         }
 
-        if (this.emotionValue) {
-            this.emotionValue.textContent = emotionText;
+        if (this.tagsContainer) {
+            this.tagsContainer.innerHTML = "";
         }
-
-        if (this.insightText) {
-            this.insightText.textContent = this.generateInsight(note);
-        }
-
-        this.renderTags(note);
     }
 
-    renderTags(note) {
-        if (!this.tagsContainer) {
-            return;
-        }
-
-        this.tagsContainer.innerHTML = "";
-
-        const tags = this.buildTags(note);
-
-        tags.forEach((tag) => {
-            const tagElement = document.createElement("span");
-            tagElement.classList.add("note-text__tag");
-            tagElement.textContent = tag;
-
-            this.tagsContainer.append(tagElement);
-        });
-    }
-
-    buildTags(note) {
-        const tagsFromText = this.extractTags(note.orig_text);
-        const sentimentTag = this.getEmotionText(note.sentiment_label || "NEUTRAL");
-
-        const tags = [sentimentTag, ...tagsFromText];
-
-        if (note.translate_status) {
-            tags.push(this.getTranslateStatusText(note.translate_status));
-        }
-
-        return [...new Set(tags)].filter(Boolean);
-    }
-
-    extractTags(text) {
-        if (!text) {
-            return [];
-        }
-
-        const tags = text.match(/#[а-яА-ЯёЁa-zA-Z0-9]+/g);
-
-        return tags ? tags.map((tag) => tag.substring(1)) : [];
-    }
 
     getEmotionText(sentimentLabel) {
-        const emotionMap = {
-            POSITIVE: "Позитивное",
-            NEGATIVE: "Негативное",
-            NEUTRAL: "Нейтральное",
+        // Простое сопоставление типов настроения
+        const moodMap = {
+            'negative': 'Плохое',
+            'positive': 'Хорошее',
+            'neutral': 'Спокойное',
         };
 
-        return emotionMap[sentimentLabel] || "Нейтральное";
-    }
-
-    getTranslateStatusText(status) {
-        const statusMap = {
-            pending: "Перевод ожидает",
-            processing: "Переводится",
-            done: "Переведено",
-            error: "Ошибка перевода",
-        };
-
-        return statusMap[status] || status;
-    }
-
-    normalizeMoodScore(sentimentScore, sentimentLabel) {
-        if (typeof sentimentScore === "number") {
-            if (sentimentScore >= 0 && sentimentScore <= 10) {
-                return Math.round(sentimentScore);
-            }
-
-            if (sentimentScore >= 0 && sentimentScore <= 100) {
-                return Math.round(sentimentScore / 10);
-            }
-        }
-
-        const fallbackScores = {
-            POSITIVE: 8,
-            NEUTRAL: 6,
-            NEGATIVE: 3,
-        };
-
-        return fallbackScores[sentimentLabel] || 6;
-    }
-
-    getConfidenceText(sentimentScore) {
-        if (typeof sentimentScore !== "number") {
-            return "—";
-        }
-
-        if (sentimentScore >= 0 && sentimentScore <= 1) {
-            return `${Math.round(sentimentScore * 100)} %`;
-        }
-
-        if (sentimentScore >= 0 && sentimentScore <= 100) {
-            return `${Math.round(sentimentScore)} %`;
-        }
-
-        return `${sentimentScore} %`;
+        return moodMap[sentimentLabel] || "Спокойное";
     }
 
     generateTitle(text) {
@@ -246,45 +222,12 @@ class DetailsPage {
         });
     }
 
-    renderError(message) {
-        if (this.pageTitle) {
-            this.pageTitle.textContent = "Ошибка загрузки";
-        }
 
-        if (this.dateElement) {
-            this.dateElement.textContent = "";
-        }
 
-        if (this.noteContent) {
-            this.noteContent.textContent = message || "Не удалось загрузить запись";
-        }
-
-        if (this.tagsContainer) {
-            this.tagsContainer.innerHTML = "";
-        }
-    }
-
-    initEvents() {
-        if (this.backButton) {
-            this.backButton.addEventListener("click", () => {
-                window.location.href = "./history.html";
-            });
-        }
-
-        const logoutBtn = document.getElementById("logoutBtn");
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", () => {
-                Auth.logout();
-            });
-        }
-    }
-
-    init() {
-        this.initEvents();
-        this.renderNote();
-    }
+    // recommendationCardTemplate
 }
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     if (!Auth.isAuth()) {
