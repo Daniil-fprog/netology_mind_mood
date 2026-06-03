@@ -360,6 +360,7 @@ class AnalyticsPage {
     }
 
     handleDateRangeApply() {
+        // Принудительно обновляем данные
         this.renderAnalytics();
     }
 
