@@ -28,39 +28,21 @@ class AnalyticsPage {
             }
 
             const dateQuery = this.getDateRangeQuery();
-            const [
-                summaryResponse,
-                chartResponse,
-                distributionResponse,
-                insightsResponse,
-            ] = await Promise.all([
-                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`),
-                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`),
-                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/distribution?${dateQuery}`),
-                Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`),
-            ]);
+            
+            // Используем один главный endpoint для получения всех данных
+            const response = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics?${dateQuery}`);
 
-            const responses = [
-                summaryResponse,
-                chartResponse,
-                distributionResponse,
-                insightsResponse,
-            ];
-
-            const failedResponse = responses.find(response => !response.ok);
-            if (failedResponse) {
-                throw new Error(`Ошибка загрузки данных: ${failedResponse.status}`);
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки данных: ${response.status}`);
             }
 
-            const [summary, chart, distribution, insights] = await Promise.all(
-                responses.map(response => response.json())
-            );
-
+            const data = await response.json();
+            
             return {
-                average_mood_index: summary.average_mood_index,
-                mood_chart_data: chart.chart_data,
-                emotion_distribution: distribution.distribution,
-                neural_insights: insights,
+                average_mood_index: data.average_mood_index,
+                mood_chart_data: data.mood_chart_data,
+                emotion_distribution: data.emotion_distribution,
+                neural_insights: data.neural_insights,
             };
         } catch (error) {
             console.error("Error fetching analytics:", error);
@@ -437,7 +419,7 @@ class AnalyticsPage {
 // Инициализация страницы аналитики
 document.addEventListener("DOMContentLoaded", () => {
     if (!Auth.isAuth()) {
-        window.location.href = "../pages/login.html";
+        window.location.href = "./login.html";
         return;
     }
 
