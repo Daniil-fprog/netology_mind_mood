@@ -87,12 +87,16 @@
                     <!-- Карточка динамики за 7 дней -->
                     <div class="mood-chart">
                         <div class="mood-chart__header">
-                            <h2 class="mood-chart__title">Динамика за 7 дней</h2>
-                            <select class="mood-chart__select">
-                                <option value="7">Неделя</option>
-                                <option value="30">Месяц</option>
-                                <option value="90">Квартал</option>
-                            </select>
+                            <h2 class="mood-chart__title">Динамика настроения</h2>
+                            <div class="date-picker">
+                                <i class="fas fa-calendar-alt date-picker__icon"></i>
+                                <input type="date" class="date-picker__input date-picker__input--start" id="startDate">
+                                <span class="date-picker__separator">—</span>
+                                <input type="date" class="date-picker__input date-picker__input--end" id="endDate">
+                                <button class="date-picker__apply" id="applyDateRange">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="mood-chart__body">
                             <svg class="mood-chart__svg" viewBox="0 0 700 300" preserveAspectRatio="none">
@@ -141,7 +145,7 @@
                     </div>
 
                     <!-- Карточка распределения эмоций -->
-                    <div class="emotion-distribution">
+                    <!-- <div class="emotion-distribution">
                         <h2 class="emotion-distribution__title">Распределение эмоций</h2>
                         <div class="emotion-distribution__list">
                             <div class="emotion-distribution__item">
@@ -189,7 +193,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </main>

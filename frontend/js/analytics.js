@@ -5,7 +5,9 @@ const API_BASE_URL = Auth.API_BASE_URL;
 class AnalyticsPage {
     constructor() {
         this.apiBaseUrl = API_BASE_URL;
-        this.periodSelect = document.querySelector(".mood-chart__select");
+        this.startDateInput = document.getElementById("startDate");
+        this.endDateInput = document.getElementById("endDate");
+        this.applyDateRangeBtn = document.getElementById("applyDateRange");
         this.exportButton = document.querySelector(".analytics__export-button");
         this.moodIndexValue = document.querySelector(".mood-index__value");
         this.moodIndexChange = document.querySelector(".mood-index__change");
@@ -16,8 +18,30 @@ class AnalyticsPage {
         this.neuralInsightsHeader = document.querySelector(".neural-insights__header");
         this.moodIndexChangeEl = document.querySelector(".mood-index__change");
 
-        this.currentPeriod = "week"; // week, month, quarter
+        // Устанавливаем даты по умолчанию (последние 7 дней)
+        this.setDefaultDateRange();
         this.chartData = [];
+    }
+
+    setDefaultDateRange() {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - 6); // 7 дней включительно
+
+        this.startDateInput.value = this.formatDateToYYYYMMDD(startDate);
+        this.endDateInput.value = this.formatDateToYYYYMMDD(endDate);
+    }
+
+    formatDateToYYYYMMDD(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    parseDateFromYYYYMMDD(dateStr) {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
     }
 
     async fetchAnalytics() {
@@ -320,42 +344,22 @@ class AnalyticsPage {
         });
     }
 
-    getDaysByPeriod() {
-        switch (this.currentPeriod) {
-            case "week":
-            case "7":
-                return 7;
-            case "month":
-            case "30":
-                return 30;
-            case "quarter":
-            case "90":
-                return 90;
-            default:
-                return 7;
-        }
-    }
-
     getDateRangeQuery() {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setDate(endDate.getDate() - this.getDaysByPeriod() + 1);
+        const startDateStr = this.startDateInput.value;
+        const endDateStr = this.endDateInput.value;
 
-        const formatDate = (date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day}`;
-        };
+        if (!startDateStr || !endDateStr) {
+            this.setDefaultDateRange();
+            return this.getDateRangeQuery();
+        }
 
         return new URLSearchParams({
-            start_date: formatDate(startDate),
-            end_date: formatDate(endDate),
+            start_date: startDateStr,
+            end_date: endDateStr,
         }).toString();
     }
 
-    handlePeriodChange(event) {
-        this.currentPeriod = event.target.value;
+    handleDateRangeApply() {
         this.renderAnalytics();
     }
 
@@ -395,10 +399,10 @@ class AnalyticsPage {
     }
 
     initEvents() {
-        // Обработчик выбора периода
-        if (this.periodSelect) {
-            this.periodSelect.addEventListener("change", (e) => {
-                this.handlePeriodChange(e);
+        // Обработчик кнопки применения диапазона дат
+        if (this.applyDateRangeBtn) {
+            this.applyDateRangeBtn.addEventListener("click", () => {
+                this.handleDateRangeApply();
             });
         }
 
@@ -406,6 +410,33 @@ class AnalyticsPage {
         if (this.exportButton) {
             this.exportButton.addEventListener("click", () => {
                 this.handleExport();
+            });
+        }
+
+        // Инициализация дат при клике на инпуты (открытие календаря)
+        if (this.startDateInput) {
+            this.startDateInput.addEventListener("change", () => {
+                // Валидация: startDate не должен быть больше endDate
+                const startDate = this.parseDateFromYYYYMMDD(this.startDateInput.value);
+                const endDate = this.parseDateFromYYYYMMDD(this.endDateInput.value);
+                if (startDate > endDate) {
+                    // Если startDate > endDate, устанавливаем endDate = startDate
+                    this.endDateInput.value = this.startDateInput.value;
+                }
+                this.renderAnalytics();
+            });
+        }
+
+        if (this.endDateInput) {
+            this.endDateInput.addEventListener("change", () => {
+                // Валидация: endDate не должен быть меньше startDate
+                const startDate = this.parseDateFromYYYYMMDD(this.startDateInput.value);
+                const endDate = this.parseDateFromYYYYMMDD(this.endDateInput.value);
+                if (endDate < startDate) {
+                    // Если endDate < startDate, устанавливаем startDate = endDate
+                    this.startDateInput.value = this.endDateInput.value;
+                }
+                this.renderAnalytics();
             });
         }
     }
