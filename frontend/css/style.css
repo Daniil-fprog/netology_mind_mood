@@ -75,6 +75,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 var(--spacing-lg) var(--spacing-lg);
+    padding-top: 20px;
     border-top: 1px solid var(--border);
 }
 

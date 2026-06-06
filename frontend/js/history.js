@@ -106,6 +106,7 @@ class HistoryPage {
             this.filterReset.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.resetFilters();
+                this.closeFilterPopup();
             });
         }
     }
@@ -262,7 +263,7 @@ class HistoryPage {
             if (this.filters.mood !== "all") {
                 params.append("sentiment_label", this.filters.mood);
             }
-           
+
             if (this.filters.sort) params.append("sort", this.filters.sort);
 
             const queryString = params.toString();

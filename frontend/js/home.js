@@ -5,9 +5,12 @@ import Auth from './auth.js';
 class HomePage {
     constructor() {
         this.noteForm = document.querySelector("#noteForm");
+        this.contentDateNow = document.querySelector("#content-date-now");
     }
 
     init() {
+        this.contentDateNow.textContent = this.getCurrentDateFormatted();
+
         this.displayUserInfo();
         this.noteForm.addEventListener("submit", (evt) => this.createNewNote(evt))
     }
@@ -57,6 +60,26 @@ class HomePage {
             console.error("Ошибка", err)
             this.showToast(err.message || "Ошибка запроса", "error");
         }
+    }
+
+    getCurrentDateFormatted() {
+        const date = new Date();
+
+        const weekday = new Intl.DateTimeFormat('ru-RU', {
+            weekday: 'long'
+        }).format(date);
+
+        const dayMonth = new Intl.DateTimeFormat('ru-RU', {
+            day: 'numeric',
+            month: 'long'
+        }).format(date);
+
+        const time = new Intl.DateTimeFormat('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
+
+        return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${dayMonth} • ${time}`;
     }
 
     // Отображение данных пользователя в header__account

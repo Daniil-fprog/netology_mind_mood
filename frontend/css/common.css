@@ -93,6 +93,8 @@ body {
     font-size: 26px;
     font-weight: 600;
     margin-bottom: 4px;
+    text-decoration: none;
+    color: black;
 }
 
 .sidebar__app-tagline {

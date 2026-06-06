@@ -6,8 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.models.note import NoteModel
 from app.models.user import UserModel
-from app.models.recommendation import RecommendationModel
-from app.models.note_recommendation import NoteRecommendationModel
 from app.schemas.note import NoteCreate, NoteUpdate
 
 
@@ -58,28 +56,6 @@ def get_current_user_note_by_id_service(
     
     return note
 
-    # Получаем рекомендации через промежуточную таблицу
-    recommendations = (
-        db.query(RecommendationModel)
-        .join(
-            NoteRecommendationModel,
-            RecommendationModel.id == NoteRecommendationModel.recommendation_id,
-        )
-        .filter(NoteRecommendationModel.note_id == note_id)
-        .all()
-    )
-
-    # Формируем массив рекомендаций (только id, name, text)
-    recommendations_list = [
-        {
-            "id": rec.id,
-            "name": rec.rec_name,
-            "text": rec.rec_text,
-        }
-        for rec in recommendations
-    ]
-
-    return note, recommendations_list
 
 
 def update_note_service(

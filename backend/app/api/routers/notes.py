@@ -40,13 +40,15 @@ def get_notes(
     date_from: Optional[str] = Query(None, description="Дата начала фильтрации (YYYY-MM-DD)"),
     date_to: Optional[str] = Query(None, description="Дата окончания фильтрации (YYYY-MM-DD)"),
     sentiment_label: Optional[str] = Query(None, description="Фильтрация по настроению (positive/negative)"),
+    sort: str = Query("newest"),
 ):
     return filter_notes_service(
         current_user, db,
         search=search,
         date_from=date_from,
         date_to=date_to,
-        sentiment_label=sentiment_label
+        sentiment_label=sentiment_label,
+        sort=sort
     )
 
 
