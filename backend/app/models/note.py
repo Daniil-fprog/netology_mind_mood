@@ -18,6 +18,7 @@ class NoteModel(Base):
 
     sentiment_label = Column(String, nullable=True)
     sentiment_score = Column(Integer, nullable=True) # скор от 0 до 100
+    # model_confidence = Column(Integer, nullable=True) # скор от 0 до 100
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

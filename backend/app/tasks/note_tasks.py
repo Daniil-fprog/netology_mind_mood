@@ -34,6 +34,8 @@ def translate_note_background(note_id: int):
 
             note.sentiment_label = sentiment_label
             note.sentiment_score = sentiment_score
+            # note.model_confidence = model_confidence
+
             note.translate_status = "analyzed"
             db.commit()
             db.refresh(note)

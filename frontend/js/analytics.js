@@ -47,7 +47,7 @@ class AnalyticsPage {
     async fetchAnalytics() {
         try {
             if (!Auth.isAuth()) {
-                window.location.href = "../pages/login.html";
+                window.location.href = "./login.html";
                 return null;
             }
 
@@ -56,14 +56,17 @@ class AnalyticsPage {
             // Загружаем данные для графика
             const chartResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`);
             const chartData = await chartResponse.json();
-
+            console.log(chartData);
+            
             // Загружаем средний индекс настроения
             const summaryResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`);
             const summaryData = await summaryResponse.json();
-
+            console.log(summaryData);
+            
             // Загружаем нейро-инсайты
             const insightsResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`);
             const insightsData = await insightsResponse.json();
+            console.log(insightsData);
 
             return {
                 average_mood_index: summaryData.average_mood_index,
@@ -302,7 +305,7 @@ class AnalyticsPage {
     async handleExport() {
         try {
             if (!Auth.isAuth()) {
-                window.location.href = "../pages/login.html";
+                window.location.href = "./login.html";
                 return;
             }
 
