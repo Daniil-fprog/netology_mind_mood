@@ -117,7 +117,7 @@ class AnalyticsPage {
             // Нормализуем значение 0-10 в 0-100%
             const percentage = (average / 10) * 100;
             this.moodIndexProgressFill.style.width = `${percentage}%`;
-            
+
             // Меняем цвет прогресс-бара в зависимости от значения
             if (average >= 7) {
                 this.moodIndexProgressFill.style.backgroundColor = "#4ade80";
@@ -140,8 +140,9 @@ class AnalyticsPage {
         }
 
         if (!chartData.length) {
-            // Если нет данных, создаем пустой график с сообщением
-            this.chartCanvas.getContext('2d').clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+            // Если нет данных, очищаем canvas
+            const ctx = this.chartCanvas.getContext('2d');
+            ctx.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
             return;
         }
 

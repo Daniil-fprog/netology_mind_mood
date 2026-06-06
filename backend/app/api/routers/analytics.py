@@ -164,41 +164,6 @@ def export_analytics_csv(
 
 
 
-# @router.get("/", response_model=AnalyticsOut)
-# def get_analytics(
-#     date_range: tuple[datetime, datetime] = Depends(get_date_range),
-#     db: Session = Depends(get_db),
-#     current_user: UserModel = Depends(get_current_user),
-# ):
-#     """
-#     Получает полную аналитику по заметкам пользователя за произвольный период.
-
-#     - **start_date**: дата начала периода в формате YYYY-MM-DD
-#     - **end_date**: дата конца периода в формате YYYY-MM-DD
-#     """
-#     start_datetime, end_datetime = date_range
-#     analytics_data = get_analytics_data(
-#         current_user,
-#         db,
-#         start_datetime,
-#         end_datetime,
-#     )
-
-#     # Получаем инсайты и данные трендов
-#     neural_insights_list = analytics_data["neural_insights"]
-#     trend_analysis = analytics_data.get("trend_analysis", {})
-
-#     return AnalyticsOut(
-#         average_mood_index=analytics_data["average_mood_index"],
-#         mood_chart_data=analytics_data["mood_chart_data"],
-#         emotion_distribution=analytics_data["emotion_distribution"],
-#         neural_insights=NeuralInsights(
-#             insights=neural_insights_list,
-#             trend_analysis=trend_analysis if trend_analysis else None,
-#         ),
-#         notes=notes_to_analytics_list(analytics_data["notes"]),
-#     )
-
 
 @router.get("/summary")
 def get_analytics_summary(
