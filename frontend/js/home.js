@@ -26,8 +26,19 @@ class HomePage {
         };
         // console.log(data);
 
-        if (!data.orig_text || !data.orig_text.trim()) {
+        const text = data.orig_text?.trim() || "";
+
+        if (!text) {
             console.log("Введите текст записи");
+            this.showToast("Введите текст записи", "error");
+            return;
+        }
+
+        if (text.length < 50) {
+            this.showToast(
+                `Текст записи должен содержать минимум 50 символов. Сейчас: ${text.length} символов`,
+                "error"
+            );
             return;
         }
 
@@ -61,6 +72,7 @@ class HomePage {
             this.showToast(err.message || "Ошибка запроса", "error");
         }
     }
+
 
     getCurrentDateFormatted() {
         const date = new Date();
