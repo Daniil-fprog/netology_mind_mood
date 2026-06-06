@@ -16,23 +16,13 @@ class NoteAnalytics(BaseModel):
 
     model_config = {"from_attributes": True}
 
+
 class MoodChartPoint(BaseModel):
     """Точка для графика настроения"""
     date: str
     day_name: str
     score: float
     label: Optional[str] = None
-
-
-class MoodDistribution(BaseModel):
-    """Распределение эмоций"""
-    calm: float = 0.0
-    focus: float = 0.0
-    tired: float = 0.0
-    stress: float = 0.0
-    positive: float = 0.0
-    negative: float = 0.0
-    neutral: float = 0.0
 
 
 class TrendAnalysis(BaseModel):
@@ -47,11 +37,3 @@ class NeuralInsights(BaseModel):
     insights: list[str]
     trend_analysis: Optional[Dict[str, Any]] = None
 
-
-class AnalyticsOut(BaseModel):
-    """Ответ аналитики"""
-    average_mood_index: float
-    mood_chart_data: list[MoodChartPoint]
-    emotion_distribution: MoodDistribution
-    neural_insights: NeuralInsights
-    notes: list[NoteAnalytics]

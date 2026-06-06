@@ -14,9 +14,10 @@ class AnalyticsPage {
         this.moodIndexProgressFill = document.querySelector(".mood-index__progress-fill");
         this.neuralInsightsList = document.querySelector(".neural-insights__list");
         this.emotionDistributionList = document.querySelector(".emotion-distribution__list");
-        this.chartSvg = document.querySelector(".mood-chart__svg");
+        this.chartCanvas = document.getElementById("moodChart");
         this.neuralInsightsHeader = document.querySelector(".neural-insights__header");
         this.moodIndexChangeEl = document.querySelector(".mood-index__change");
+        this.chartInstance = null;
 
         // Устанавливаем даты по умолчанию (последние 7 дней)
         this.setDefaultDateRange();
@@ -52,7 +53,7 @@ class AnalyticsPage {
             }
 
             const dateQuery = this.getDateRangeQuery();
-            
+
             // Используем один главный endpoint для получения всех данных
             const response = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics?${dateQuery}`);
 
@@ -61,10 +62,10 @@ class AnalyticsPage {
             }
 
             const data = await response.json();
-            
+
             return {
                 average_mood_index: data.average_mood_index,
-                mood_chart_data: data.mood_chart_data,
+                mood_chart_data: data.mood_chart_data || data.chart_data,
                 emotion_distribution: data.emotion_distribution,
                 neural_insights: data.neural_insights,
             };
@@ -131,150 +132,118 @@ class AnalyticsPage {
     renderChart(chartData) {
         this.chartData = chartData;
 
-        if (!this.chartSvg) return;
+        if (!this.chartCanvas) return;
 
-        // Очищаем существующие элементы (кроме сетки)
-        const existingElements = this.chartSvg.querySelectorAll("polyline, circle, g");
-        existingElements.forEach(el => el.remove());
+        // Уничтожаем старый инстанс, если есть
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+        }
 
         if (!chartData.length) {
+            // Если нет данных, создаем пустой график с сообщением
+            this.chartCanvas.getContext('2d').clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
             return;
         }
 
-        const width = 600; // 650 - 50
-        const height = 200; // 250 - 50
-        const paddingX = 50;
-        const paddingY = 50;
+        const ctx = this.chartCanvas.getContext('2d');
 
-        // Находим мин и макс значения для масштабирования
-        const scores = chartData.map(d => d.score);
-        const minScore = Math.min(...scores, 0);
-        const maxScore = Math.max(...scores, 10);
+        // Преобразуем данные для Chart.js
+        const labels = chartData.map(d => d.day_name);
+        const dataPoints = chartData.map(d => d.score);
 
-        // Функция масштабирования
-        const scaleScore = (score) => {
-            if (maxScore === minScore) return 150;
-            const normalized = (score - minScore) / (maxScore - minScore);
-            return 250 - (normalized * height);
-        };
-
-        // Строим полилинию
-        const stepX = width / (chartData.length - 1 || 1);
-        const points = chartData.map((d, i) => {
-            const x = paddingX + i * stepX;
-            const y = scaleScore(d.score);
-            return `${x},${y}`;
-        }).join(" ");
-
-        // Создаем полилинию графика
-        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-        polyline.setAttribute("points", points);
-        polyline.setAttribute("fill", "none");
-        polyline.setAttribute("stroke", "#667eea");
-        polyline.setAttribute("stroke-width", "3");
-        polyline.setAttribute("stroke-linejoin", "round");
-        this.chartSvg.appendChild(polyline);
-
-        // Создаем точки
-        chartData.forEach((d, i) => {
-            const x = paddingX + i * stepX;
-            const y = scaleScore(d.score);
-
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", x);
-            circle.setAttribute("cy", y);
-            circle.setAttribute("r", "5");
-            circle.setAttribute("fill", "#667eea");
-            this.chartSvg.appendChild(circle);
-
-            // Добавляем tooltip при наведении
-            circle.addEventListener("mouseover", () => {
-                this.showTooltip(x, y, d.score);
-            });
-
-            circle.addEventListener("mouseout", () => {
-                this.hideTooltip();
-            });
+        this.chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Настроение',
+                    data: dataPoints,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverBackgroundColor: '#667eea',
+                    pointHoverBorderColor: '#667eea',
+                    pointHoverBorderWidth: 3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#4b5563',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Индекс настроения: ' + context.raw;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 5) {
+                                    return '#e5e7eb';
+                                }
+                                return '#f3f4f6';
+                            },
+                            lineWidth: function(context) {
+                                if (context.tick.value === 5) {
+                                    return 1;
+                                }
+                                return 1;
+                            }
+                        },
+                        ticks: {
+                            stepSize: 2,
+                            color: '#718096',
+                            font: {
+                                size: 12
+                            },
+                            callback: function(value) {
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#718096',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 500
+                }
+            }
         });
-
-        // Добавляем подписи по оси X
-        this.updateXAxisLabels(chartData);
-    }
-
-    updateXAxisLabels(chartData) {
-        if (!this.chartSvg) return;
-
-        // Удаляем старые подписи
-        const oldTexts = this.chartSvg.querySelectorAll(".x-axis-label");
-        oldTexts.forEach(el => el.remove());
-
-        if (!chartData.length) return;
-
-        const width = 600;
-        const paddingX = 50;
-        const stepX = width / (chartData.length - 1 || 1);
-
-        chartData.forEach((d, i) => {
-            const x = paddingX + i * stepX;
-
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.textContent = d.day_name;
-            text.setAttribute("x", x);
-            text.setAttribute("y", "270");
-            text.setAttribute("text-anchor", "middle");
-            text.setAttribute("font-size", "12");
-            text.setAttribute("fill", "#718096");
-            text.setAttribute("class", "x-axis-label");
-            this.chartSvg.appendChild(text);
-        });
-    }
-
-    showTooltip(x, y, score) {
-        if (!this.chartSvg) return;
-
-        // Удаляем старый tooltip
-        const oldTooltip = this.chartSvg.querySelector(".tooltip");
-        if (oldTooltip) oldTooltip.remove();
-
-        const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        tooltip.setAttribute("class", "tooltip");
-
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("x", x - 30);
-        rect.setAttribute("y", y - 35);
-        rect.setAttribute("width", "60");
-        rect.setAttribute("height", "30");
-        rect.setAttribute("rx", "4");
-        rect.setAttribute("fill", "#1f2937");
-        rect.setAttribute("opacity", "0.9");
-
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.textContent = score;
-        text.setAttribute("x", x);
-        text.setAttribute("y", y - 15);
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("font-size", "14");
-        text.setAttribute("fill", "white");
-        text.setAttribute("font-weight", "600");
-
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x);
-        line.setAttribute("y1", y - 5);
-        line.setAttribute("x2", x);
-        line.setAttribute("y2", y + 10);
-        line.setAttribute("stroke", "#1f2937");
-        line.setAttribute("stroke-width", "2");
-
-        tooltip.appendChild(rect);
-        tooltip.appendChild(text);
-        tooltip.appendChild(line);
-        this.chartSvg.appendChild(tooltip);
-    }
-
-    hideTooltip() {
-        if (!this.chartSvg) return;
-        const tooltip = this.chartSvg.querySelector(".tooltip");
-        if (tooltip) tooltip.remove();
     }
 
     renderEmotionDistribution(distribution) {

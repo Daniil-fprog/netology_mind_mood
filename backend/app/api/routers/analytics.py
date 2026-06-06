@@ -15,7 +15,6 @@ from app.schemas.analytics import (
 )
 from app.services.analytics_service import (
     calculate_average_mood_index,
-    get_analytics_data,
     get_notes_for_export,
     get_current_user_notes_service,
     get_mood_chart_data,
@@ -76,6 +75,7 @@ def notes_to_analytics_list(notes: list) -> list[NoteAnalytics]:
     return result
 
 
+# Экспорт
 @router.get("/export")
 def export_analytics_csv(
     date_range: tuple[datetime, datetime] = Depends(get_date_range),
@@ -162,40 +162,42 @@ def export_analytics_csv(
     )
 
 
-@router.get("/", response_model=AnalyticsOut)
-def get_analytics(
-    date_range: tuple[datetime, datetime] = Depends(get_date_range),
-    db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-):
-    """
-    Получает полную аналитику по заметкам пользователя за произвольный период.
 
-    - **start_date**: дата начала периода в формате YYYY-MM-DD
-    - **end_date**: дата конца периода в формате YYYY-MM-DD
-    """
-    start_datetime, end_datetime = date_range
-    analytics_data = get_analytics_data(
-        current_user,
-        db,
-        start_datetime,
-        end_datetime,
-    )
 
-    # Получаем инсайты и данные трендов
-    neural_insights_list = analytics_data["neural_insights"]
-    trend_analysis = analytics_data.get("trend_analysis", {})
+# @router.get("/", response_model=AnalyticsOut)
+# def get_analytics(
+#     date_range: tuple[datetime, datetime] = Depends(get_date_range),
+#     db: Session = Depends(get_db),
+#     current_user: UserModel = Depends(get_current_user),
+# ):
+#     """
+#     Получает полную аналитику по заметкам пользователя за произвольный период.
 
-    return AnalyticsOut(
-        average_mood_index=analytics_data["average_mood_index"],
-        mood_chart_data=analytics_data["mood_chart_data"],
-        emotion_distribution=analytics_data["emotion_distribution"],
-        neural_insights=NeuralInsights(
-            insights=neural_insights_list,
-            trend_analysis=trend_analysis if trend_analysis else None,
-        ),
-        notes=notes_to_analytics_list(analytics_data["notes"]),
-    )
+#     - **start_date**: дата начала периода в формате YYYY-MM-DD
+#     - **end_date**: дата конца периода в формате YYYY-MM-DD
+#     """
+#     start_datetime, end_datetime = date_range
+#     analytics_data = get_analytics_data(
+#         current_user,
+#         db,
+#         start_datetime,
+#         end_datetime,
+#     )
+
+#     # Получаем инсайты и данные трендов
+#     neural_insights_list = analytics_data["neural_insights"]
+#     trend_analysis = analytics_data.get("trend_analysis", {})
+
+#     return AnalyticsOut(
+#         average_mood_index=analytics_data["average_mood_index"],
+#         mood_chart_data=analytics_data["mood_chart_data"],
+#         emotion_distribution=analytics_data["emotion_distribution"],
+#         neural_insights=NeuralInsights(
+#             insights=neural_insights_list,
+#             trend_analysis=trend_analysis if trend_analysis else None,
+#         ),
+#         notes=notes_to_analytics_list(analytics_data["notes"]),
+#     )
 
 
 @router.get("/summary")
@@ -242,26 +244,6 @@ def get_chart_data(
     return {"chart_data": chart_data}
 
 
-@router.get("/distribution")
-def get_distribution(
-    date_range: tuple[datetime, datetime] = Depends(get_date_range),
-    db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-):
-    """
-    Получает распределение эмоций за произвольный период.
-    """
-    start_datetime, end_datetime = date_range
-    notes = get_current_user_notes_service(
-        current_user,
-        db,
-        start_datetime,
-        end_datetime,
-    )
-    distribution = calculate_emotion_distribution(notes)
-
-    return {"distribution": distribution}
-
 
 @router.get("/insights")
 def get_insights(
@@ -283,21 +265,21 @@ def get_insights(
     return get_neural_insights(notes)
 
 
-@router.get("/notes", response_model=list[NoteAnalytics])
-def get_notes_analytics(
-    date_range: tuple[datetime, datetime] = Depends(get_date_range),
-    db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-):
-    """
-    Получает список заметок с аналитическими полями за произвольный период.
-    """
-    start_datetime, end_datetime = date_range
-    notes = get_current_user_notes_service(
-        current_user,
-        db,
-        start_datetime,
-        end_datetime,
-    )
+# @router.get("/notes", response_model=list[NoteAnalytics])
+# def get_notes_analytics(
+#     date_range: tuple[datetime, datetime] = Depends(get_date_range),
+#     db: Session = Depends(get_db),
+#     current_user: UserModel = Depends(get_current_user),
+# ):
+#     """
+#     Получает список заметок с аналитическими полями за произвольный период.
+#     """
+#     start_datetime, end_datetime = date_range
+#     notes = get_current_user_notes_service(
+#         current_user,
+#         db,
+#         start_datetime,
+#         end_datetime,
+#     )
 
-    return notes_to_analytics_list(notes)
+#     return notes_to_analytics_list(notes)
