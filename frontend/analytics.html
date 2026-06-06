@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -73,6 +74,7 @@
                             <h2 class="mood-index__title">Средний индекс настроения</h2>
                             <i class="fas fa-info-circle mood-index__info"></i>
                         </div>
+
                         <div class="mood-index__body">
                             <div class="mood-index__info">
                                 <div class="mood-index__value">7.8</div>
@@ -84,6 +86,21 @@
                         </div>
                     </div>
 
+                    <!-- Карточка нейро-инсайтов -->
+                    <div class="neural-insights">
+                        <div class="neural-insights__header">
+                            <i class="fas fa-bolt neural-insights__icon"></i>
+                            <h2 class="neural-insights__title">Нейро-инсайты</h2>
+                        </div>
+                        <div class="neural-insights__list">
+                            <!-- Инсайты будут отрендерены динамически через JS -->
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Правая колонка -->
+                <div class="analytics__aside">
                     <!-- Карточка динамики за 7 дней -->
                     <div class="mood-chart">
                         <div class="mood-chart__header">
@@ -99,101 +116,10 @@
                             </div>
                         </div>
                         <div class="mood-chart__body">
-                            <svg class="mood-chart__svg" viewBox="0 0 700 300" preserveAspectRatio="none">
-                                <!-- Сетка -->
-                                <line x1="50" y1="50" x2="50" y2="250" stroke="#e5e7eb" stroke-width="1" />
-                                <line x1="50" y1="250" x2="650" y2="250" stroke="#e5e7eb" stroke-width="1" />
-
-                                <!-- Горизонтальные линии сетки -->
-                                <line x1="50" y1="50" x2="650" y2="50" stroke="#f3f4f6" stroke-width="1" />
-                                <line x1="50" y1="100" x2="650" y2="100" stroke="#f3f4f6" stroke-width="1" />
-                                <line x1="50" y1="150" x2="650" y2="150" stroke="#f3f4f6" stroke-width="1" />
-                                <line x1="50" y1="200" x2="650" y2="200" stroke="#f3f4f6" stroke-width="1" />
-
-                                <!-- Пунктирные линии значений -->
-                                <line x1="50" y1="75" x2="650" y2="75" stroke="#e5e7eb" stroke-width="1"
-                                    stroke-dasharray="5,5" />
-                                <line x1="50" y1="125" x2="650" y2="125" stroke="#e5e7eb" stroke-width="1"
-                                    stroke-dasharray="5,5" />
-                                <line x1="50" y1="175" x2="650" y2="175" stroke="#e5e7eb" stroke-width="1"
-                                    stroke-dasharray="5,5" />
-                                <line x1="50" y1="225" x2="650" y2="225" stroke="#e5e7eb" stroke-width="1"
-                                    stroke-dasharray="5,5" />
-
-                                <!-- Подписи по оси Y -->
-                                <text x="40" y="55" text-anchor="end" font-size="12" fill="#718096">10</text>
-                                <text x="40" y="105" text-anchor="end" font-size="12" fill="#718096">8</text>
-                                <text x="40" y="155" text-anchor="end" font-size="12" fill="#718096">6</text>
-                                <text x="40" y="205" text-anchor="end" font-size="12" fill="#718096">4</text>
-                                <text x="40" y="255" text-anchor="end" font-size="12" fill="#718096">2</text>
-                            </svg>
+                            <canvas id="moodChart"></canvas>
                         </div>
                     </div>
-                </div>
-
-                <!-- Правая колонка -->
-                <div class="analytics__aside">
-                    <!-- Карточка нейро-инсайтов -->
-                    <div class="neural-insights">
-                        <div class="neural-insights__header">
-                            <i class="fas fa-bolt neural-insights__icon"></i>
-                            <h2 class="neural-insights__title">Нейро-инсайты</h2>
-                        </div>
-                        <div class="neural-insights__list">
-                            <!-- Инсайты будут отрендерены динамически через JS -->
-                        </div>
-                    </div>
-
-                    <!-- Карточка распределения эмоций -->
-                    <!-- <div class="emotion-distribution">
-                        <h2 class="emotion-distribution__title">Распределение эмоций</h2>
-                        <div class="emotion-distribution__list">
-                            <div class="emotion-distribution__item">
-                                <div class="emotion-distribution__row">
-                                    <div class="emotion-distribution__color emotion-distribution__color--calm"></div>
-                                    <span class="emotion-distribution__name">Спокойствие</span>
-                                    <span class="emotion-distribution__percent">45%</span>
-                                </div>
-                                <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--calm"
-                                        style="width: 45%"></div>
-                                </div>
-                            </div>
-                            <div class="emotion-distribution__item">
-                                <div class="emotion-distribution__row">
-                                    <div class="emotion-distribution__color emotion-distribution__color--focus"></div>
-                                    <span class="emotion-distribution__name">Фокус</span>
-                                    <span class="emotion-distribution__percent">30%</span>
-                                </div>
-                                <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--focus"
-                                        style="width: 30%"></div>
-                                </div>
-                            </div>
-                            <div class="emotion-distribution__item">
-                                <div class="emotion-distribution__row">
-                                    <div class="emotion-distribution__color emotion-distribution__color--tired"></div>
-                                    <span class="emotion-distribution__name">Усталость</span>
-                                    <span class="emotion-distribution__percent">15%</span>
-                                </div>
-                                <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--tired"
-                                        style="width: 15%"></div>
-                                </div>
-                            </div>
-                            <div class="emotion-distribution__item">
-                                <div class="emotion-distribution__row">
-                                    <div class="emotion-distribution__color emotion-distribution__color--stress"></div>
-                                    <span class="emotion-distribution__name">Стресс</span>
-                                    <span class="emotion-distribution__percent">10%</span>
-                                </div>
-                                <div class="emotion-distribution__bar">
-                                    <div class="emotion-distribution__fill emotion-distribution__fill--stress"
-                                        style="width: 10%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
+                   
                 </div>
             </div>
         </main>

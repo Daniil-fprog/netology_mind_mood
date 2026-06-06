@@ -53,15 +53,15 @@
 .analytics__grid {
     padding: 0 var(--spacing-xl) var(--spacing-xl);
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
+    /* grid-template-columns: 1.3fr 1fr; */
     gap: 32px;
 }
 
 /* Левая колонка */
 .analytics__main {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: 1fr 60%;
+    gap: 32px;
 }
 
 /* Карточка среднего индекса настроения */
@@ -383,7 +383,7 @@
 }
 
 /* Адаптивность */
-@media (max-width: 900px) {
+/* @media (max-width: 900px) {
     .analytics__header {
         padding: var(--spacing-md);
         flex-direction: column;
@@ -473,4 +473,4 @@
     .emotion-distribution__percent {
         align-self: flex-end;
     }
-}
+} */

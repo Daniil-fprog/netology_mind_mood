@@ -1,6 +1,34 @@
 import Auth from './auth.js';
 
 class DetailsPage {
+    MOOD_INSIGHTS = [
+        {
+            from: 0,
+            to: 20,
+            text: "Эмоциональный фон выглядит напряжённым. В записи могут присутствовать признаки усталости, тревоги или внутреннего давления."
+        },
+        {
+            from: 21,
+            to: 40,
+            text: "Настроение ниже среднего. Возможны признаки стресса, переутомления или эмоционального дискомфорта."
+        },
+        {
+            from: 41,
+            to: 60,
+            text: "Эмоциональное состояние выглядит относительно стабильным. Ярко выраженных позитивных или негативных переживаний не обнаружено."
+        },
+        {
+            from: 61,
+            to: 80,
+            text: "В записи заметен положительный эмоциональный фон. Присутствуют признаки удовлетворённости, спокойствия или уверенности."
+        },
+        {
+            from: 81,
+            to: 100,
+            text: "Эмоциональное состояние выглядит очень благоприятным. В тексте прослеживаются высокий уровень ресурса, оптимизма или вдохновения."
+        }
+    ];
+
     negative = "negative"
 
     constructor() {
@@ -92,8 +120,6 @@ class DetailsPage {
         if (this.confidenceLabel) {
             this.confidenceLabel.textContent = emotionText;
         }
-
-
 
         if (this.insightText) {
             this.insightText.textContent = this.generateInsight(note);
@@ -195,17 +221,11 @@ class DetailsPage {
     }
 
     generateInsight(note) {
-        const sentimentLabel = note.sentiment_label || "NEUTRAL";
+        const score = Number(note.sentiment_score ?? 50);
 
-        if (sentimentLabel === "POSITIVE") {
-            return "Запись имеет положительную эмоциональную окраску. В тексте заметны признаки спокойствия, ресурса или удовлетворённости текущим состоянием.";
-        }
+        const insight = this.MOOD_INSIGHTS.find(item => score >= item.from && score <= item.to);
 
-        if (sentimentLabel === "NEGATIVE") {
-            return "Запись имеет негативную эмоциональную окраску. Стоит обратить внимание на возможные источники стресса и добавить восстановительные действия.";
-        }
-
-        return "Запись имеет нейтральную эмоциональную окраску. Состояние выглядит стабильным, без ярко выраженного эмоционального смещения.";
+        return insight?.text ?? "Недостаточно данных для анализа настроения.";
     }
 
     formatDateTime(date) {
@@ -221,10 +241,6 @@ class DetailsPage {
             minute: "2-digit",
         });
     }
-
-
-
-    // recommendationCardTemplate
 }
 
 

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
+from app.schemas.recommendation import RecommendationOutWithNote
 
 class NoteAnalytics(BaseModel):
     """Модель заметки с аналитикой для экспорта"""
@@ -11,8 +12,9 @@ class NoteAnalytics(BaseModel):
     sentiment_score: Optional[float] = None
     created_at: datetime
 
-    model_config = {"from_attributes": True}
+    recommendations: List[RecommendationOutWithNote] = []
 
+    model_config = {"from_attributes": True}
 
 class MoodChartPoint(BaseModel):
     """Точка для графика настроения"""
