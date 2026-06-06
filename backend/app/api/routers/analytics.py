@@ -9,7 +9,6 @@ from app.core.security import get_current_user
 from app.db.database import get_db
 from app.models.user import UserModel
 from app.schemas.analytics import (
-    AnalyticsOut,
     NoteAnalytics,
     NeuralInsights,
 )
@@ -207,7 +206,6 @@ def get_chart_data(
     chart_data = get_mood_chart_data(notes)
 
     return {"chart_data": chart_data}
-
 
 
 @router.get("/insights")

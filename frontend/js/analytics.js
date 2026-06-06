@@ -13,7 +13,6 @@ class AnalyticsPage {
         this.moodIndexChange = document.querySelector(".mood-index__change");
         this.moodIndexProgressFill = document.querySelector(".mood-index__progress-fill");
         this.neuralInsightsList = document.querySelector(".neural-insights__list");
-        this.emotionDistributionList = document.querySelector(".emotion-distribution__list");
         this.chartCanvas = document.getElementById("moodChart");
         this.neuralInsightsHeader = document.querySelector(".neural-insights__header");
         this.moodIndexChangeEl = document.querySelector(".mood-index__change");
@@ -54,20 +53,22 @@ class AnalyticsPage {
 
             const dateQuery = this.getDateRangeQuery();
 
-            // Используем один главный endpoint для получения всех данных
-            const response = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics?${dateQuery}`);
+            // Загружаем данные для графика
+            const chartResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`);
+            const chartData = await chartResponse.json();
 
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки данных: ${response.status}`);
-            }
+            // Загружаем средний индекс настроения
+            const summaryResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`);
+            const summaryData = await summaryResponse.json();
 
-            const data = await response.json();
+            // Загружаем нейро-инсайты
+            const insightsResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`);
+            const insightsData = await insightsResponse.json();
 
             return {
-                average_mood_index: data.average_mood_index,
-                mood_chart_data: data.mood_chart_data || data.chart_data,
-                emotion_distribution: data.emotion_distribution,
-                neural_insights: data.neural_insights,
+                average_mood_index: summaryData.average_mood_index,
+                mood_chart_data: chartData.chart_data,
+                neural_insights: insightsData,
             };
         } catch (error) {
             console.error("Error fetching analytics:", error);
@@ -84,7 +85,6 @@ class AnalyticsPage {
 
         this.renderMoodIndex(data);
         this.renderChart(data.mood_chart_data || data.chart_data);
-        this.renderEmotionDistribution(data.emotion_distribution);
         this.renderNeuralInsights(data.neural_insights || data.neural_insights);
     }
 
@@ -244,41 +244,6 @@ class AnalyticsPage {
                     duration: 500
                 }
             }
-        });
-    }
-
-    renderEmotionDistribution(distribution) {
-        if (!this.emotionDistributionList) return;
-
-        // Очищаем список
-        this.emotionDistributionList.innerHTML = "";
-
-        // Категории для отображения (кастомные категории из HTML)
-        const categories = [
-            { key: "calm", label: "Спокойствие", class: "calm" },
-            { key: "focus", label: "Фокус", class: "focus" },
-            { key: "tired", label: "Усталость", class: "tired" },
-            { key: "stress", label: "Стресс", class: "stress" }
-        ];
-
-        categories.forEach(cat => {
-            const percentage = distribution[cat.key] || 0;
-
-            const item = document.createElement("div");
-            item.className = "emotion-distribution__item";
-
-            item.innerHTML = `
-                <div class="emotion-distribution__row">
-                    <div class="emotion-distribution__color emotion-distribution__color--${cat.class}"></div>
-                    <span class="emotion-distribution__name">${cat.label}</span>
-                    <span class="emotion-distribution__percent">${percentage}%</span>
-                </div>
-                <div class="emotion-distribution__bar">
-                    <div class="emotion-distribution__fill emotion-distribution__fill--${cat.class}" style="width: ${percentage}%"></div>
-                </div>
-            `;
-
-            this.emotionDistributionList.appendChild(item);
         });
     }
 

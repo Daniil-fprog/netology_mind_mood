@@ -37,4 +37,3 @@ class NeuralInsights(BaseModel):
     insights: list[str]
     trend_analysis: Optional[Dict[str, Any]] = None
 
-ё
