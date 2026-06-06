@@ -228,23 +228,3 @@ def get_insights(
     )
 
     return get_neural_insights(notes)
-
-
-# @router.get("/notes", response_model=list[NoteAnalytics])
-# def get_notes_analytics(
-#     date_range: tuple[datetime, datetime] = Depends(get_date_range),
-#     db: Session = Depends(get_db),
-#     current_user: UserModel = Depends(get_current_user),
-# ):
-#     """
-#     Получает список заметок с аналитическими полями за произвольный период.
-#     """
-#     start_datetime, end_datetime = date_range
-#     notes = get_current_user_notes_service(
-#         current_user,
-#         db,
-#         start_datetime,
-#         end_datetime,
-#     )
-
-#     return notes_to_analytics_list(notes)

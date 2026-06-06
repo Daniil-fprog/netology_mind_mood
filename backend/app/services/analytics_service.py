@@ -21,6 +21,24 @@ def calculate_average_mood_index(notes: list[NoteModel]) -> float:
     return round(sum(valid_scores) / len(valid_scores), 1)
 
 
+# Получаем записи для построяние графика
+def get_current_user_notes_service(
+    current_user: UserModel,
+    db: Session,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+) -> list[NoteModel]:
+    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
+
+    if start_date:
+        query = query.filter(NoteModel.created_at >= start_date)
+
+    if end_date:
+        query = query.filter(NoteModel.created_at <= end_date)
+
+    return query.order_by(NoteModel.created_at.asc()).all()
+
+
 def get_mood_chart_data(notes: list[NoteModel]) -> list[dict]:
     """Получает данные для графика настроения за указанный период"""
     if not notes:
@@ -80,42 +98,6 @@ def get_mood_chart_data(notes: list[NoteModel]) -> list[dict]:
     return chart_data
 
 
-# def get_analytics_data(
-#     current_user: UserModel,
-#     db: Session,
-#     start_date: Optional[datetime] = None,
-#     end_date: Optional[datetime] = None,
-# ) -> dict:
-#     """Получает полную аналитику для пользователя"""
-#     notes = get_current_user_notes_service(current_user, db, start_date, end_date)
-
-#     neural_result = get_neural_insights(notes)
-
-#     return {
-#         "average_mood_index": calculate_average_mood_index(notes),
-#         "mood_chart_data": get_mood_chart_data(notes),
-#         "neural_insights": neural_result["insights"],
-#         "trend_analysis": neural_result.get("trend_analysis", {}),
-#         "notes": notes,
-#     }
-
-
-# Импорт из note_service
-def get_current_user_notes_service(
-    current_user: UserModel,
-    db: Session,
-    start_date: Optional[datetime] = None,
-    end_date: Optional[datetime] = None,
-) -> list[NoteModel]:
-    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
-
-    if start_date:
-        query = query.filter(NoteModel.created_at >= start_date)
-
-    if end_date:
-        query = query.filter(NoteModel.created_at <= end_date)
-
-    return query.order_by(NoteModel.created_at.asc()).all()
 
 
 # Функция для генерации нейро-инсайтов
