@@ -56,12 +56,28 @@
             <div class="analytics__header">
                 <div class="analytics__heading">
                     <h1 class="analytics__title">Аналитика</h1>
-                    <p class="analytics__subtitle">Обзор вашего эмоционального состояния за неделю.</p>
+                    <!-- <p class="analytics__subtitle">Обзор вашего эмоционального состояния за неделю.</p> -->
+                    <!-- </div> -->
+
+                    <div class="analytics__actions">
+                        <div class="date-picker analytics__date-picker">
+                            <i class="fas fa-calendar-alt date-picker__icon"></i>
+                            <input type="date" class="date-picker__input date-picker__input--start" id="startDate">
+                            <span class="date-picker__separator">—</span>
+                            <input type="date" class="date-picker__input date-picker__input--end" id="endDate">
+                            <button class="date-picker__reset" id="resetDateRange">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
+                        
+                        <button class="analytics__export-button">
+                            <i class="fas fa-download"></i>
+                            <span>Экспорт данных</span>
+                        </button>
+                    </div>
                 </div>
-                <button class="analytics__export-button">
-                    <i class="fas fa-download"></i>
-                    <span>Экспорт данных</span>
-                </button>
+
+                <!-- <p class="analytics__subtitle">Обзор вашего эмоционального состояния за неделю.</p> -->
             </div>
 
             <!-- Основная сетка -->
@@ -98,28 +114,19 @@
                     </div>
 
                 </div>
-                
+
                 <!-- Правая колонка -->
                 <div class="analytics__aside">
                     <!-- Карточка динамики за 7 дней -->
                     <div class="mood-chart">
                         <div class="mood-chart__header">
                             <h2 class="mood-chart__title">Динамика настроения</h2>
-                            <div class="date-picker">
-                                <i class="fas fa-calendar-alt date-picker__icon"></i>
-                                <input type="date" class="date-picker__input date-picker__input--start" id="startDate">
-                                <span class="date-picker__separator">—</span>
-                                <input type="date" class="date-picker__input date-picker__input--end" id="endDate">
-                                <button class="date-picker__apply" id="applyDateRange">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </div>
                         </div>
                         <div class="mood-chart__body">
                             <canvas id="moodChart"></canvas>
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
         </main>

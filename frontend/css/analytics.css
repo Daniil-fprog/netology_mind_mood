@@ -3,27 +3,36 @@
 /* Верх страницы */
 .analytics__header {
     padding: var(--spacing-xl);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-top: var(--spacing-lg);
 }
 
 .analytics__heading {
-    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .analytics__title {
     font-size: 32px;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 8px;
 }
 
 .analytics__subtitle {
     font-size: 16px;
     color: var(--muted);
 }
+
+.analytics__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analytics__date-picker {
+    margin-right: 20px;
+}
+
 
 .analytics__export-button {
     display: flex;
@@ -47,6 +56,20 @@
 
 .analytics__export-button i {
     font-size: 16px;
+}
+
+/* Панель управления фильтрами */
+.analytics__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-xl);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.analytics__date-picker {
+    padding: 10px 14px;
 }
 
 /* Основная сетка */
@@ -209,6 +232,20 @@
 
 .date-picker__apply:hover {
     color: #3b82f6;
+}
+
+.date-picker__reset {
+    background: transparent;
+    border: none;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    transition: color 0.2s;
+}
+
+.date-picker__reset:hover {
+    color: var(--text);
 }
 
 .date-picker__body {
@@ -473,4 +510,45 @@
     .emotion-distribution__percent {
         align-self: flex-end;
     }
-} */
+}
+
+/* Адаптивность панели управления */
+@media (max-width: 768px) {
+    .analytics__toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .analytics__period {
+        width: 100%;
+    }
+
+    .analytics__period-hint {
+        width: 100%;
+    }
+
+    .analytics__date-picker {
+        width: 100%;
+    }
+
+    .date-picker__input {
+        width: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .analytics__toolbar {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+
+    .analytics__period-label {
+        font-size: 13px;
+    }
+
+    .date-picker__input {
+        width: 60px;
+        font-size: 11px;
+    }
+}

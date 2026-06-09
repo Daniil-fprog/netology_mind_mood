@@ -7,7 +7,7 @@ class AnalyticsPage {
         this.apiBaseUrl = API_BASE_URL;
         this.startDateInput = document.getElementById("startDate");
         this.endDateInput = document.getElementById("endDate");
-        this.applyDateRangeBtn = document.getElementById("applyDateRange");
+        this.resetDateRangeBtn = document.getElementById("resetDateRange");
         this.exportButton = document.querySelector(".analytics__export-button");
         this.moodIndexValue = document.querySelector(".mood-index__value");
         this.moodIndexChange = document.querySelector(".mood-index__change");
@@ -338,10 +338,11 @@ class AnalyticsPage {
     }
 
     initEvents() {
-        // Обработчик кнопки применения диапазона дат
-        if (this.applyDateRangeBtn) {
-            this.applyDateRangeBtn.addEventListener("click", () => {
-                this.handleDateRangeApply();
+        // Обработчик кнопки сброса диапазона дат
+        if (this.resetDateRangeBtn) {
+            this.resetDateRangeBtn.addEventListener("click", () => {
+                this.setDefaultDateRange();
+                this.renderAnalytics();
             });
         }
 
