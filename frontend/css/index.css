@@ -250,20 +250,6 @@ section {
     color: var(--text-secondary);
 }
 
-.mockup-card__tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.mockup-card__tag {
-    background-color: var(--accent-gray);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-}
-
 .mockup-card__ai {
     background-color: var(--accent-blue);
     padding: 1rem;
