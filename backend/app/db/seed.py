@@ -2,13 +2,40 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 
+from app.core.security import hash_password
 from app.models.note import NoteModel
 from app.models.recommendation import RecommendationModel
 from app.models.user import UserModel
+from app.services.sentiment_service import calculate_confidence
 
 
 TEST_USER_ID = 1
 TEST_USER_NAME = "Даниил"
+
+
+def seed_admin_user(db: Session) -> UserModel:
+    """
+    Создаёт пользователя-админа Даниил, если его нет.
+    """
+    user = db.query(UserModel).filter(UserModel.phone == "+79807057002").first()
+
+    if user:
+        print("Seed: пользователь Даниил уже существует")
+        return user
+
+    user = UserModel(
+        name="Даниил",
+        login="daniil",
+        phone="+79807057002",
+        password_hash=hash_password("admin123"),
+    )
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    print(f"Seed: создан пользователь Даниил (id={user.id})")
+    return user
 
 
 def seed_test_data(db: Session) -> None:
@@ -18,11 +45,7 @@ def seed_test_data(db: Session) -> None:
     - 20 записей для пользователя Даниил
     """
 
-    user = (
-        db.query(UserModel)
-        .filter((UserModel.id == TEST_USER_ID) | (UserModel.name == TEST_USER_NAME))
-        .first()
-    )
+    user = db.query(UserModel).filter(UserModel.phone == "+79807057002").first()
 
     if user is None:
         print("Seed: пользователь Даниил не найден, тестовые записи не созданы")
@@ -364,6 +387,7 @@ def seed_notes_for_user(db: Session, user_id: int) -> None:
             continue
 
         created_at = now - timedelta(days=item["days_ago"])
+        model_confidence = calculate_confidence(item["score"])
 
         note = NoteModel(
             user_id=user_id,
@@ -372,6 +396,7 @@ def seed_notes_for_user(db: Session, user_id: int) -> None:
             translate_status="done",
             sentiment_label=item["label"],
             sentiment_score=item["score"],
+            model_confidence=model_confidence,
             created_at=created_at,
             updated_at=created_at,
         )

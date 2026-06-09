@@ -8,10 +8,9 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.db.database import get_db
 from app.models.user import UserModel
-from app.schemas.analytics import (
-    NoteAnalytics,
-    NeuralInsights,
-)
+# from app.schemas.analytics import (
+#     NoteAnalytics,
+# )
 from app.services.analytics_service import (
     calculate_average_mood_index,
     get_notes_for_export,
@@ -56,25 +55,6 @@ def get_emotion_text(sentiment_label: str | None) -> str:
     return mood_map.get(sentiment_label.lower(), "Не определено")
 
 
-def notes_to_analytics_list(notes: list) -> list[NoteAnalytics]:
-    result = []
-
-    for note in notes:
-        result.append(
-            NoteAnalytics(
-                id=note.id,
-                orig_text=note.orig_text,
-                sentiment_label=note.sentiment_label,
-                sentiment_score=note.sentiment_score,
-                created_at=note.created_at,
-                recommendations=note.recommendations,
-            )
-        )
-
-    return result
-
-
-# Экспорт
 @router.get("/export")
 def export_analytics_csv(
     date_range: tuple[datetime, datetime] = Depends(get_date_range),

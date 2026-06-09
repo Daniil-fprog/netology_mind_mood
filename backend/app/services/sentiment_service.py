@@ -45,7 +45,7 @@ def predict_sentimental(text: str) -> tuple[str, int]:
 
     positive_index = classes.index(positive_class)
 
-    # Берем вероятность именно positive-класса
+    # Берем вероятность именно positiv`e-класса
     positive_probability = float(probabilities[positive_index])
 
     # score теперь означает настроение от 0 до 100:

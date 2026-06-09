@@ -1,6 +1,6 @@
 from app.db.database import SessionLocal
 from app.models.note import NoteModel
-from app.services.sentiment_service import predict_sentimental
+from app.services.sentiment_service import predict_sentimental, calculate_confidence
 from app.services.translation_service import translate_to_english
 from app.services.recommendation_service import attach_recommendations_to_note
 
@@ -31,10 +31,11 @@ def translate_note_background(note_id: int):
 
             # 3. Получение скора
             sentiment_label, sentiment_score = predict_sentimental(translated_text)
+            model_confidence = calculate_confidence(sentiment_score)
 
             note.sentiment_label = sentiment_label
             note.sentiment_score = sentiment_score
-            # note.model_confidence = model_confidence
+            note.model_confidence = model_confidence
 
             note.translate_status = "analyzed"
             db.commit()
@@ -57,6 +58,7 @@ def translate_note_background(note_id: int):
             note.translate_status = "error"
             note.sentiment_label = "unknown"
             note.sentiment_score = 0
+            note.model_confidence = 0
 
             db.commit()
 

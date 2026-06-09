@@ -4,25 +4,26 @@ from typing import Optional, List, Dict, Any
 
 from app.schemas.recommendation import RecommendationOutWithNote
 
-class NoteAnalytics(BaseModel):
-    """Модель заметки с аналитикой для экспорта"""
-    id: int
-    orig_text: str
-    sentiment_label: Optional[str] = None
-    sentiment_score: Optional[float] = None
-    created_at: datetime
+# class NoteAnalytics(BaseModel):
+#     """Модель заметки с аналитикой для экспорта"""
+#     id: int
+#     orig_text: str
+#     sentiment_label: Optional[str] = None
+#     sentiment_score: Optional[float] = None
+#     model_confidence: Optional[int] = None
+#     created_at: datetime
 
-    recommendations: List[RecommendationOutWithNote] = []
+#     recommendations: List[RecommendationOutWithNote] = []
 
-    model_config = {"from_attributes": True}
+#     model_config = {"from_attributes": True}
 
 
-class MoodChartPoint(BaseModel):
-    """Точка для графика настроения"""
-    date: str
-    day_name: str
-    score: float
-    label: Optional[str] = None
+# class MoodChartPoint(BaseModel):
+#     """Точка для графика настроения"""
+#     date: str
+#     day_name: str
+#     score: float
+#     label: Optional[str] = None
 
 
 class TrendAnalysis(BaseModel):

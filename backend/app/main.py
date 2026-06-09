@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import Base, engine, SessionLocal
 from app.api.routers import analytics, auth, notes, recommendations, users
-from app.db.seed import seed_test_data
+from app.db.seed import seed_admin_user, seed_test_data
 from app import models
 
 
@@ -14,6 +14,7 @@ Base.metadata.create_all(bind=engine)
 # Заполняем БД тестовыми данными
 db = SessionLocal()
 try:
+    seed_admin_user(db)
     seed_test_data(db)
 finally:
     db.close()

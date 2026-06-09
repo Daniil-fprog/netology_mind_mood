@@ -24,6 +24,7 @@ class NoteOut(BaseModel):
 
     sentiment_label: Optional[str] = None
     sentiment_score: Optional[int] = None
+    model_confidence: Optional[int] = None
 
     created_at: datetime
     updated_at: datetime

@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 os.makedirs("db", exist_ok=True)
 
 # === Настройка подключения к БД ===
-DATABASE_URL = "sqlite:///./db/test.db"
+DATABASE_URL = "sqlite:///./db/mood_sync.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 

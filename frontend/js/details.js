@@ -114,7 +114,7 @@ class DetailsPage {
         }
 
         if (this.confidenceValue) {
-            this.confidenceValue.textContent = `${Math.round(note.sentiment_score)} %`;
+            this.confidenceValue.textContent = `${Math.round(note.model_confidence)} %`;
         }
 
         if (this.confidenceLabel) {
