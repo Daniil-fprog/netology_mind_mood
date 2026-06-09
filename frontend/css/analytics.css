@@ -18,21 +18,11 @@
     color: var(--text);
 }
 
-.analytics__subtitle {
-    font-size: 16px;
-    color: var(--muted);
-}
-
 .analytics__actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
-.analytics__date-picker {
-    margin-right: 20px;
-}
-
 
 .analytics__export-button {
     display: flex;
@@ -59,17 +49,9 @@
 }
 
 /* Панель управления фильтрами */
-.analytics__toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 var(--spacing-xl);
-    margin-top: var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
-}
-
 .analytics__date-picker {
     padding: 10px 14px;
+    margin-right: 20px;
 }
 
 /* Основная сетка */
@@ -113,6 +95,8 @@
 }
 
 .mood-index__info {
+    display: flex;
+    align-items: center;
     color: var(--muted);
     font-size: 16px;
     cursor: pointer;
@@ -121,12 +105,6 @@
 
 .mood-index__info:hover {
     color: var(--accent);
-}
-
-.mood-index__info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
 }
 
 .mood-index__value {
@@ -255,11 +233,6 @@
     height: 100%;
 }
 
-.mood-chart__svg {
-    width: 100%;
-    height: 100%;
-}
-
 /* График настроения */
 #moodChart {
     height: 450px !important;
@@ -331,233 +304,4 @@
     font-size: 14px;
     line-height: 1.5;
     color: var(--text);
-}
-
-/* Карточка распределения эмоций */
-.emotion-distribution {
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border);
-    padding: 28px;
-}
-
-.emotion-distribution__title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 20px;
-}
-
-.emotion-distribution__list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.emotion-distribution__item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.emotion-distribution__row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.emotion-distribution__color {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-}
-
-.emotion-distribution__color--calm {
-    background-color: #93c5fd;
-}
-
-.emotion-distribution__color--focus {
-    background-color: #60a5fa;
-}
-
-.emotion-distribution__color--tired {
-    background-color: #d1d5db;
-}
-
-.emotion-distribution__color--stress {
-    background-color: #9ca3af;
-}
-
-.emotion-distribution__name {
-    font-size: 14px;
-    color: var(--text);
-}
-
-.emotion-distribution__percent {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.emotion-distribution__bar {
-    height: 6px;
-    background-color: #e5e7eb;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.emotion-distribution__fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.3s ease;
-}
-
-.emotion-distribution__fill--calm {
-    background-color: #93c5fd;
-}
-
-.emotion-distribution__fill--focus {
-    background-color: #60a5fa;
-}
-
-.emotion-distribution__fill--tired {
-    background-color: #d1d5db;
-}
-
-.emotion-distribution__fill--stress {
-    background-color: #9ca3af;
-}
-
-/* Адаптивность */
-/* @media (max-width: 900px) {
-    .analytics__header {
-        padding: var(--spacing-md);
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
-    }
-    
-    .analytics__title {
-        font-size: 24px;
-    }
-    
-    .analytics__grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 0 var(--spacing-md) var(--spacing-md);
-    }
-    
-    .analytics__main, .analytics__aside {
-        width: 100%;
-    }
-    
-    .mood-chart {
-        height: 350px;
-    }
-    
-    .mood-index {
-        height: 150px;
-    }
-    
-    .mood-index__value {
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 600px) {
-    .analytics__header {
-        padding: var(--spacing-md);
-    }
-    
-    .analytics__title {
-        font-size: 20px;
-    }
-    
-    .analytics__subtitle {
-        font-size: 14px;
-    }
-    
-    .analytics__export-button {
-        padding: 10px 16px;
-        font-size: 12px;
-    }
-    
-    .analytics__export-button i {
-        font-size: 14px;
-    }
-    
-    .mood-index, .mood-chart, .neural-insights, .emotion-distribution {
-        padding: 20px;
-    }
-    
-    .mood-chart {
-        height: 300px;
-    }
-    
-    .mood-index__header, .mood-chart__header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .neural-insights__item {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .neural-insights__marker {
-        margin-top: 0;
-        margin-bottom: 4px;
-    }
-    
-    .emotion-distribution__row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
-    
-    .emotion-distribution__percent {
-        align-self: flex-end;
-    }
-}
-
-/* Адаптивность панели управления */
-@media (max-width: 768px) {
-    .analytics__toolbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .analytics__period {
-        width: 100%;
-    }
-
-    .analytics__period-hint {
-        width: 100%;
-    }
-
-    .analytics__date-picker {
-        width: 100%;
-    }
-
-    .date-picker__input {
-        width: 70px;
-    }
-}
-
-@media (max-width: 480px) {
-    .analytics__toolbar {
-        padding-left: var(--spacing-md);
-        padding-right: var(--spacing-md);
-    }
-
-    .analytics__period-label {
-        font-size: 13px;
-    }
-
-    .date-picker__input {
-        width: 60px;
-        font-size: 11px;
-    }
 }
