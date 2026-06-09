@@ -62,6 +62,8 @@ class HistoryPage {
         if (this.filterBtn) {
             this.filterBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
+                console.log('КЛик');
+                
                 this.toggleFilterPopup();
             });
         }
@@ -74,7 +76,7 @@ class HistoryPage {
 
         // Закрытие попапа при клике вне
         document.addEventListener("click", (e) => {
-            if (this.filterPopup && this.filterPopup.classList.contains("active")) {
+            if (this.filterPopup && this.filterPopup.classList.contains("history__filter-popup--active")) {
                 const isClickInsidePopup = this.filterPopupContent.contains(e.target);
                 const isClickOnFilterBtn = e.target.closest("#filterBtn");
 
@@ -86,7 +88,7 @@ class HistoryPage {
 
         // Закрытие при Escape
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && this.filterPopup.classList.contains("active")) {
+            if (e.key === "Escape" && this.filterPopup.classList.contains("history__filter-popup--active")) {
                 this.closeFilterPopup();
             }
         });
@@ -119,7 +121,7 @@ class HistoryPage {
 
     toggleFilterPopup() {
         if (this.filterPopup) {
-            if (this.filterPopup.classList.contains("active")) {
+            if (this.filterPopup.classList.contains("history__filter-popup--active")) {
                 this.closeFilterPopup();
             } else {
                 this.openFilterPopup();
@@ -129,13 +131,13 @@ class HistoryPage {
 
     openFilterPopup() {
         if (this.filterPopup) {
-            this.filterPopup.classList.add("active");
+            this.filterPopup.classList.add("history__filter-popup--active");
         }
     }
 
     closeFilterPopup() {
         if (this.filterPopup) {
-            this.filterPopup.classList.remove("active");
+            this.filterPopup.classList.remove("history__filter-popup--active");
         }
     }
 
@@ -354,15 +356,15 @@ class HistoryPage {
         const tagsContainer = entryElement.querySelector(".history__entry-tags");
 
         time.textContent = entry.time;
-        moodBadge.textContent = entry.moodType;
+        moodBadge.textContent = entry.moodLabel;
         title.textContent = entry.title;
         title.href = `./details.html?id=${entry.id}`;
         text.textContent = entry.text;
 
         // Очищаем предыдущие классы настроения
         moodIndicator.className = "history__mood-indicator";
-        if (entry.moodType !== "Не определено") {
-            moodIndicator.classList.add(`history__mood-indicator--${entry.moodType}`);
+        if (entry.moodClass) {
+            moodIndicator.classList.add(`history__mood-indicator--${entry.moodClass}`);
         }
 
         // Очищаем предыдущие теги
@@ -420,14 +422,14 @@ class HistoryPage {
             const timeString = date.toTimeString().substring(0, 5);
 
             // Определяем тип настроения на основе sentiment_label
-            // В реальной реализации это может быть более сложной логикой
-            const moodType = this.getMoodType(note.sentiment_label);
+            const moodInfo = this.getMoodType(note.sentiment_label);
 
             groups[dateKey].entries.push({
                 id: note.id,
                 time: timeString,
                 mood: note.sentiment_label || 'Не определено',
-                moodType: moodType,
+                moodClass: moodInfo.class,
+                moodLabel: moodInfo.label,
                 title: this.generateTitle(note.orig_text),
                 text: note.orig_text,
                 tags: this.extractTags(note.orig_text)
@@ -464,14 +466,14 @@ class HistoryPage {
     }
 
     getMoodType(sentimentLabel) {
-        // Простое сопоставление типов настроения
+        // Сопоставление типов настроения с CSS классами и русским названием
         const moodMap = {
-            'negative': 'Плохое',
-            'positive': 'Хорошее',
-            'neutral': 'Спокойное',
+            'negative': { class: 'tired', label: 'Плохое' },
+            'positive': { class: 'joy', label: 'Хорошее' },
+            'neutral': { class: 'calm', label: 'Спокойное' },
         };
 
-        return moodMap[sentimentLabel] || 'Не определено';
+        return moodMap[sentimentLabel] || { class: 'calm', label: 'Не определено' };
     }
 
     generateTitle(text) {
