@@ -88,7 +88,7 @@ class AnalyticsPage {
 
         this.renderMoodIndex(data);
         this.renderChart(data.mood_chart_data || data.chart_data);
-        this.renderNeuralInsights(data.neural_insights || data.neural_insights);
+        this.renderNeuralInsights(data.neural_insights);
     }
 
     renderMoodIndex(data) {

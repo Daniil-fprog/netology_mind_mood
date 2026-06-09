@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Session
@@ -6,14 +7,72 @@ from app.models.note import NoteModel
 from app.models.user import UserModel
 
 
+# Функция для выявления повторяющихся паттернов по дням недели
+def find_repeated_weekday_patterns(daily_averages: list[dict], threshold: int, min_count: int = 2) -> list[str]:
+    """
+    Находит дни недели, где значение было зафиксировано минимум min_count раз.
+    
+    Args:
+        daily_averages: Список средних значений по дням
+        threshold: Пороговое значение (например, 40 для провалов, 80 для подъемов)
+        min_count: Минимальное количество повторений
+    
+    Returns:
+        Список названий дней недели (на русском)
+    """
+    day_names_rus = {
+        "Monday": "Понедельник",
+        "Tuesday": "Вторник",
+        "Wednesday": "Среда",
+        "Thursday": "Четверг",
+        "Friday": "Пятница",
+        "Saturday": "Суббота",
+        "Sunday": "Воскресенье",
+    }
+
+    weekday_counts = defaultdict(int)
+
+    for day in daily_averages:
+        date_obj = datetime.strptime(day["date"], "%Y-%m-%d")
+        weekday_eng = date_obj.strftime("%A")
+        weekday_rus = day_names_rus.get(weekday_eng, day["date"])
+
+        if day["score"] <= threshold:
+            weekday_counts[weekday_rus] += 1
+
+    # Оставляем только те дни недели, где паттерн был минимум min_count раз
+    return [
+        weekday for weekday, count in weekday_counts.items() if count >= min_count
+    ]
+
+
+# Получаем записи для построяние графика
+def get_current_user_notes_service(
+    current_user: UserModel,
+    db: Session,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+) -> list[NoteModel]:
+    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
+
+    if start_date:
+        query = query.filter(NoteModel.created_at >= start_date)
+
+    if end_date:
+        query = query.filter(NoteModel.created_at <= end_date)
+
+    return query.order_by(NoteModel.created_at.asc()).all()
+
+
+# Вычисляет средний индекс настроения и анализ трендов
 def calculate_average_mood_index(notes: list[NoteModel]) -> tuple[float, dict]:
     """Вычисляет средний индекс настроения и анализ трендов.
-    
+
     Возвращает:
         tuple: (средний индекс, данные тренда)
     """
     trend_analysis = {}
-    
+
     if not notes:
         return (0.0, trend_analysis)
 
@@ -25,7 +84,7 @@ def calculate_average_mood_index(notes: list[NoteModel]) -> tuple[float, dict]:
         return (0.0, trend_analysis)
 
     average = round(sum(valid_scores) / len(valid_scores), 1)
-    
+
     # === АНАЛИЗ ТРЕНДОВ ===
     # Группируем по дням
     daily_scores = {}
@@ -49,11 +108,17 @@ def calculate_average_mood_index(notes: list[NoteModel]) -> tuple[float, dict]:
         previous_week_start = len(daily_averages) - 14
         previous_week = daily_averages[previous_week_start : previous_week_start + 7]
 
-        current_avg = round(sum(d["score"] for d in current_week) / len(current_week), 1)
-        previous_avg = round(sum(d["score"] for d in previous_week) / len(previous_week), 1)
+        current_avg = round(
+            sum(d["score"] for d in current_week) / len(current_week), 1
+        )
+        previous_avg = round(
+            sum(d["score"] for d in previous_week) / len(previous_week), 1
+        )
 
         if previous_avg > 0:
-            change_percent = round(((current_avg - previous_avg) / previous_avg) * 100, 1)
+            change_percent = round(
+                ((current_avg - previous_avg) / previous_avg) * 100, 1
+            )
         else:
             change_percent = 0
 
@@ -62,24 +127,6 @@ def calculate_average_mood_index(notes: list[NoteModel]) -> tuple[float, dict]:
         trend_analysis["change_percent"] = change_percent
 
     return (average, trend_analysis)
-
-
-# Получаем записи для построяние графика
-def get_current_user_notes_service(
-    current_user: UserModel,
-    db: Session,
-    start_date: Optional[datetime] = None,
-    end_date: Optional[datetime] = None,
-) -> list[NoteModel]:
-    query = db.query(NoteModel).filter(NoteModel.user_id == current_user.id)
-
-    if start_date:
-        query = query.filter(NoteModel.created_at >= start_date)
-
-    if end_date:
-        query = query.filter(NoteModel.created_at <= end_date)
-
-    return query.order_by(NoteModel.created_at.asc()).all()
 
 
 # Функция для получения данных для графика
@@ -142,8 +189,6 @@ def get_mood_chart_data(notes: list[NoteModel]) -> list[dict]:
     return chart_data
 
 
-
-
 # Функция для генерации нейро-инсайтов
 def get_neural_insights(notes: list[NoteModel]) -> dict:
     """
@@ -151,7 +196,6 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
 
     Возвращает словарь с:
     - insights: list[str] - текстовые инсайты
-    - trend_analysis: dict - численные данные о трендах
     """
     if not notes:
         return {
@@ -159,11 +203,9 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
                 "Недостаточно данных для анализа. Добавьте больше заметок для получения инсайтов.",
                 "Рекомендуется записывать мысли ежедневно для более точного анализа.",
             ],
-            "trend_analysis": {},
         }
 
     insights = []
-    trend_analysis = {}
 
     # Получаем все заметки с оценкой настроения
     scored_notes = [
@@ -176,7 +218,6 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
                 "Недостаточно данных для анализа тенденций. Добавьте больше заметок.",
                 "Рекомендуется записывать мысли ежедневно для более точного анализа.",
             ],
-            "trend_analysis": {},
         }
 
     # Сортируем по дате
@@ -201,7 +242,7 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
         insights.append(
             "Недостаточно данных для анализа тенденций. Добавьте больше заметок."
         )
-        return {"insights": insights, "trend_analysis": {}}
+        return {"insights": insights}
 
     # === АНАЛИЗ ТРЕНДОВ ===
 
@@ -222,10 +263,6 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
     else:
         change_percent = 0
 
-    trend_analysis["current_avg"] = current_avg
-    trend_analysis["previous_avg"] = previous_avg
-    trend_analysis["change_percent"] = change_percent
-
     # Инсайт об изменении уровня настроения
     if abs(change_percent) >= 10:
         sign = "вырос" if change_percent > 0 else "снизился"
@@ -239,52 +276,50 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
         )
 
     # 2. Выявление стабильных провалов (дни с низким настроением)
-    low_days = [d for d in current_week if d["score"] <= 4]
-    if len(low_days) >= 2:
-        day_names_rus = {
-            "Monday": "Понедельник",
-            "Tuesday": "Вторник",
-            "Wednesday": "Среда",
-            "Thursday": "Четверг",
-            "Friday": "Пятница",
-            "Saturday": "Суббота",
-            "Sunday": "Воскресенье",
-        }
-        low_day_names = []
-        for day in low_days:
-            # Ищем день недели
-            date_obj = datetime.strptime(day["date"], "%Y-%m-%d")
-            day_name = day_names_rus.get(date_obj.strftime("%A"), day["date"])
-            low_day_names.append(day_name)
+    # Анализируем по всем данным из выбранного периода
+    stable_low_weekdays = find_repeated_weekday_patterns(daily_averages, threshold=40, min_count=2)
 
-        if len(low_day_names) >= 3:
-            days_str = ", ".join(low_day_names[:2]) + " и другие"
+    if stable_low_weekdays:
+        if len(stable_low_weekdays) >= 3:
+            days_str = ", ".join(stable_low_weekdays[:2]) + " и другие"
         else:
-            days_str = " и ".join(low_day_names)
+            days_str = " и ".join(stable_low_weekdays)
+
         insights.append(
-            f"В середине недели (в {days_str}) заметны провалы настроения. "
-            f"Рекомендуется планировать короткие перерывы или расслабляющие занятия."
+            f"В выбранном периоде по дням недели ({days_str}) "
+            f"заметны повторяющиеся провалы настроения. "
+            f"Рекомендуется заранее планировать короткие перерывы или расслабляющие занятия в эти дни."
         )
 
     # 3. Выявление подъемов
-    high_days = [d for d in current_week if d["score"] >= 8]
-    if len(high_days) >= 2:
+    # Анализируем по всем данным из выбранного периода
+    stable_high_weekdays = find_repeated_weekday_patterns(daily_averages, threshold=80, min_count=2)
+
+    if stable_high_weekdays:
+        if len(stable_high_weekdays) >= 3:
+            days_str = ", ".join(stable_high_weekdays[:2]) + " и другие"
+        else:
+            days_str = " и ".join(stable_high_weekdays)
+
         insights.append(
-            "Отмечены периоды высокого настроения. Это может быть связано с успешными задачами или позитивными событиями."
+            f"В выбранном периоде по дням недели ({days_str}) "
+            f"отмечается устойчивое высокое настроение. "
+            f"Это может быть связано с успешным выполнением задач или позитивными событиями."
         )
 
     # 4. Анализ стабильности (вариабельность)
-    scores_list = [d["score"] for d in current_week]
+    # Анализируем по всем данным из выбранного периода
+    scores_list = [d["score"] for d in daily_averages]
     if len(scores_list) >= 3:
         max_score = max(scores_list)
         min_score = min(scores_list)
         variance = max_score - min_score
 
-        if variance <= 2:
+        if variance <= 20:
             insights.append(
                 "Уровень настроения стабильный с небольшой вариабельностью. Вы эффективно управляете эмоциями."
             )
-        elif variance <= 4:
+        elif variance <= 40:
             insights.append(
                 "Уровень настроения варьируется в умеренных пределах. Это нормальная реакция на разные события."
             )
@@ -293,7 +328,9 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
                 "Уровень настроения сильно колеблется. Рассмотрите практики для стабилизации эмоционального состояния."
             )
 
+
     # 5. Сквозная налаика по изменениям
+    # Анализируем по всем данным из выбранного периода
     if len(daily_averages) >= 3:
         # Считаем направление изменений между днями
         changes = []
@@ -302,11 +339,11 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
             changes.append("up" if diff > 0 else ("down" if diff < 0 else "stable"))
 
         # Ищем устойчивые паттерны
-        if all(c == "up" for c in changes[-3:]) and current_avg >= previous_avg:
+        if all(c == "up" for c in changes[-3:]):
             insights.append(
                 "Отмечается устойчивый рост настроения в последние дни. Продолжайте то, что приносит положительные эмоции."
             )
-        elif all(c == "down" for c in changes[-3:]) and current_avg <= previous_avg:
+        elif all(c == "down" for c in changes[-3:]):
             insights.append(
                 "Отмечается устойчивое снижение настроения. Рассмотрите возможность корректировки режима дня или отдыха."
             )
@@ -317,7 +354,7 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
             "Состояние стабильное без ярко выраженных тенденций. Продолжайте вести дневник для отслеживания изменений."
         )
 
-    return {"insights": insights, "trend_analysis": trend_analysis}
+    return {"insights": insights}
 
 
 # Для экспорта
