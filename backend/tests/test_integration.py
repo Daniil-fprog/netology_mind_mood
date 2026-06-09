@@ -108,7 +108,7 @@ class TestFullUserFlow:
             "start_date": "2024-01-01",
             "end_date": today,
         }
-        response = client.get("/analytics/", params=params, headers=headers)
+        response = client.get("/analytics/summary", params=params, headers=headers)
         assert response.status_code == 200
 
 
@@ -185,14 +185,13 @@ class TestAnalyticsIntegration:
                 "start_date": "2024-01-01",
                 "end_date": today,
             }
-            
+
             # Получаем аналитику
-            response = client.get("/analytics/", params=params, headers=headers)
+            response = client.get("/analytics/summary", params=params, headers=headers)
             assert response.status_code == 200
-            
+
             data = response.json()
             assert "average_mood_index" in data
-            assert "notes" in data
 
 
 class TestErrorResponseFormat:

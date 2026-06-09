@@ -54,7 +54,7 @@ class TestLogin:
         user = UserModel(
             name="Тестовый Пользователь",
             login="testuser",
-            password=hashed_password,
+            password_hash=hashed_password,
         )
         
         db = TestingSessionLocal()
@@ -115,7 +115,7 @@ class TestLogin:
         user = UserModel(
             name="Тестовый",
             login="emptyuser",
-            password=hashed_password,
+            password_hash=hashed_password,
         )
         
         db = TestingSessionLocal()

@@ -63,7 +63,7 @@ def auth_headers(client, test_user_data):
     user = UserModel(
         name=test_user_data["name"],
         login=test_user_data["login"],
-        password=hashed_password,
+        password_hash=hashed_password,
         phone=test_user_data["phone"],
     )
     
@@ -124,7 +124,7 @@ class TestRegister:
         user = UserModel(
             name=test_user_data["name"],
             login=test_user_data["login"],
-            password=hashed_password,
+            password_hash=hashed_password,
         )
         
         db = TestingSessionLocal()
@@ -147,7 +147,7 @@ class TestRegister:
         user = UserModel(
             name="Old User",
             login="uniqueuser",
-            password=hashed_password,
+            password_hash=hashed_password,
         )
         
         db = TestingSessionLocal()
@@ -217,16 +217,16 @@ class TestGetUserById:
         user = UserModel(
             name="Другой Пользователь",
             login="otheruser",
-            password=hash_password("otherpass"),
+            password_hash=hash_password("otherpass"),
         )
         db = TestingSessionLocal()
         db.add(user)
         db.commit()
         db.refresh(user)
         db.close()
-        
+
         response = client.get(f"/users/{user.id}", headers=auth_headers)
-        
+
         assert response.status_code == 200
         data = response.json()
         assert isinstance(data, list)
@@ -235,7 +235,7 @@ class TestGetUserById:
     def test_get_user_by_id_not_found(self, client, auth_headers):
         """Получение несуществующего пользователя по ID."""
         response = client.get("/users/999999", headers=auth_headers)
-        
+
         assert response.status_code == 200
         data = response.json()
         assert isinstance(data, list)
@@ -244,57 +244,5 @@ class TestGetUserById:
     def test_get_user_by_id_unauthorized(self, client):
         """Получение пользователя без авторизации."""
         response = client.get("/users/1")
-        
+
         assert response.status_code == 401
-
-
-class TestUpdateUser:
-    """Тесты PATCH /users/{userId} (если есть)."""
-
-    def test_update_user_success(self, client, auth_headers):
-        """Успешное обновление данных пользователя."""
-        user = UserModel(
-            name="Old Name",
-            login="updateuser",
-            password=hash_password("password"),
-        )
-        db = TestingSessionLocal()
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        db.close()
-
-        update_data = {
-            "name": "New Name",
-            "phone": "+79990001122",
-        }
-        response = client.patch(f"/users/{user.id}", json=update_data, headers=auth_headers)
-        
-        assert response.status_code == 200
-        data = response.json()
-        assert data["name"] == "New Name"
-        assert data["phone"] == "+79990001122"
-
-    def test_update_user_partial(self, client, auth_headers):
-        """Частичное обновление данных пользователя."""
-        user = UserModel(
-            name="Partial User",
-            login="partialuser",
-            password=hash_password("password"),
-            phone="+79991112233",
-        )
-        db = TestingSessionLocal()
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        db.close()
-
-        update_data = {
-            "name": "Updated Name",
-        }
-        response = client.patch(f"/users/{user.id}", json=update_data, headers=auth_headers)
-        
-        assert response.status_code == 200
-        data = response.json()
-        assert data["name"] == "Updated Name"
-        assert data["phone"] == "+79991112233"

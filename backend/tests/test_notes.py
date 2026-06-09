@@ -54,7 +54,7 @@ def auth_headers(client):
     user = UserModel(
         name="Тестовый Пользователь",
         login="testuser",
-        password=hashed_password,
+        password_hash=hashed_password,
     )
     
     db = TestingSessionLocal()
