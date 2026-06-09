@@ -161,9 +161,7 @@ def export_analytics_csv(
     )
 
 
-
-
-
+# Средний индекс + тренд за неделю
 @router.get("/summary")
 def get_analytics_summary(
     date_range: tuple[datetime, datetime] = Depends(get_date_range),
@@ -188,6 +186,7 @@ def get_analytics_summary(
         "average_mood_index": average,
         "trend_analysis": trend_analysis,
     }
+
 
 
 @router.get("/chart-data")

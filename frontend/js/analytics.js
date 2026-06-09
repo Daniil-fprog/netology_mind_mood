@@ -97,20 +97,24 @@ class AnalyticsPage {
         const average = data.average_mood_index;
         this.moodIndexValue.textContent = average;
 
-        // Получаем данные трендов (приоритет: trend_analysis из /summary)
-        let changePercent = 0;
-        if (data.trend_analysis?.change_percent) {
-            changePercent = data.trend_analysis.change_percent;
-        } 
+        // Получаем данные трендов только из trend_analysis
+        if (data.trend_analysis?.change_percent !== undefined) {
+            const changePercent = data.trend_analysis.change_percent;
 
-        // Рассчитываем изменение на основе трендов
-        const sign = changePercent >= 0 ? "↗" : "↘";
-        const changeText = `${sign} ${Math.abs(changePercent).toFixed(1)}% за неделю`;
+            // Рассчитываем изменение на основе трендов
+            const sign = changePercent >= 0 ? "↗" : "↘";
+            const changeText = `${sign} ${Math.abs(changePercent).toFixed(1)}% за неделю`;
 
-        if (this.moodIndexChange) {
-            this.moodIndexChange.textContent = changeText;
-            // Меняем цвет в зависимости от направления
-            this.moodIndexChange.style.color = changePercent >= 0 ? "#10b981" : "#ef4444";
+            if (this.moodIndexChange) {
+                this.moodIndexChange.textContent = changeText;
+                // Меняем цвет в зависимости от направления
+                this.moodIndexChange.style.color = changePercent >= 0 ? "#10b981" : "#ef4444";
+            }
+        } else {
+            // Если нет данных тренда, скрываем элемент изменения
+            if (this.moodIndexChange) {
+                this.moodIndexChange.textContent = "";
+            }
         }
 
         // Обновляем прогресс-бар

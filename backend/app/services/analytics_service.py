@@ -82,6 +82,7 @@ def get_current_user_notes_service(
     return query.order_by(NoteModel.created_at.asc()).all()
 
 
+# Функция для получения данных для графика
 def get_mood_chart_data(notes: list[NoteModel]) -> list[dict]:
     """Получает данные для графика настроения за указанный период"""
     if not notes:
