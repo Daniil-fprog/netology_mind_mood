@@ -8,12 +8,12 @@ venv/
 .venv/
 
 # Backend data
-/backend/train/data/*
-!/backend/data/.gitkeep
+/backend/train_model/data/*
+!/backend/train_model/data/.gitkeep
 
 # Backend model files
-/backend/train/models/*
-!/backend/models/.gitkeep
+/backend/train_model/models/*
+!/backend/train_model/models/.gitkeep
 
 # Local DB files
 /backend/db/*.sqlite
