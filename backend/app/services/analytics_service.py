@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 from sqlalchemy.orm import Session
 
@@ -8,15 +8,17 @@ from app.models.user import UserModel
 
 
 # Функция для выявления повторяющихся паттернов по дням недели
-def find_repeated_weekday_patterns(daily_averages: list[dict], threshold: int, min_count: int = 2) -> list[str]:
+def find_repeated_weekday_patterns(
+    daily_averages: list[dict], threshold: int, min_count: int = 2
+) -> list[str]:
     """
     Находит дни недели, где значение было зафиксировано минимум min_count раз.
-    
+
     Args:
         daily_averages: Список средних значений по дням
         threshold: Пороговое значение (например, 40 для провалов, 80 для подъемов)
         min_count: Минимальное количество повторений
-    
+
     Returns:
         Список названий дней недели (на русском)
     """
@@ -41,9 +43,7 @@ def find_repeated_weekday_patterns(daily_averages: list[dict], threshold: int, m
             weekday_counts[weekday_rus] += 1
 
     # Оставляем только те дни недели, где паттерн был минимум min_count раз
-    return [
-        weekday for weekday, count in weekday_counts.items() if count >= min_count
-    ]
+    return [weekday for weekday, count in weekday_counts.items() if count >= min_count]
 
 
 # Получаем записи для построяние графика
@@ -247,37 +247,93 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
     # === АНАЛИЗ ТРЕНДОВ ===
 
     # 1. Сравнение двух последних недель
-    current_week = daily_averages[-7:] if len(daily_averages) >= 7 else daily_averages
-    previous_week_start = max(0, len(daily_averages) - 14)
-    previous_week = (
-        daily_averages[previous_week_start : previous_week_start + 7]
-        if len(daily_averages) > 7
-        else daily_averages[:7]
-    )
+    # current_week = daily_averages[-7:] if len(daily_averages) >= 7 else daily_averages
+    # previous_week_start = max(0, len(daily_averages) - 14)
+    # previous_week = (
+    #     daily_averages[previous_week_start : previous_week_start + 7]
+    #     if len(daily_averages) > 7
+    #     else daily_averages[:7]
+    # )
 
-    current_avg = round(sum(d["score"] for d in current_week) / len(current_week), 1)
-    previous_avg = round(sum(d["score"] for d in previous_week) / len(previous_week), 1)
+    # current_avg = round(sum(d["score"] for d in current_week) / len(current_week), 1)
+    # previous_avg = round(sum(d["score"] for d in previous_week) / len(previous_week), 1)
 
-    if previous_avg > 0:
-        change_percent = round(((current_avg - previous_avg) / previous_avg) * 100, 1)
-    else:
-        change_percent = 0
+    # if previous_avg > 0:
+    #     change_percent = round(((current_avg - previous_avg) / previous_avg) * 100, 1)
+    # else:
+    #     change_percent = 0
 
-    # Инсайт об изменении уровня настроения
-    if abs(change_percent) >= 10:
-        sign = "вырос" if change_percent > 0 else "снизился"
-        insights.append(
-            f"Ваш уровень настроения {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
+    # # Инсайт об изменении уровня настроения
+    # if abs(change_percent) >= 10:
+    #     sign = "вырос" if change_percent > 0 else "снизился"
+    #     insights.append(
+    #         f"Ваш уровень настроения {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
+    #     )
+    # elif abs(change_percent) >= 5:
+    #     sign = "вырос" if change_percent > 0 else "снизился"
+    #     insights.append(
+    #         f"Ваш уровень настроения немного {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
+    #     )
+
+    # 2. Сквозная аналитика по изменениям за последнюю неделю
+    # Анализируем только последние 7 дней внутри выбранного периода
+    if len(daily_averages) >= 2:
+        # Сортируем данные по дате
+        sorted_daily_averages = sorted(
+            daily_averages, key=lambda d: datetime.strptime(d["date"], "%Y-%m-%d")
         )
-    elif abs(change_percent) >= 5:
-        sign = "вырос" if change_percent > 0 else "снизился"
-        insights.append(
-            f"Ваш уровень настроения немного {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
-        )
 
-    # 2. Выявление стабильных провалов (дни с низким настроением)
+        # Берём последнюю дату из доступных данных
+        last_date = datetime.strptime(sorted_daily_averages[-1]["date"], "%Y-%m-%d")
+
+        # Начало недельного периода: последние 7 дней включая last_date
+        week_start_date = last_date - timedelta(days=6)
+
+        # Оставляем только записи за последние 7 дней
+        week_daily_averages = [
+            day
+            for day in sorted_daily_averages
+            if week_start_date
+            <= datetime.strptime(day["date"], "%Y-%m-%d")
+            <= last_date
+        ]
+
+        # Для тренда нужно минимум 2 дня
+        if len(week_daily_averages) >= 2:
+            total_growth = 0
+            total_decline = 0
+
+            for i in range(1, len(week_daily_averages)):
+                current_score = week_daily_averages[i]["score"]
+                previous_score = week_daily_averages[i - 1]["score"]
+
+                diff = current_score - previous_score
+
+                if diff > 0:
+                    total_growth += diff
+                elif diff < 0:
+                    total_decline += abs(diff)
+
+            trend_score = total_growth - total_decline
+
+            if trend_score > 0:
+                insights.append(
+                    f"За последнюю неделю наблюдается общий подъём настроения "
+                    f"на +{round(trend_score, 1)}%. "
+                    f"Это говорит о положительной динамике эмоционального состояния."
+                )
+            elif trend_score < 0:
+                insights.append(
+                    f"За последнюю неделю наблюдается общее снижение настроения "
+                    f"на {round(trend_score, 1)}%. "
+                    f"Стоит обратить внимание на факторы, которые могли повлиять на ухудшение состояния."
+                )
+
+    # 3. Выявление стабильных провалов (дни с низким настроением)
     # Анализируем по всем данным из выбранного периода
-    stable_low_weekdays = find_repeated_weekday_patterns(daily_averages, threshold=40, min_count=2)
+    stable_low_weekdays = find_repeated_weekday_patterns(
+        daily_averages, threshold=40, min_count=2
+    )
 
     if stable_low_weekdays:
         if len(stable_low_weekdays) >= 3:
@@ -291,9 +347,11 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
             f"Рекомендуется заранее планировать короткие перерывы или расслабляющие занятия в эти дни."
         )
 
-    # 3. Выявление подъемов
+    # 4. Выявление подъемов
     # Анализируем по всем данным из выбранного периода
-    stable_high_weekdays = find_repeated_weekday_patterns(daily_averages, threshold=80, min_count=2)
+    stable_high_weekdays = find_repeated_weekday_patterns(
+        daily_averages, threshold=80, min_count=2
+    )
 
     if stable_high_weekdays:
         if len(stable_high_weekdays) >= 3:
@@ -307,7 +365,7 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
             f"Это может быть связано с успешным выполнением задач или позитивными событиями."
         )
 
-    # 4. Анализ стабильности (вариабельность)
+    # 5. Анализ стабильности (вариабельность)
     # Анализируем по всем данным из выбранного периода
     scores_list = [d["score"] for d in daily_averages]
     if len(scores_list) >= 3:
@@ -326,26 +384,6 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
         else:
             insights.append(
                 "Уровень настроения сильно колеблется. Рассмотрите практики для стабилизации эмоционального состояния."
-            )
-
-
-    # 5. Сквозная налаика по изменениям
-    # Анализируем по всем данным из выбранного периода
-    if len(daily_averages) >= 3:
-        # Считаем направление изменений между днями
-        changes = []
-        for i in range(1, len(daily_averages)):
-            diff = daily_averages[i]["score"] - daily_averages[i - 1]["score"]
-            changes.append("up" if diff > 0 else ("down" if diff < 0 else "stable"))
-
-        # Ищем устойчивые паттерны
-        if all(c == "up" for c in changes[-3:]):
-            insights.append(
-                "Отмечается устойчивый рост настроения в последние дни. Продолжайте то, что приносит положительные эмоции."
-            )
-        elif all(c == "down" for c in changes[-3:]):
-            insights.append(
-                "Отмечается устойчивое снижение настроения. Рассмотрите возможность корректировки режима дня или отдыха."
             )
 
     # Если инсайтов нет, добавляем общий
