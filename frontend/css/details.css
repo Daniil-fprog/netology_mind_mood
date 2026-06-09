@@ -153,21 +153,6 @@
     margin-bottom: 20px;
 }
 
-.note-text__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.note-text__tag {
-    background-color: #f3f4f6;
-    color: var(--text);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
 /* Правая колонка */
 .details__aside {
     display: flex;
@@ -307,13 +292,6 @@
     background-color: #f3f4f6;
 }
 
-.recommendation-card__icon {
-    color: var(--accent);
-    font-size: 16px;
-    width: 20px;
-    text-align: center;
-}
-
 .recommendation-card__content {
     flex: 1;
 }
@@ -330,13 +308,8 @@
     color: var(--muted);
 }
 
-.recommendation-card__arrow {
-    color: var(--muted);
-    font-size: 12px;
-}
-
 /* Адаптивность */
-@media (max-width: 900px) {
+/* @media (max-width: 900px) {
     .details__header {
         padding: var(--spacing-md);
     }
@@ -411,8 +384,4 @@
         align-items: flex-start;
         gap: 8px;
     }
-    
-    .recommendation-card__arrow {
-        align-self: flex-end;
-    }
-}
+} */
