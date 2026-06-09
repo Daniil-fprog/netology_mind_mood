@@ -172,6 +172,7 @@ def get_analytics_summary(
 ):
     """
     Получает средний индекс настроения за произвольный период.
+    Возвращает также анализ трендов (сравнение текущей и предыдущей недель).
     """
     start_datetime, end_datetime = date_range
     notes = get_current_user_notes_service(
@@ -180,8 +181,13 @@ def get_analytics_summary(
         start_datetime,
         end_datetime,
     )
+    
+    average, trend_analysis = calculate_average_mood_index(notes)
 
-    return {"average_mood_index": calculate_average_mood_index(notes)}
+    return {
+        "average_mood_index": average,
+        "trend_analysis": trend_analysis,
+    }
 
 
 @router.get("/chart-data")

@@ -6,19 +6,62 @@ from app.models.note import NoteModel
 from app.models.user import UserModel
 
 
-def calculate_average_mood_index(notes: list[NoteModel]) -> float:
-    """Вычисляет средний индекс настроения"""
+def calculate_average_mood_index(notes: list[NoteModel]) -> tuple[float, dict]:
+    """Вычисляет средний индекс настроения и анализ трендов.
+    
+    Возвращает:
+        tuple: (средний индекс, данные тренда)
+    """
+    trend_analysis = {}
+    
     if not notes:
-        return 0.0
+        return (0.0, trend_analysis)
 
     valid_scores = [
         note.sentiment_score for note in notes if note.sentiment_score is not None
     ]
 
     if not valid_scores:
-        return 0.0
+        return (0.0, trend_analysis)
 
-    return round(sum(valid_scores) / len(valid_scores), 1)
+    average = round(sum(valid_scores) / len(valid_scores), 1)
+    
+    # === АНАЛИЗ ТРЕНДОВ ===
+    # Группируем по дням
+    daily_scores = {}
+    for note in notes:
+        if note.sentiment_score is not None and note.created_at is not None:
+            day_key = note.created_at.strftime("%Y-%m-%d")
+            if day_key not in daily_scores:
+                daily_scores[day_key] = []
+            daily_scores[day_key].append(note.sentiment_score)
+
+    # Считаем среднее по дням и сортируем
+    daily_averages = []
+    for day_key in sorted(daily_scores.keys()):
+        scores = daily_scores[day_key]
+        avg = round(sum(scores) / len(scores), 1)
+        daily_averages.append({"date": day_key, "score": avg})
+
+    if len(daily_averages) >= 14:
+        # 1. Сравнение двух последних недель
+        current_week = daily_averages[-7:]
+        previous_week_start = len(daily_averages) - 14
+        previous_week = daily_averages[previous_week_start : previous_week_start + 7]
+
+        current_avg = round(sum(d["score"] for d in current_week) / len(current_week), 1)
+        previous_avg = round(sum(d["score"] for d in previous_week) / len(previous_week), 1)
+
+        if previous_avg > 0:
+            change_percent = round(((current_avg - previous_avg) / previous_avg) * 100, 1)
+        else:
+            change_percent = 0
+
+        trend_analysis["current_avg"] = current_avg
+        trend_analysis["previous_avg"] = previous_avg
+        trend_analysis["change_percent"] = change_percent
+
+    return (average, trend_analysis)
 
 
 # Получаем записи для построяние графика

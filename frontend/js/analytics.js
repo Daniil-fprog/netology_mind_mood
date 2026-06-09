@@ -69,6 +69,7 @@ class AnalyticsPage {
 
             return {
                 average_mood_index: summaryData.average_mood_index,
+                trend_analysis: summaryData.trend_analysis || {},
                 mood_chart_data: chartData.chart_data,
                 neural_insights: insightsData,
             };
@@ -96,13 +97,11 @@ class AnalyticsPage {
         const average = data.average_mood_index;
         this.moodIndexValue.textContent = average;
 
-        // Получаем данные трендов
+        // Получаем данные трендов (приоритет: trend_analysis из /summary)
         let changePercent = 0;
-        if (data.neural_insights?.trend_analysis) {
-            changePercent = data.neural_insights.trend_analysis.change_percent || 0;
-        } else if (data.trend_analysis) {
-            changePercent = data.trend_analysis.change_percent || 0;
-        }
+        if (data.trend_analysis?.change_percent) {
+            changePercent = data.trend_analysis.change_percent;
+        } 
 
         // Рассчитываем изменение на основе трендов
         const sign = changePercent >= 0 ? "↗" : "↘";
@@ -116,14 +115,14 @@ class AnalyticsPage {
 
         // Обновляем прогресс-бар
         if (this.moodIndexProgressFill) {
-            // Нормализуем значение 0-10 в 0-100%
-            const percentage = (average / 10) * 100;
+            // Нормализуем значение 0-100 в 0-100%
+            const percentage = (average / 100) * 100;
             this.moodIndexProgressFill.style.width = `${percentage}%`;
 
             // Меняем цвет прогресс-бара в зависимости от значения
-            if (average >= 7) {
+            if (average >= 70) {
                 this.moodIndexProgressFill.style.backgroundColor = "#4ade80";
-            } else if (average >= 4) {
+            } else if (average >= 40) {
                 this.moodIndexProgressFill.style.backgroundColor = "#facc15";
             } else {
                 this.moodIndexProgressFill.style.backgroundColor = "#ef4444";
