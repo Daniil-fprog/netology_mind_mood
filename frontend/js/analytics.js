@@ -15,7 +15,6 @@ class AnalyticsPage {
         this.neuralInsightsList = document.querySelector(".neural-insights__list");
         this.chartCanvas = document.getElementById("moodChart");
         this.neuralInsightsHeader = document.querySelector(".neural-insights__header");
-        this.moodIndexChangeEl = document.querySelector(".mood-index__change");
         this.chartInstance = null;
 
         // Устанавливаем даты по умолчанию (последние 7 дней)
@@ -57,12 +56,12 @@ class AnalyticsPage {
             const chartResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`);
             const chartData = await chartResponse.json();
             console.log(chartData);
-            
+
             // Загружаем средний индекс настроения
             const summaryResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`);
             const summaryData = await summaryResponse.json();
             console.log(summaryData);
-            
+
             // Загружаем нейро-инсайты
             const insightsResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`);
             const insightsData = await insightsResponse.json();
@@ -155,6 +154,9 @@ class AnalyticsPage {
         const labels = chartData.map(d => d.day_name);
         const dataPoints = chartData.map(d => d.score);
 
+        // Сохраняем полные данные для использования в tooltip
+        this.chartDataFull = chartData;
+
         this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -162,6 +164,7 @@ class AnalyticsPage {
                 datasets: [{
                     label: 'Настроение',
                     data: dataPoints,
+                    _fullData: chartData, // Сохраняем полные данные
                     borderColor: '#667eea',
                     backgroundColor: 'rgba(102, 126, 234, 0.1)',
                     tension: 0.4,
@@ -196,7 +199,7 @@ class AnalyticsPage {
                         padding: 10,
                         displayColors: false,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return 'Индекс настроения: ' + context.raw;
                             }
                         }
@@ -205,40 +208,78 @@ class AnalyticsPage {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 10,
+                        max: 100,
                         grid: {
-                            color: function(context) {
-                                if (context.tick.value === 5) {
+                            color: function (context) {
+                                if (context.tick.value === 50) {
                                     return '#e5e7eb';
                                 }
                                 return '#f3f4f6';
                             },
-                            lineWidth: function(context) {
-                                if (context.tick.value === 5) {
+                            lineWidth: function (context) {
+                                if (context.tick.value === 50) {
                                     return 1;
                                 }
                                 return 1;
                             }
                         },
                         ticks: {
-                            stepSize: 2,
+                            stepSize: 20,
                             color: '#718096',
                             font: {
                                 size: 12
                             },
-                            callback: function(value) {
+                            callback: function (value) {
                                 return value;
                             }
                         }
                     },
                     x: {
+                        display: false,
                         grid: {
                             display: false
-                        },
-                        ticks: {
-                            color: '#718096',
-                            font: {
-                                size: 12
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#4b5563',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            title: function (context) {
+                                const dataIndex = context[0].dataIndex;
+
+                                // Используем сохранённые полные данные
+                                const fullData = context[0].dataset._fullData || this.chartDataFull;
+                                const data = fullData[dataIndex];
+
+                                // Форматируем дату в русский формат
+                                const dateObj = new Date(data.date);
+                                const day = dateObj.getDate();
+                                const month = dateObj.getMonth();
+                                const year = dateObj.getFullYear();
+
+                                const months = [
+                                    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                                ];
+
+                                return `Дата: ${day} ${months[month]} ${year} (${data.day_name})`;
+                            },
+                            label: function (context) {
+                                return 'Индекс настроения: ' + context.raw;
                             }
                         }
                     }

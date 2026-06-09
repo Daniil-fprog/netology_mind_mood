@@ -78,6 +78,7 @@
     display: grid;
     /* grid-template-columns: 1.3fr 1fr; */
     gap: 32px;
+    flex: 1;
 }
 
 /* Левая колонка */
@@ -85,6 +86,8 @@
     display: grid;
     grid-template-columns: 1fr 60%;
     gap: 32px;
+    height: 100%;
+    min-height: 0;
 }
 
 /* Карточка среднего индекса настроения */
@@ -160,7 +163,6 @@
     border-radius: var(--border-radius);
     border: 1px solid var(--border);
     padding: 28px;
-    height: 420px;
 }
 
 .mood-chart__header {
@@ -258,11 +260,18 @@
     height: 100%;
 }
 
+/* График настроения */
+#moodChart {
+    height: 450px !important;
+    width: 100% !important;
+}
+
 /* Правая колонка */
 .analytics__aside {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    height: 100%;
 }
 
 /* Карточка нейро-инсайтов */
