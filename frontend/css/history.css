@@ -389,10 +389,3 @@
     margin-top: auto;
 }
 
-.history__tag {
-    background-color: var(--bg);
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 11px;
-    color: var(--muted);
-}
