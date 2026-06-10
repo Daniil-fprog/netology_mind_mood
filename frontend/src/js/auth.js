@@ -160,7 +160,7 @@ class Auth {
             const user = await response.json();
             return user;
         } else {
-            console.error('Failed to fetch user data');
+            console.error('Ошибка получения данных пользователя');
             return null;
         }
     }

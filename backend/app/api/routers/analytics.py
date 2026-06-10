@@ -8,9 +8,6 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.db.database import get_db
 from app.models.user import UserModel
-# from app.schemas.analytics import (
-#     NoteAnalytics,
-# )
 from app.services.analytics_service import (
     calculate_average_mood_index,
     get_notes_for_export,

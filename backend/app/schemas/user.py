@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 # === Pydantic схемы ===
 class UserCreate(BaseModel):
     name: str
+    login: str
     password: str
     phone: Optional[str] = None
 
@@ -14,7 +15,6 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     login: str
     password: str
-
 
 class UserOut(BaseModel):
     id: int

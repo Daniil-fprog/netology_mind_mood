@@ -4,10 +4,22 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password, verify_password
 from app.models.user import UserModel
 from app.schemas.user import UserCreate, UserLogin
-from app.utils.login_generator import generate_login
 
 
 def register_user_service(user_data: UserCreate, db: Session) -> UserModel:
+    if user_data.login:
+        existing_login = (
+            db.query(UserModel)
+            .filter(UserModel.login == user_data.login)
+            .first()
+        )
+
+        if existing_login:
+            raise HTTPException(
+                status_code=400,
+                detail="Пользователь с таким логином уже существует",
+            )
+
     if user_data.phone:
         existing_phone = (
             db.query(UserModel)
@@ -21,11 +33,9 @@ def register_user_service(user_data: UserCreate, db: Session) -> UserModel:
                 detail="Пользователь с таким телефоном уже существует",
             )
 
-    generated_login = generate_login(db)
-
     db_user = UserModel(
         name=user_data.name,
-        login=generated_login,
+        login=user_data.login,
         password_hash=hash_password(user_data.password),
         phone=user_data.phone,
     )
