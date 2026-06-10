@@ -15,12 +15,18 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const name = document.querySelector("#name").value.trim();
+    const login = document.querySelector("#login").value.trim();
     const phone = document.querySelector("#phone").value.trim();
     const password = document.querySelector("#password").value.trim();
     const passwordRepeat = document.querySelector("#passwordRepeat").value.trim();
 
     if (!name) {
-        showMessage("Введите имя пользователя", "error");
+        showMessage("Введите имя", "error");
+        return;
+    }
+   
+    if (!login) {
+        showMessage("Введите логин", "error");
         return;
     }
 
@@ -52,6 +58,7 @@ form.addEventListener("submit", async (event) => {
     try {
         const data = await Auth.register({
             name,
+            login,
             phone,
             password,
         });

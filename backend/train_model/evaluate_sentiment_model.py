@@ -11,15 +11,10 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
 )
-from app.core.config import SENTIMENT_MODEL_PATH
+from core.config import SENTIMENT_MODEL_PATH
 
-
-# Чтобы можно было импортировать app.*
+# Пути
 ROOT_DIR = Path(__file__).resolve().parent.parent
-PROJECT_DIR = ROOT_DIR.parent
-
-sys.path.append(str(PROJECT_DIR))
-
 
 
 DATA_PATH = ROOT_DIR / "train_model" / "data" / "sentiment_test_records.csv"
@@ -30,24 +25,58 @@ METRICS_TXT_PATH = REPORT_DIR / "sentiment_quality_metrics.txt"
 CONFUSION_MATRIX_CSV_PATH = REPORT_DIR / "confusion_matrix.csv"
 
 
-LABEL_SCORE_MAP = {
-    "negative": 20,
-    "neutral": 50,
-    "positive": 85,
-}
+def calculate_confidence(score: int) -> int:
+    """
+    Считает уверенность модели на основе sentiment_score.
+
+    Логика:
+    - около 50 модель считается менее уверенной;
+    - ближе к 0 или 100 модель считается более уверенной.
+    """
+
+    neutral_min = 35
+    neutral_max = 65
+
+    if neutral_min <= score <= neutral_max:
+        center = 50
+        distance = abs(score - center)
+
+        return round(distance / 15 * 50)
+
+    if score < neutral_min:
+        return round((neutral_min - score) / neutral_min * 50 + 50)
+
+    return round((score - neutral_max) / (100 - neutral_max) * 50 + 50)
+
+
+def get_label_by_score(score: int) -> str:
+    """
+    Определяет label по sentiment_score.
+
+    0-34   -> negative
+    35-65  -> neutral
+    66-100 -> positive
+    """
+
+    if 35 <= score <= 65:
+        return "neutral"
+
+    if score < 35:
+        return "negative"
+
+    return "positive"
 
 
 def normalize_label(label) -> str:
     """
-    Нормализует метку модели.
+    Нормализует метки.
 
-    Если модель возвращает:
-    0 -> negative
-    1 -> positive
-
-    Если модель уже возвращает строку:
-    negative / neutral / positive
+    Поддерживает:
+    - 0 / "0" -> negative
+    - 1 / "1" -> positive
+    - negative / neutral / positive
     """
+
     if label == 0 or label == "0":
         return "negative"
 
@@ -62,33 +91,38 @@ def normalize_label(label) -> str:
     return "unknown"
 
 
-def predict_with_model(model, text: str) -> dict:
+def predict_sentimental(model, text: str) -> tuple[str, int, int]:
     """
-    Возвращает предсказание модели:
-    - predicted_label
-    - predicted_score
+    Предсказывает:
+    - sentiment_label
+    - sentiment_score
     - confidence
+
+    Использует такую же логику, как в основном приложении.
     """
 
-    predicted_raw = model.predict([text])[0]
-    predicted_label = normalize_label(predicted_raw)
+    if not text or not text.strip():
+        return "unknown", 0, 0
 
-    confidence = None
+    probabilities = model.predict_proba([text])[0]
+    classes = list(model.classes_)
 
-    if hasattr(model, "predict_proba"):
-        probabilities = model.predict_proba([text])[0]
-        classes = list(model.classes_)
+    negative_class = 0
+    positive_class = 1
 
-        max_probability = float(max(probabilities))
-        confidence = round(max_probability * 100, 2)
+    if positive_class not in classes:
+        print(f"Класс positive={positive_class} отсутствует в sentiment_model.classes_: {classes}")
+        return "unknown", 0, 0
 
-    predicted_score = LABEL_SCORE_MAP.get(predicted_label, 0)
+    positive_index = classes.index(positive_class)
 
-    return {
-        "predicted_label": predicted_label,
-        "predicted_score": predicted_score,
-        "confidence": confidence,
-    }
+    positive_probability = float(probabilities[positive_index])
+
+    sentiment_score = round(positive_probability * 100)
+    sentiment_label = get_label_by_score(sentiment_score)
+    confidence = calculate_confidence(sentiment_score)
+
+    return sentiment_label, sentiment_score, confidence
 
 
 def main():
@@ -114,21 +148,20 @@ def main():
 
     for _, row in df.iterrows():
         text = str(row["text"])
-        true_label = normalize_label(row["true_label"])
         true_score = int(row["true_score"])
 
-        prediction = predict_with_model(model, text)
+        true_label_from_csv = normalize_label(row["true_label"])
+        true_label_from_score = get_label_by_score(true_score)
 
-        predicted_label = prediction["predicted_label"]
-        predicted_score = prediction["predicted_score"]
-        confidence = prediction["confidence"]
+        predicted_label, predicted_score, confidence = predict_sentimental(model, text)
 
         rows.append(
             {
                 "text": text,
-                "true_label": true_label,
+                "true_label": true_label_from_csv,
+                "true_label_by_score": true_label_from_score,
                 "predicted_label": predicted_label,
-                "is_correct": true_label == predicted_label,
+                "is_correct": true_label_from_csv == predicted_label,
                 "true_score": true_score,
                 "predicted_score": predicted_score,
                 "score_difference": abs(true_score - predicted_score),
@@ -144,16 +177,63 @@ def main():
     labels = ["negative", "neutral", "positive"]
 
     accuracy = accuracy_score(y_true, y_pred)
-    precision = precision_score(
-        y_true, y_pred, labels=labels, average="macro", zero_division=0
-    )
-    recall = recall_score(
-        y_true, y_pred, labels=labels, average="macro", zero_division=0
-    )
-    f1 = f1_score(y_true, y_pred, labels=labels, average="macro", zero_division=0)
 
-    average_confidence = result_df["confidence"].dropna().mean()
+    precision_macro = precision_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="macro",
+        zero_division=0,
+    )
+
+    recall_macro = recall_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="macro",
+        zero_division=0,
+    )
+
+    f1_macro = f1_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="macro",
+        zero_division=0,
+    )
+
+    precision_weighted = precision_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="weighted",
+        zero_division=0,
+    )
+
+    recall_weighted = recall_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="weighted",
+        zero_division=0,
+    )
+
+    f1_weighted = f1_score(
+        y_true,
+        y_pred,
+        labels=labels,
+        average="weighted",
+        zero_division=0,
+    )
+
+    average_confidence = result_df["confidence"].mean()
     average_score_difference = result_df["score_difference"].mean()
+
+    correct_count = int(result_df["is_correct"].sum())
+    incorrect_count = int(len(result_df) - correct_count)
+
+    label_distribution_true = result_df["true_label"].value_counts().to_dict()
+    label_distribution_predicted = result_df["predicted_label"].value_counts().to_dict()
 
     report = classification_report(
         y_true,
@@ -170,24 +250,58 @@ def main():
 
     metrics_text = f"""
 MoodSync — отчёт качества sentiment-модели
+=========================================
 
+1. Общая информация
+-------------------
 Количество тестовых записей: {len(result_df)}
+Правильно классифицировано: {correct_count}
+Ошибочно классифицировано: {incorrect_count}
 
-Общие метрики:
+2. Основные метрики качества
+----------------------------
 Accuracy: {accuracy:.4f}
-Precision macro: {precision:.4f}
-Recall macro: {recall:.4f}
-F1-score macro: {f1:.4f}
-Average confidence: {average_confidence:.2f}%
-Average score difference: {average_score_difference:.2f}
+Precision macro: {precision_macro:.4f}
+Recall macro: {recall_macro:.4f}
+F1-score macro: {f1_macro:.4f}
 
-Classification report:
+Precision weighted: {precision_weighted:.4f}
+Recall weighted: {recall_weighted:.4f}
+F1-score weighted: {f1_weighted:.4f}
 
-{report}
+3. Метрики sentiment_score
+--------------------------
+Средняя уверенность модели: {average_confidence:.2f}%
+Средняя разница true_score и predicted_score: {average_score_difference:.2f}
 
-Confusion matrix:
+4. Распределение реальных классов
+---------------------------------
+Negative: {label_distribution_true.get("negative", 0)}
+Neutral: {label_distribution_true.get("neutral", 0)}
+Positive: {label_distribution_true.get("positive", 0)}
+
+5. Распределение предсказанных классов
+--------------------------------------
+Negative: {label_distribution_predicted.get("negative", 0)}
+Neutral: {label_distribution_predicted.get("neutral", 0)}
+Positive: {label_distribution_predicted.get("positive", 0)}
+
+6. Confusion matrix
+-------------------
+Строки — реальные классы.
+Столбцы — предсказанные классы.
 
 {matrix_df.to_string()}
+
+7. Classification report
+------------------------
+{report}
+
+8. Файлы отчёта
+---------------
+Подробный CSV-отчёт: {REPORT_CSV_PATH}
+Матрица ошибок CSV: {CONFUSION_MATRIX_CSV_PATH}
+TXT-отчёт с метриками: {METRICS_TXT_PATH}
 """.strip()
 
     METRICS_TXT_PATH.write_text(metrics_text, encoding="utf-8")
