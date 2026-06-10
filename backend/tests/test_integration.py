@@ -79,7 +79,7 @@ class TestFullUserFlow:
         
         # 4. Создание заметки
         note_data = {
-            "orig_text": "Тестовая заметка через полный флоу",
+            "orig_text": "Тестовая заметка через полный флоу. Здесь должно быть не менее пятидесяти символов.",
         }
         response = client.post("/notes/", json=note_data, headers=headers)
         assert response.status_code == 200
@@ -125,17 +125,20 @@ class TestMultipleUsers:
         }
         response = client.post("/users/register", json=user1_data)
         assert response.status_code == 200
-        
+        user1_result = response.json()
+        user1_id = user1_result["id"]
+
         login1 = {"login": "user1", "password": "pass1"}
         response = client.post("/users/login", json=login1)
         token1 = response.json()["access_token"]
         headers1 = {"Authorization": f"Bearer {token1}"}
-        
+
         # Создаем заметку первого пользователя
-        note1 = {"orig_text": "Заметка пользователя 1"}
+        note1 = {"orig_text": "Заметка пользователя 1. Здесь должно быть не менее пятидесяти символов для теста."}
         response = client.post("/notes/", json=note1, headers=headers1)
+        assert response.status_code == 200
         note1_id = response.json()["id"]
-        
+
         # Создаем второго пользователя
         user2_data = {
             "name": "Пользователь 2",
@@ -144,21 +147,24 @@ class TestMultipleUsers:
         }
         response = client.post("/users/register", json=user2_data)
         assert response.status_code == 200
-        
+        user2_result = response.json()
+        user2_id = user2_result["id"]
+
         login2 = {"login": "user2", "password": "pass2"}
         response = client.post("/users/login", json=login2)
         token2 = response.json()["access_token"]
         headers2 = {"Authorization": f"Bearer {token2}"}
-        
+
         # Второй пользователь не может видеть заметку первого
         response = client.get(f"/notes/{note1_id}", headers=headers2)
         assert response.status_code == 404
-        
+
         # Создаем заметку второго пользователя
-        note2 = {"orig_text": "Заметка пользователя 2"}
+        note2 = {"orig_text": "Заметка пользователя 2. Здесь должно быть не менее пятидесяти символов для теста."}
         response = client.post("/notes/", json=note2, headers=headers2)
+        assert response.status_code == 200
         note2_id = response.json()["id"]
-        
+
         # Первый пользователь не может видеть заметку второго
         response = client.get(f"/notes/{note2_id}", headers=headers1)
         assert response.status_code == 404

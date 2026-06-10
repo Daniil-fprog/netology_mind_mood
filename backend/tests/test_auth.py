@@ -110,14 +110,14 @@ class TestLogin:
         assert response.status_code == 422
 
     def test_login_empty_password(self, client):
-        """Вход с пустым паролем."""
+        """Вход с пустым паролем - возвращает 422 из-за валидации."""
         hashed_password = hash_password("")
         user = UserModel(
             name="Тестовый",
             login="emptyuser",
             password_hash=hashed_password,
         )
-        
+
         db = TestingSessionLocal()
         db.add(user)
         db.commit()
@@ -128,8 +128,9 @@ class TestLogin:
             "password": "",
         }
         response = client.post("/users/login", json=login_data)
-        
-        assert response.status_code == 401
+
+        # Pydantic возвращает 422 при валидации пустого пароля
+        assert response.status_code == 422
 
     def test_login_whitespace_password(self, client):
         """Вход с пробелами в пароле."""

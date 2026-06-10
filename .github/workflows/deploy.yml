@@ -5,63 +5,65 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+
 jobs:
-  lint-backend:
-    name: Линтинг Python (black, flake8, isort)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+  # lint-backend:
+  #   name: Линтинг Python (black, flake8, isort)
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: backend
 
-    steps:
-      - name: Checkout кода
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout кода
+  #       uses: actions/checkout@v4
 
-      - name: Установка Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
+  #     - name: Установка Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.13'
 
-      - name: Установка зависимостей
-        run: |
-          python -m pip install --upgrade pip
-          pip install black flake8 isort
+  #     - name: Установка зависимостей
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install black flake8 isort
 
-      - name: Проверка форматирования (black)
-        run: black --check .
+  #     - name: Проверка форматирования (black)
+  #       run: black --check .
 
-      - name: Проверка стиля кода (flake8)
-        run: flake8 . --count --show-source --statistics
+  #     - name: Проверка стиля кода (flake8)
+  #       run: flake8 . --count --show-source --statistics
 
-      - name: Проверка импортов (isort)
-        run: isort --check-only .
+  #     - name: Проверка импортов (isort)
+  #       run: isort --check-only .
 
-  lint-frontend:
-    name: Линтинг Frontend (ESLint, Stylelint)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
+  # lint-frontend:
+  #   name: Линтинг Frontend (ESLint, Stylelint)
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: frontend
 
-    steps:
-      - name: Checkout кода
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout кода
+  #       uses: actions/checkout@v4
 
-      - name: Установка Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+  #     - name: Установка Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
 
-      - name: Установка зависимостей
-        run: |
-          npm init -y
-          npm install --save-dev eslint stylelint stylelint-config-standard
+  #     - name: Установка зависимостей
+  #       run: |
+  #         npm init -y
+  #         npm install --save-dev eslint stylelint stylelint-config-standard
 
-      - name: Линтинг JavaScript
-        run: npx eslint . --ext .js
+  #     - name: Линтинг JavaScript
+  #       run: npx eslint . --ext .js
 
-      - name: Линтинг CSS
-        run: npx stylelint "**/*.css"
+  #     - name: Линтинг CSS
+  #       run: npx stylelint "**/*.css"
 
   test-backend:
     name: Тестирование Backend

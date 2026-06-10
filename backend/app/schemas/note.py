@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, field_serializer
 
 from typing import Optional, List
 
@@ -13,8 +13,10 @@ class NoteCreate(BaseModel):
     @field_validator("orig_text")
     @classmethod
     def validate_orig_text(cls, v: str) -> str:
-        if not v or v.strip() == "":
+        if not v:
             raise ValueError("Текст записи не может быть пустым")
+        if v.strip() == "":
+            raise ValueError("Текст записи не может состоять только из пробелов")
         if len(v.strip()) < 50:
             raise ValueError(f"Текст записи должен содержать минимум 50 символов. Сейчас: {len(v.strip())} символов")
         return v

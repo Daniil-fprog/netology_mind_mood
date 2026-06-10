@@ -73,7 +73,7 @@ def get_recommendations_service(
 ) -> list[RecommendationModel]:
     query = db.query(RecommendationModel)
 
-    if mood_type is not None:
+    if mood_type is not None and mood_type.strip() != "":
         allowed_mood_types = {"positive", "neutral", "negative"}
         if mood_type not in allowed_mood_types:
             raise HTTPException(

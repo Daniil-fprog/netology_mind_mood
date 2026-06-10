@@ -290,6 +290,7 @@ class TestGetInsights:
         assert response.status_code == 200
         data = response.json()
 
+        # Точное совпадение с результатом функции get_neural_insights
         assert data["insights"] == [
             "Недостаточно данных для анализа. Добавьте больше заметок для получения инсайтов.",
             "Рекомендуется записывать мысли ежедневно для более точного анализа.",

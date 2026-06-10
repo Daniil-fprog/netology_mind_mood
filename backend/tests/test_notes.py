@@ -86,7 +86,7 @@ class TestCreateNote:
     def test_create_note_success(self, client, auth_headers, sample_note_data):
         """Успешное создание заметки."""
         response = client.post("/notes/", json=sample_note_data, headers=auth_headers)
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["orig_text"] == sample_note_data["orig_text"]
@@ -95,16 +95,16 @@ class TestCreateNote:
         assert data["translate_status"] == "pending"
 
     def test_create_note_empty_text(self, client, auth_headers):
-        """Создание заметки с пустым текстом."""
+        """Создание заметки с пустым текстом - возвращает 422 из-за валидации."""
         response = client.post("/notes/", json={"orig_text": ""}, headers=auth_headers)
-        
-        assert response.status_code == 200
+
+        assert response.status_code == 422
 
     def test_create_note_missing_text(self, client, auth_headers):
-        """Создание заметки без текста."""
+        """Создание заметки без текста - возвращает 422 из-за валидации."""
         response = client.post("/notes/", json={}, headers=auth_headers)
-        
-        assert response.status_code == 200
+
+        assert response.status_code == 422
 
     def test_create_note_unauthorized(self, client, sample_note_data):
         """Создание заметки без авторизации."""
