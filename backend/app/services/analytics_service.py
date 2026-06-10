@@ -244,37 +244,7 @@ def get_neural_insights(notes: list[NoteModel]) -> dict:
         )
         return {"insights": insights}
 
-    # === АНАЛИЗ ТРЕНДОВ ===
-
-    # 1. Сравнение двух последних недель
-    # current_week = daily_averages[-7:] if len(daily_averages) >= 7 else daily_averages
-    # previous_week_start = max(0, len(daily_averages) - 14)
-    # previous_week = (
-    #     daily_averages[previous_week_start : previous_week_start + 7]
-    #     if len(daily_averages) > 7
-    #     else daily_averages[:7]
-    # )
-
-    # current_avg = round(sum(d["score"] for d in current_week) / len(current_week), 1)
-    # previous_avg = round(sum(d["score"] for d in previous_week) / len(previous_week), 1)
-
-    # if previous_avg > 0:
-    #     change_percent = round(((current_avg - previous_avg) / previous_avg) * 100, 1)
-    # else:
-    #     change_percent = 0
-
-    # # Инсайт об изменении уровня настроения
-    # if abs(change_percent) >= 10:
-    #     sign = "вырос" if change_percent > 0 else "снизился"
-    #     insights.append(
-    #         f"Ваш уровень настроения {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
-    #     )
-    # elif abs(change_percent) >= 5:
-    #     sign = "вырос" if change_percent > 0 else "снизился"
-    #     insights.append(
-    #         f"Ваш уровень настроения немного {sign} на {abs(change_percent)}% по сравнению с прошлой неделей."
-    #     )
-
+    # === АНАЛИЗ ===
     # 2. Сквозная аналитика по изменениям за последнюю неделю
     # Анализируем только последние 7 дней внутри выбранного периода
     if len(daily_averages) >= 2:

@@ -24,4 +24,14 @@ services:
 
 volumes:
   backend_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/db
   huggingface_cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/cache
