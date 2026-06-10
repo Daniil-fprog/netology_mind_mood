@@ -3,37 +3,37 @@ MoodSync — отчёт качества sentiment-модели
 
 1. Общая информация
 -------------------
-Количество тестовых записей: 30
-Правильно классифицировано: 10
-Ошибочно классифицировано: 20
+Количество тестовых записей: 20
+Правильно классифицировано: 18
+Ошибочно классифицировано: 2
 
 2. Основные метрики качества
 ----------------------------
-Accuracy: 0.3333
-Precision macro: 0.1111
-Recall macro: 0.3333
-F1-score macro: 0.1667
+Accuracy: 0.9000
+Precision macro: 0.6364
+Recall macro: 0.6000
+F1-score macro: 0.6138
 
-Precision weighted: 0.1111
-Recall weighted: 0.3333
-F1-score weighted: 0.1667
+Precision weighted: 0.9545
+Recall weighted: 0.9000
+F1-score weighted: 0.9206
 
 3. Метрики sentiment_score
 --------------------------
-Средняя уверенность модели: 51.00%
-Средняя разница true_score и predicted_score: 27.23
+Средняя уверенность модели: 81.35%
+Средняя разница true_score и predicted_score: 13.95
 
 4. Распределение реальных классов
 ---------------------------------
 Negative: 10
-Neutral: 10
+Neutral: 0
 Positive: 10
 
 5. Распределение предсказанных классов
 --------------------------------------
-Negative: 0
-Neutral: 0
-Positive: 30
+Negative: 11
+Neutral: 1
+Positive: 8
 
 6. Confusion matrix
 -------------------
@@ -41,30 +41,18 @@ Positive: 30
 Столбцы — предсказанные классы.
 
           negative  neutral  positive
-negative         0        0        10
-neutral          0        0        10
-positive         0        0        10
+negative        10        0         0
+neutral          0        0         0
+positive         1        1         8
 
 7. Classification report
 ------------------------
               precision    recall  f1-score   support
 
-    negative       0.00      0.00      0.00        10
-     neutral       0.00      0.00      0.00        10
-    positive       0.33      1.00      0.50        10
+    negative       0.91      1.00      0.95        10
+     neutral       0.00      0.00      0.00         0
+    positive       1.00      0.80      0.89        10
 
-    accuracy                           0.33        30
-   macro avg       0.11      0.33      0.17        30
-weighted avg       0.11      0.33      0.17        30
-
-
-8. Файлы отчёта
----------------
-Подробный CSV-отчёт:
-"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_report.csv"
-
-TXT-отчёт с метриками:
-"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_metrics.txt"
-
-Матрица ошибок класса CSV:
-"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/confusion_matrix.csv"
+    accuracy                           0.90        20
+   macro avg       0.64      0.60      0.61        20
+weighted avg       0.95      0.90      0.92        20

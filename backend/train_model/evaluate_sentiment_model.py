@@ -1,7 +1,5 @@
-import sys
 from pathlib import Path
 
-import joblib
 import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
@@ -12,8 +10,8 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-from app.core.config import SENTIMENT_MODEL_PATH
 from app.services.sentiment_service import predict_sentimental
+from app.services.translation_service import translate_to_english
 
 
 # Пути
@@ -23,7 +21,6 @@ REPORT_DIR = ROOT_DIR / "train_model" / "reports"
 
 REPORT_CSV_PATH = REPORT_DIR / "sentiment_quality_report.csv"
 METRICS_TXT_PATH = REPORT_DIR / "sentiment_quality_metrics.txt"
-CONFUSION_MATRIX_CSV_PATH = REPORT_DIR / "confusion_matrix.csv"
 
 
 # Настройки твоей модели
@@ -69,9 +66,6 @@ def main():
     if not DATA_PATH.exists():
         raise FileNotFoundError(f"Не найден файл с тестовыми записями: {DATA_PATH}")
 
-    if not Path(SENTIMENT_MODEL_PATH).exists():
-        raise FileNotFoundError(f"Не найдена модель: {SENTIMENT_MODEL_PATH}")
-
     df = pd.read_csv(DATA_PATH, sep=";")
 
     required_columns = {"text", "true_label", "true_score"}
@@ -80,8 +74,6 @@ def main():
     if missing_columns:
         raise ValueError(f"В CSV отсутствуют колонки: {missing_columns}")
 
-    model = joblib.load(SENTIMENT_MODEL_PATH)
-
     rows = []
 
     for _, row in df.iterrows():
@@ -89,7 +81,10 @@ def main():
         true_score = int(row["true_score"])
         true_label = row["true_label"]
 
-        sentiment_label, sentiment_score, model_confidence = predict_sentimental(text)
+        # 2. Перевод
+        translated_text = translate_to_english(text)
+        
+        sentiment_label, sentiment_score, model_confidence = predict_sentimental(translated_text)
 
         rows.append(
             {
@@ -181,7 +176,6 @@ def main():
     matrix_df = pd.DataFrame(matrix, index=labels, columns=labels)
 
     result_df.to_csv(REPORT_CSV_PATH, index=False, encoding="utf-8-sig")
-    matrix_df.to_csv(CONFUSION_MATRIX_CSV_PATH, encoding="utf-8-sig")
 
     metrics_text = f"""
 MoodSync — отчёт качества sentiment-модели
@@ -232,26 +226,12 @@ Positive: {label_distribution_predicted.get("positive", 0)}
 ------------------------
 {report}
 
-8. Файлы отчёта
----------------
-Подробный CSV-отчёт:
-{quote_path(REPORT_CSV_PATH)}
-
-TXT-отчёт с метриками:
-{quote_path(METRICS_TXT_PATH)}
-
-Матрица ошибок класса CSV:
-{quote_path(CONFUSION_MATRIX_CSV_PATH)}
-
 """.strip()
 
     METRICS_TXT_PATH.write_text(metrics_text, encoding="utf-8")
 
     print(metrics_text)
     print()
-    print(f"CSV-отчёт сохранён: {quote_path(REPORT_CSV_PATH)}")
-    print(f"Метрики сохранены: {quote_path(METRICS_TXT_PATH)}")
-    print(f"Confusion matrix сохранена: {quote_path(CONFUSION_MATRIX_CSV_PATH)}")
 
 
 if __name__ == "__main__":
