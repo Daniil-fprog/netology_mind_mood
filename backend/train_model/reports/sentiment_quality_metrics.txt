@@ -1,0 +1,65 @@
+MoodSync — отчёт качества sentiment-модели
+=========================================
+
+1. Общая информация
+-------------------
+Количество тестовых записей: 30
+Правильно классифицировано: 10
+Ошибочно классифицировано: 20
+
+2. Основные метрики качества
+----------------------------
+Accuracy: 0.3333
+Precision macro: 0.1111
+Recall macro: 0.3333
+F1-score macro: 0.1667
+
+Precision weighted: 0.1111
+Recall weighted: 0.3333
+F1-score weighted: 0.1667
+
+3. Метрики sentiment_score
+--------------------------
+Средняя уверенность модели: 51.00%
+Средняя разница true_score и predicted_score: 27.23
+
+4. Распределение реальных классов
+---------------------------------
+Negative: 10
+Neutral: 10
+Positive: 10
+
+5. Распределение предсказанных классов
+--------------------------------------
+Negative: 0
+Neutral: 0
+Positive: 30
+
+6. Confusion matrix
+-------------------
+Строки — реальные классы.
+Столбцы — предсказанные классы.
+
+          negative  neutral  positive
+negative         0        0        10
+neutral          0        0        10
+positive         0        0        10
+
+7. Classification report
+------------------------
+              precision    recall  f1-score   support
+
+    negative       0.00      0.00      0.00        10
+     neutral       0.00      0.00      0.00        10
+    positive       0.33      1.00      0.50        10
+
+    accuracy                           0.33        30
+   macro avg       0.11      0.33      0.17        30
+weighted avg       0.11      0.33      0.17        30
+
+
+8. Файлы отчёта
+---------------
+Подробный CSV-отчёт: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_report.csv
+Матрица ошибок CSV: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/confusion_matrix.csv
+TXT-отчёт с метриками: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_metrics.txt

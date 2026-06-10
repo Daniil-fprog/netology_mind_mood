@@ -11,12 +11,11 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
 )
-from core.config import SENTIMENT_MODEL_PATH
+
+from app.core.config import SENTIMENT_MODEL_PATH
 
 # Пути
 ROOT_DIR = Path(__file__).resolve().parent.parent
-
-
 DATA_PATH = ROOT_DIR / "train_model" / "data" / "sentiment_test_records.csv"
 REPORT_DIR = ROOT_DIR / "train_model" / "reports"
 
@@ -25,46 +24,41 @@ METRICS_TXT_PATH = REPORT_DIR / "sentiment_quality_metrics.txt"
 CONFUSION_MATRIX_CSV_PATH = REPORT_DIR / "confusion_matrix.csv"
 
 
-def calculate_confidence(score: int) -> int:
+# Настройки твоей модели
+NEGATIVE_CLASS = 0
+POSITIVE_CLASS = 1
+
+# Настройки искусственного neutral-класса
+NEUTRAL_MIN = 35
+NEUTRAL_MAX = 65
+BINARY_THRESHOLD = 50
+
+
+def quote_path(path: Path) -> str:
     """
-    Считает уверенность модели на основе sentiment_score.
-
-    Логика:
-    - около 50 модель считается менее уверенной;
-    - ближе к 0 или 100 модель считается более уверенной.
-    """
-
-    neutral_min = 35
-    neutral_max = 65
-
-    if neutral_min <= score <= neutral_max:
-        center = 50
-        distance = abs(score - center)
-
-        return round(distance / 15 * 50)
-
-    if score < neutral_min:
-        return round((neutral_min - score) / neutral_min * 50 + 50)
-
-    return round((score - neutral_max) / (100 - neutral_max) * 50 + 50)
-
-
-def get_label_by_score(score: int) -> str:
-    """
-    Определяет label по sentiment_score.
-
-    0-34   -> negative
-    35-65  -> neutral
-    66-100 -> positive
+    Возвращает путь в кавычках, чтобы его было удобно копировать в терминал,
+    даже если в директориях есть пробелы.
     """
 
-    if 35 <= score <= 65:
-        return "neutral"
+    return f'"{path}"'
 
-    if score < 35:
-        return "negative"
 
-    return "positive"
+# def get_3_class_label_by_score(score: int) -> str:
+#     """
+#     Определяет 3-классовую метку приложения по sentiment_score.
+
+#     0-34   -> negative
+#     35-65  -> neutral
+#     66-100 -> positive
+#     """
+
+#     if NEUTRAL_MIN <= score <= NEUTRAL_MAX:
+#         return "neutral"
+
+#     if score < NEUTRAL_MIN:
+#         return "negative"
+
+#     return "positive"
 
 
 def normalize_label(label) -> str:
@@ -91,6 +85,31 @@ def normalize_label(label) -> str:
     return "unknown"
 
 
+
+def calculate_confidence(score: int) -> int:
+    """
+    Считает уверенность модели на основе sentiment_score.
+
+    Логика:
+    - около 50 модель считается менее уверенной;
+    - ближе к 0 или 100 модель считается более уверенной.
+    """
+
+    neutral_min = 35
+    neutral_max = 65
+
+    if neutral_min <= score <= neutral_max:
+        center = 50
+        distance = abs(score - center)
+
+        return round(distance / 15 * 50)
+
+    if score < neutral_min:
+        return round((neutral_min - score) / neutral_min * 50 + 50)
+
+    return round((score - neutral_max) / (100 - neutral_max) * 50 + 50)
+
+
 def predict_sentimental(model, text: str) -> tuple[str, int, int]:
     """
     Предсказывает:
@@ -104,22 +123,31 @@ def predict_sentimental(model, text: str) -> tuple[str, int, int]:
     if not text or not text.strip():
         return "unknown", 0, 0
 
+
+    # 1. Класс берём именно из predict()
+    predicted_raw = model.predict([text])[0]
+    sentiment_label = normalize_label(predicted_raw)
+
+    # 2. Score считаем отдельно через вероятность positive-класса
     probabilities = model.predict_proba([text])[0]
     classes = list(model.classes_)
 
-    negative_class = 0
     positive_class = 1
 
     if positive_class not in classes:
-        print(f"Класс positive={positive_class} отсутствует в sentiment_model.classes_: {classes}")
-        return "unknown", 0, 0
+        print(
+            f"Класс positive={positive_class} отсутствует "
+            f"в sentiment_model.classes_: {classes}"
+        )
+        return sentiment_label, 0, 0
+
 
     positive_index = classes.index(positive_class)
-
     positive_probability = float(probabilities[positive_index])
 
     sentiment_score = round(positive_probability * 100)
-    sentiment_label = get_label_by_score(sentiment_score)
+
+    # 3. Confidence считаем по score
     confidence = calculate_confidence(sentiment_score)
 
     return sentiment_label, sentiment_score, confidence
@@ -134,7 +162,7 @@ def main():
     if not Path(SENTIMENT_MODEL_PATH).exists():
         raise FileNotFoundError(f"Не найдена модель: {SENTIMENT_MODEL_PATH}")
 
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(DATA_PATH, sep=";")
 
     required_columns = {"text", "true_label", "true_score"}
     missing_columns = required_columns - set(df.columns)
@@ -299,18 +327,24 @@ Positive: {label_distribution_predicted.get("positive", 0)}
 
 8. Файлы отчёта
 ---------------
-Подробный CSV-отчёт: {REPORT_CSV_PATH}
-Матрица ошибок CSV: {CONFUSION_MATRIX_CSV_PATH}
-TXT-отчёт с метриками: {METRICS_TXT_PATH}
+Подробный CSV-отчёт:
+{quote_path(REPORT_CSV_PATH)}
+
+TXT-отчёт с метриками:
+{quote_path(METRICS_TXT_PATH)}
+
+Матрица ошибок класса CSV:
+{quote_path(CONFUSION_MATRIX_CSV_PATH)}
+
 """.strip()
 
     METRICS_TXT_PATH.write_text(metrics_text, encoding="utf-8")
 
     print(metrics_text)
     print()
-    print(f"CSV-отчёт сохранён: {REPORT_CSV_PATH}")
-    print(f"Метрики сохранены: {METRICS_TXT_PATH}")
-    print(f"Confusion matrix сохранена: {CONFUSION_MATRIX_CSV_PATH}")
+    print(f"CSV-отчёт сохранён: {quote_path(REPORT_CSV_PATH)}")
+    print(f"Метрики сохранены: {quote_path(METRICS_TXT_PATH)}")
+    print(f"Confusion matrix сохранена: {quote_path(CONFUSION_MATRIX_CSV_PATH)}")
 
 
 if __name__ == "__main__":
