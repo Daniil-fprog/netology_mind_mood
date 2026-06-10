@@ -1,23 +1,29 @@
+"""Сервис анализа настроения текста."""
+
 import joblib
+from functools import lru_cache
+from pathlib import Path
+from typing import Optional
 
 from app.core.config import SENTIMENT_MODEL_PATH
 
 
-sentiment_model = joblib.load(SENTIMENT_MODEL_PATH)
+@lru_cache(maxsize=1)
+def get_sentiment_model() -> Optional[object]:
+    """Ленивая загрузка модели с кэшированием. Возвращает None если модель не найдена."""
+    if not Path(SENTIMENT_MODEL_PATH).exists():
+        return None
+    return joblib.load(SENTIMENT_MODEL_PATH)
 
-# Метки класса
-# neutral
-# negative
-# positive
 
 def calculate_confidence(score: int) -> int:
+    """Вычисляет уверенность модели на основе sentiment_score (0-100)."""
     neutral_min = 35
     neutral_max = 65
 
     if neutral_min <= score <= neutral_max:
         center = 50
         distance = abs(score - center)
-
         return round(distance / 15 * 50)
 
     if score < neutral_min:
@@ -26,12 +32,24 @@ def calculate_confidence(score: int) -> int:
     return round((score - neutral_max) / (100 - neutral_max) * 50 + 50)
 
 
-def predict_sentimental(text: str) -> tuple[str, int]:
+def predict_sentimental(text: str) -> tuple[str, int, int]:
+    """Предсказывает настроение текста.
+    
+    Возвращает:
+        tuple: (sentiment_label, sentiment_score, model_confidence)
+        Если модель не найдена, возвращает заглушку.
+    """
     if not text or not text.strip():
-        return "unknown", 0
+        return "unknown", 0, 0
 
-    probabilities = sentiment_model.predict_proba([text])[0]
-    classes = list(sentiment_model.classes_)
+    model = get_sentiment_model()
+    
+    # Если модель не найдена, возвращаем заглушку
+    if model is None:
+        return "neutral", 50, 50
+
+    probabilities = model.predict_proba([text])[0]
+    classes = list(model.classes_)
 
     # Твоя модель бинарная:
     # 0 = negative
@@ -41,11 +59,11 @@ def predict_sentimental(text: str) -> tuple[str, int]:
 
     if positive_class not in classes:
         print(f"Класс positive={positive_class} отсутствует в sentiment_model.classes_: {classes}")
-        return "unknown", 0
+        return "neutral", 50, 50
 
     positive_index = classes.index(positive_class)
 
-    # Берем вероятность именно positiv`e-класса
+    # Берем вероятность именно positive-класса
     positive_probability = float(probabilities[positive_index])
 
     # score теперь означает настроение от 0 до 100:
