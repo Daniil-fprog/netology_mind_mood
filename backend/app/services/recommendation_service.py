@@ -43,18 +43,20 @@ def create_recommendation_service(
     recommendation_data: RecommendationCreate,
     db: Session,
 ) -> RecommendationModel:
-    allowed_mood_types = {"positive", "negative"}
+    allowed_mood_types = {"positive", "neutral", "negative"}
 
     if recommendation_data.mood_type not in allowed_mood_types:
         raise HTTPException(
-            status_code=400,
-            detail="mood_type должен быть positive или negative",
+            status_code=422,
+            detail=f"mood_type должен быть одним из: {', '.join(allowed_mood_types)}",
         )
 
     db_recommendation = RecommendationModel(
         rec_name=recommendation_data.rec_name,
         rec_text=recommendation_data.rec_text,
         mood_type=recommendation_data.mood_type,
+        score_from=recommendation_data.score_from,
+        score_to=recommendation_data.score_to,
     )
 
     db.add(db_recommendation)
@@ -65,22 +67,19 @@ def create_recommendation_service(
 
 
 def get_recommendations_service(
-    sentiment_score: int | None,
     db: Session,
+    mood_type: str | None = None,
     limit: int = 2,
 ) -> list[RecommendationModel]:
     query = db.query(RecommendationModel)
 
-    if sentiment_score is not None:
-        if sentiment_score > 100 | sentiment_score < 0:
+    if mood_type is not None:
+        allowed_mood_types = {"positive", "neutral", "negative"}
+        if mood_type not in allowed_mood_types:
             raise HTTPException(
-                status_code=400,
-                detail="mood_type должен быть positive или negative",
+                status_code=422,
+                detail=f"mood_type должен быть одним из: {', '.join(allowed_mood_types)}",
             )
-
-        query = query.filter(
-            RecommendationModel.score_from <= sentiment_score,
-            RecommendationModel.score_to >= sentiment_score,
-        ).limit(limit)
+        query = query.filter(RecommendationModel.mood_type == mood_type).limit(limit)
 
     return query.all()

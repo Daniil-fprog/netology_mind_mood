@@ -27,8 +27,8 @@ def create_recommendation(
 
 @router.get("/", response_model=list[RecommendationOut])
 def get_recommendations(
-    mood_type: Optional[str] = None,
     db: Session = Depends(get_db),
+    mood_type: Optional[str] = None,
     current_user: UserModel = Depends(get_current_user),
 ):
-    return get_recommendations_service(mood_type, db)
+    return get_recommendations_service(db, mood_type)

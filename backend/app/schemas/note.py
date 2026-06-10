@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from typing import Optional, List
 
@@ -9,6 +9,15 @@ from app.schemas.recommendation import RecommendationOutWithNote
 
 class NoteCreate(BaseModel):
     orig_text: str
+
+    @field_validator("orig_text")
+    @classmethod
+    def validate_orig_text(cls, v: str) -> str:
+        if not v or v.strip() == "":
+            raise ValueError("Текст записи не может быть пустым")
+        if len(v.strip()) < 50:
+            raise ValueError(f"Текст записи должен содержать минимум 50 символов. Сейчас: {len(v.strip())} символов")
+        return v
 
 
 class NoteUpdate(BaseModel):

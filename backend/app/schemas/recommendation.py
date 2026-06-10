@@ -7,6 +7,8 @@ class RecommendationCreate(BaseModel):
     rec_name: str
     rec_text: str
     mood_type: str  # positive / negative
+    score_from: int = 0
+    score_to: int = 100
 
 
 class RecommendationOut(BaseModel):
@@ -16,7 +18,7 @@ class RecommendationOut(BaseModel):
     mood_type: str
     score_from: int
     score_to: int
-    
+
     created_at: datetime
     updated_at: datetime
 
