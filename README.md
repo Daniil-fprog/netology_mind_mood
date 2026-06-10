@@ -104,11 +104,10 @@ MVP проекта включает базовый набор функций, н
 | Анализ данных | EDA, визуализация matplotlib/seaborn, временной анализ |
 | ML-разработка | scikit-learn, TF-IDF, LogisticRegression, Naive Bayes, joblib |
 | Backend | FastAPI, uvicorn, PyJWT, bcrypt, CORS |
-| Frontend | HTML, CSS, JavaScript (ES6+), Tailwind CSS, Chart.js, FontAwesome |
+| Frontend и интерфейс | HTML, CSS, JavaScript, Tailwind CSS, Chart.js, FontAwesome, Toast |
 | Интерфейс | Tailwind CSS (стилизация), Chart.js (графики), FontAwesome (иконки), Toast (уведомления) |
 | Инфраструктура | Docker, docker-compose (back + frontend контейнеры) |
-| Мониторинг и логирование | console.log (frontend), logging (backend через print) |
-| Документация | Markdown (FEATURES.md), requirements.txt |
+| Документация | Markdown (FEATURES.md) |
 
 ### API endpoints (обратная связь из JS кода)
 
