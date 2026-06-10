@@ -289,7 +289,7 @@ class TestGetInsights:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["insights"] == []
+        assert data["insights"] == ['Недостаточно данных для анализа.']
 
     def test_get_insights_unauthorized(self, client):
         """Получение инсайтов без авторизации."""

@@ -24,7 +24,6 @@ class HomePage {
         const data = {
             orig_text: formData.get("orig_text")
         };
-        // console.log(data);
 
         const text = data.orig_text?.trim() || "";
 
