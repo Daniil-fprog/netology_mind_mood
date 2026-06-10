@@ -122,9 +122,9 @@ jobs:
           SSH_USER: ${{ secrets.SERVER_USER || 'root' }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '/root/mindmood' }}
         run: |
-          # Создаём SSH ключ
+          # Создаём SSH ключ (без base64, так как ключ вставляется как есть)
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" | base64 -d > ~/.ssh/id_rsa
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
