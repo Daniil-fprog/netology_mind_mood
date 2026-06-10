@@ -60,6 +60,11 @@ weighted avg       0.11      0.33      0.17        30
 
 8. Файлы отчёта
 ---------------
-Подробный CSV-отчёт: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_report.csv
-Матрица ошибок CSV: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/confusion_matrix.csv
-TXT-отчёт с метриками: /Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_metrics.txt
+Подробный CSV-отчёт:
+"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_report.csv"
+
+TXT-отчёт с метриками:
+"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/sentiment_quality_metrics.txt"
+
+Матрица ошибок класса CSV:
+"/Users/sergej/Desktop/УрФУ/Семестр 2/Проектный практикум 2/project/app/backend/train_model/reports/confusion_matrix.csv"

@@ -53,7 +53,7 @@ def predict_sentimental(text: str) -> tuple[str, int]:
     # 50 — neutral
     # 100 — максимально positive
     sentiment_score = round(positive_probability * 100)
-    # model_confidence = calculate_confidence(sentiment_score)
+    model_confidence = calculate_confidence(sentiment_score)
 
     # neutral — если score около 50
     # Например 50 ± 15 => от 35 до 65
@@ -68,4 +68,4 @@ def predict_sentimental(text: str) -> tuple[str, int]:
     else:
         sentiment_label = "positive"
 
-    return sentiment_label, sentiment_score
+    return sentiment_label, sentiment_score, model_confidence

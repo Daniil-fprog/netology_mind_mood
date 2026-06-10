@@ -1,6 +1,6 @@
 from app.db.database import SessionLocal
 from app.models.note import NoteModel
-from app.services.sentiment_service import predict_sentimental, calculate_confidence
+from app.services.sentiment_service import predict_sentimental
 from app.services.translation_service import translate_to_english
 from app.services.recommendation_service import attach_recommendations_to_note
 
@@ -30,8 +30,7 @@ def translate_note_background(note_id: int):
             db.refresh(note)
 
             # 3. Получение скора
-            sentiment_label, sentiment_score = predict_sentimental(translated_text)
-            model_confidence = calculate_confidence(sentiment_score)
+            sentiment_label, sentiment_score, model_confidence = predict_sentimental(translated_text)
 
             note.sentiment_label = sentiment_label
             note.sentiment_score = sentiment_score

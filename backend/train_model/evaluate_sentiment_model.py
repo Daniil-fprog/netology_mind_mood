@@ -13,6 +13,8 @@ from sklearn.metrics import (
 )
 
 from app.core.config import SENTIMENT_MODEL_PATH
+from app.services.sentiment_service import predict_sentimental
+
 
 # Пути
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -43,114 +45,22 @@ def quote_path(path: Path) -> str:
     return f'"{path}"'
 
 
-# def get_3_class_label_by_score(score: int) -> str:
-#     """
-#     Определяет 3-классовую метку приложения по sentiment_score.
-
-#     0-34   -> negative
-#     35-65  -> neutral
-#     66-100 -> positive
-#     """
-
-#     if NEUTRAL_MIN <= score <= NEUTRAL_MAX:
-#         return "neutral"
-
-#     if score < NEUTRAL_MIN:
-#         return "negative"
-
-#     return "positive"
-
-
-def normalize_label(label) -> str:
+def get_label_by_score(score: int) -> str:
     """
-    Нормализует метки.
+    Определяет 3-классовую метку приложения по sentiment_score.
 
-    Поддерживает:
-    - 0 / "0" -> negative
-    - 1 / "1" -> positive
-    - negative / neutral / positive
+    0-34   -> negative
+    35-65  -> neutral
+    66-100 -> positive
     """
 
-    if label == 0 or label == "0":
+    if NEUTRAL_MIN <= score <= NEUTRAL_MAX:
+        return "neutral"
+
+    if score < NEUTRAL_MIN:
         return "negative"
 
-    if label == 1 or label == "1":
-        return "positive"
-
-    label = str(label).strip().lower()
-
-    if label in {"negative", "neutral", "positive"}:
-        return label
-
-    return "unknown"
-
-
-
-def calculate_confidence(score: int) -> int:
-    """
-    Считает уверенность модели на основе sentiment_score.
-
-    Логика:
-    - около 50 модель считается менее уверенной;
-    - ближе к 0 или 100 модель считается более уверенной.
-    """
-
-    neutral_min = 35
-    neutral_max = 65
-
-    if neutral_min <= score <= neutral_max:
-        center = 50
-        distance = abs(score - center)
-
-        return round(distance / 15 * 50)
-
-    if score < neutral_min:
-        return round((neutral_min - score) / neutral_min * 50 + 50)
-
-    return round((score - neutral_max) / (100 - neutral_max) * 50 + 50)
-
-
-def predict_sentimental(model, text: str) -> tuple[str, int, int]:
-    """
-    Предсказывает:
-    - sentiment_label
-    - sentiment_score
-    - confidence
-
-    Использует такую же логику, как в основном приложении.
-    """
-
-    if not text or not text.strip():
-        return "unknown", 0, 0
-
-
-    # 1. Класс берём именно из predict()
-    predicted_raw = model.predict([text])[0]
-    sentiment_label = normalize_label(predicted_raw)
-
-    # 2. Score считаем отдельно через вероятность positive-класса
-    probabilities = model.predict_proba([text])[0]
-    classes = list(model.classes_)
-
-    positive_class = 1
-
-    if positive_class not in classes:
-        print(
-            f"Класс positive={positive_class} отсутствует "
-            f"в sentiment_model.classes_: {classes}"
-        )
-        return sentiment_label, 0, 0
-
-
-    positive_index = classes.index(positive_class)
-    positive_probability = float(probabilities[positive_index])
-
-    sentiment_score = round(positive_probability * 100)
-
-    # 3. Confidence считаем по score
-    confidence = calculate_confidence(sentiment_score)
-
-    return sentiment_label, sentiment_score, confidence
+    return "positive"
 
 
 def main():
@@ -177,23 +87,20 @@ def main():
     for _, row in df.iterrows():
         text = str(row["text"])
         true_score = int(row["true_score"])
+        true_label = row["true_label"]
 
-        true_label_from_csv = normalize_label(row["true_label"])
-        true_label_from_score = get_label_by_score(true_score)
-
-        predicted_label, predicted_score, confidence = predict_sentimental(model, text)
+        sentiment_label, sentiment_score, model_confidence = predict_sentimental(text)
 
         rows.append(
             {
                 "text": text,
-                "true_label": true_label_from_csv,
-                "true_label_by_score": true_label_from_score,
-                "predicted_label": predicted_label,
-                "is_correct": true_label_from_csv == predicted_label,
+                "true_label": true_label,
+                "predicted_label": sentiment_label,
+                "is_correct": true_label == sentiment_label,
                 "true_score": true_score,
-                "predicted_score": predicted_score,
-                "score_difference": abs(true_score - predicted_score),
-                "confidence": confidence,
+                "predicted_score": sentiment_score,
+                "score_difference": abs(true_score - sentiment_score),
+                "confidence": model_confidence,
             }
         )
 
