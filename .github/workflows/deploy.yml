@@ -130,31 +130,64 @@ jobs:
           SSH_HOST: ${{ secrets.SERVER_HOST }}
           SSH_USER: ${{ secrets.SERVER_USER || 'root' }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '/root/mindmood' }}
+          REPOSITORY: ${{ github.repository }}
+
         run: |
+          set -e
+
+          if [ -z "$SSH_KEY" ]; then
+            echo "ERROR: SERVER_SSH_KEY not configured"
+            exit 1
+          fi
+
+          if [ -z "$SSH_HOST" ]; then
+            echo "ERROR: SERVER_HOST not configured"
+            exit 1
+          fi
+
+          if [ -z "$SSH_USER" ]; then
+            echo "ERROR: SERVER_USER not configured"
+            exit 1
+          fi
+
+          if [ -z "$DEPLOY_PATH" ]; then
+            echo "ERROR: DEPLOY_PATH not configured"
+            exit 1
+          fi
+
           # Создаём SSH ключ (без base64, так как ключ вставляется как есть)
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
           # Деплой через SSH
-          ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" << 'EOF'
+          ssh -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -o IdentitiesOnly=yes \
+              -o BatchMode=yes \
+              "$SSH_USER@$SSH_HOST" \
+              "DEPLOY_PATH='$DEPLOY_PATH' REPOSITORY='$REPOSITORY' bash -s" << 'EOF'
             set -e
-            cd "$DEPLOY_PATH" || mkdir -p "$DEPLOY_PATH"
 
-            # Клонируем или обновляем репозиторий
+            mkdir -p "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
+
             if [ ! -d ".git" ]; then
-              git clone https://github.com/${{ github.repository }}.git .
+              git init
+              git remote add origin "https://github.com/$REPOSITORY.git" || true
+              git fetch origin main
+              git checkout -B main origin/main
             else
-              git fetch origin
+              git fetch origin main
               git checkout main
-              git pull origin main
+              git reset --hard origin/main
             fi
 
-            # Собираем и запускаем докер-контейнеры
-            docker-compose build --no-cache
-            docker-compose down
-            docker-compose up -d
+            docker compose build --no-cache
+            docker compose down
+            docker compose up -d
           EOF
 
           # Очистка SSH ключа
