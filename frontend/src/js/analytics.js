@@ -1,10 +1,7 @@
 import Auth from './auth.js';
 
-const API_BASE_URL = Auth.API_BASE_URL;
-
 class AnalyticsPage {
     constructor() {
-        this.apiBaseUrl = API_BASE_URL;
         this.startDateInput = document.getElementById("startDate");
         this.endDateInput = document.getElementById("endDate");
         this.resetDateRangeBtn = document.getElementById("resetDateRange");
@@ -53,19 +50,16 @@ class AnalyticsPage {
             const dateQuery = this.getDateRangeQuery();
 
             // Загружаем данные для графика
-            const chartResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/chart-data?${dateQuery}`);
+            const chartResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/chart-data?${dateQuery}`);
             const chartData = await chartResponse.json();
-            console.log(chartData);
 
             // Загружаем средний индекс настроения
-            const summaryResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/summary?${dateQuery}`);
+            const summaryResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/summary?${dateQuery}`);
             const summaryData = await summaryResponse.json();
-            console.log(summaryData);
 
             // Загружаем нейро-инсайты
-            const insightsResponse = await Auth.authenticatedFetch(`${this.apiBaseUrl}/analytics/insights?${dateQuery}`);
+            const insightsResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/insights?${dateQuery}`);
             const insightsData = await insightsResponse.json();
-            console.log(insightsData);
 
             return {
                 average_mood_index: summaryData.average_mood_index,
@@ -355,7 +349,7 @@ class AnalyticsPage {
 
             const dateQuery = this.getDateRangeQuery();
             const response = await Auth.authenticatedFetch(
-                `${this.apiBaseUrl}/analytics/export?${dateQuery}`
+                `${Auth.API_BASE_URL}/analytics/export?${dateQuery}`
             );
 
             if (!response.ok) {

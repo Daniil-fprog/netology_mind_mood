@@ -32,8 +32,6 @@ class DetailsPage {
     negative = "negative"
 
     constructor() {
-        this.apiBaseUrl = "http://127.0.0.1:8000";
-
         this.backButton = document.querySelector(".details__back-button");
         this.pageTitle = document.querySelector(".details__title");
         this.dateElement = document.querySelector(".details__date");
@@ -156,7 +154,7 @@ class DetailsPage {
             }
 
             const response = await Auth.authenticatedFetch(
-                `${this.apiBaseUrl}/notes/${this.noteId}`
+                `${Auth.API_BASE_URL}/notes/${this.noteId}`
             );
 
             if (response.status === 404) {
