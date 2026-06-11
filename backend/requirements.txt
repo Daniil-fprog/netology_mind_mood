@@ -22,3 +22,8 @@ transformers==5.8.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.46.0
+
+# Зависимости для разработки и тестирования
+pytest==7.4.4
+pytest-cov==7.1.0
+httpx==0.25.1

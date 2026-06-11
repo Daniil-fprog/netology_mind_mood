@@ -30,6 +30,7 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+.qwen/
 
 # Logs
 *.log
