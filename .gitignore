@@ -35,3 +35,5 @@ venv/
 # Logs
 *.log
 logs/
+
+data/

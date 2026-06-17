@@ -1,8 +1,8 @@
 class Auth {
-    // http://127.0.0.1:8000
-    // http://139.100.207.142:8000
-    // static API_BASE_URL = "http://139.100.207.142:8000";
-    static API_BASE_URL = "http://localhost:8000";
+    static API_BASE_URL =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+            ? "http://127.0.0.1:8000"
+            : "http://139.100.207.142:8000";
 
     /**
      * Проверяет, авторизован ли пользователь
