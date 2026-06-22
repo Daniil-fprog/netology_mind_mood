@@ -141,19 +141,59 @@
     font-size: 13px;
 }
 
-@media (max-width: 940px) {
+@media (max-width: 1024px) {
     .auth--register {
-        padding: 18px;
+        align-items: center;
+        padding: 28px 20px;
     }
 
     .auth--register .auth__layout {
         grid-template-columns: 1fr;
-        max-width: 528px;
-        gap: 0;
+        max-width: 620px;
+        gap: 18px;
     }
 
     .auth--register .auth__visual {
-        display: none;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .auth--register .auth__decor {
+        width: 38px;
+        height: 38px;
+    }
+
+    .auth--register .auth__visual .auth__brand,
+    .auth--register .auth__visual .auth__subtitle {
+        text-align: center;
+    }
+
+    .auth--register .auth__visual .auth__subtitle {
+        margin-bottom: 16px;
+    }
+
+    .auth--register .auth__title {
+        font-size: 23px;
+    }
+
+    .auth--register .auth__description {
+        margin-bottom: 16px;
+    }
+
+    .auth--register .auth__feature-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .auth--register .auth__feature-item {
+        justify-content: center;
+        margin-bottom: 0;
+        padding: 8px 10px;
+    }
+
+    .auth--register .auth__feature-item:hover {
+        transform: none;
     }
 
     .auth--register .auth__card {
@@ -162,13 +202,24 @@
     }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
     .auth--register {
+        align-items: center;
+        min-height: 100dvh;
         padding: 16px;
     }
 
+    .auth--register .auth__layout {
+        max-width: 460px;
+        gap: 0;
+    }
+
+    .auth--register .auth__visual {
+        display: none;
+    }
+
     .auth--register .auth__card {
-        padding: 22px;
+        padding: 24px;
         border-radius: 18px;
     }
 
@@ -184,8 +235,37 @@
         font-size: 19px;
     }
 
+    .auth--register .auth__form-description {
+        margin-bottom: 16px;
+    }
+
+    .auth--register .auth__form {
+        gap: 12px;
+    }
+
     .auth--register .auth__input,
     .auth--register .auth__button {
         height: 44px;
+    }
+}
+
+@media (max-width: 380px) {
+    .auth--register {
+        padding: 12px;
+    }
+
+    .auth--register .auth__card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .auth--register .auth__logo {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+    }
+
+    .auth--register .auth__input {
+        padding-left: 38px;
     }
 }

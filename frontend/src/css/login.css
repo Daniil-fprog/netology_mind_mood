@@ -137,19 +137,59 @@
     font-size: 13px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     .auth--login {
-        padding: 18px;
+        align-items: center;
+        padding: 28px 20px;
     }
 
     .auth--login .auth__layout {
         grid-template-columns: 1fr;
-        max-width: 472px;
-        gap: 0;
+        max-width: 560px;
+        gap: 18px;
     }
 
     .auth--login .auth__visual {
-        display: none;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .auth--login .auth__decor {
+        width: 38px;
+        height: 38px;
+    }
+
+    .auth--login .auth__visual .auth__brand,
+    .auth--login .auth__visual .auth__subtitle {
+        text-align: center;
+    }
+
+    .auth--login .auth__visual .auth__subtitle {
+        margin-bottom: 16px;
+    }
+
+    .auth--login .auth__title {
+        font-size: 23px;
+    }
+
+    .auth--login .auth__description {
+        margin-bottom: 16px;
+    }
+
+    .auth--login .auth__feature-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .auth--login .auth__feature-item {
+        justify-content: center;
+        margin-bottom: 0;
+        padding: 8px 10px;
+    }
+
+    .auth--login .auth__feature-item:hover {
+        transform: none;
     }
 
     .auth--login .auth__card {
@@ -158,13 +198,24 @@
     }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 640px) {
     .auth--login {
+        align-items: center;
+        min-height: 100dvh;
         padding: 16px;
     }
 
+    .auth--login .auth__layout {
+        max-width: 440px;
+        gap: 0;
+    }
+
+    .auth--login .auth__visual {
+        display: none;
+    }
+
     .auth--login .auth__card {
-        padding: 22px;
+        padding: 24px;
         border-radius: 18px;
     }
 
@@ -176,8 +227,37 @@
         font-size: 19px;
     }
 
+    .auth--login .auth__form-description {
+        margin-bottom: 16px;
+    }
+
+    .auth--login .auth__form {
+        gap: 12px;
+    }
+
     .auth--login .auth__input,
     .auth--login .auth__button {
         height: 44px;
+    }
+}
+
+@media (max-width: 380px) {
+    .auth--login {
+        padding: 12px;
+    }
+
+    .auth--login .auth__card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .auth--login .auth__logo {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+    }
+
+    .auth--login .auth__input {
+        padding-left: 38px;
     }
 }
