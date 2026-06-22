@@ -7,7 +7,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
     position: relative;
 }
 
@@ -25,7 +24,7 @@
 
 /* Визуальный блок */
 .auth__visual {
-    padding: 40px;
+    padding: 30px;
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
@@ -116,7 +115,7 @@
     background: var(--card-bg);
     border-radius: 24px;
     border: 1px solid var(--border);
-    padding: 40px;
+    padding: 30px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
@@ -351,6 +350,190 @@
 .auth__message i {
     font-size: 18px;
     flex-shrink: 0;
+}
+
+/* Компактная версия страницы входа */
+.auth--login {
+    padding: 24px;
+}
+
+.auth--login .auth__layout {
+    width: 100%;
+    max-width: 952px;
+    grid-template-columns: 388px 500px;
+    gap: 32px;
+}
+
+.auth--login .auth__visual,
+.auth--login .auth__card {
+    border-radius: 22px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
+}
+
+.auth--login .auth__visual {
+    padding: 36px;
+}
+
+.auth--login .auth__decor {
+    width: 52px;
+    height: 52px;
+}
+
+.auth--login .auth__visual .auth__brand {
+    font-size: 32px;
+    margin-bottom: 6px;
+    text-align: left;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth--login .auth__visual .auth__subtitle {
+    font-size: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.auth--login .auth__title {
+    font-size: 30px;
+    line-height: 1.25;
+    margin-bottom: 12px;
+}
+
+.auth--login .auth__description {
+    font-size: 16px;
+    line-height: 1.45;
+    margin-bottom: 28px;
+}
+
+.auth--login .auth__feature-item {
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 16px;
+}
+
+.auth--login .auth__feature-icon {
+    font-size: 16px;
+}
+
+.auth--login .auth__feature-item span {
+    font-size: 15px;
+}
+
+.auth--login .auth__card {
+    padding: 36px;
+}
+
+.auth--login .auth__logo {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 16px;
+    font-size: 21px;
+}
+
+.auth--login .auth__card .auth__brand {
+    font-size: 28px;
+}
+
+.auth--login .auth__card .auth__subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.auth--login .auth__form-title {
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+.auth--login .auth__form-description {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 24px;
+}
+
+.auth--login .auth__form {
+    gap: 18px;
+}
+
+.auth--login .auth__field {
+    gap: 6px;
+}
+
+.auth--login .auth__label {
+    margin-bottom: 2px;
+}
+
+.auth--login .auth__input-icon {
+    left: 15px;
+    font-size: 16px;
+}
+
+.auth--login .auth__input {
+    height: 48px;
+    padding: 0 14px 0 44px;
+    font-size: 15px;
+}
+
+.auth--login .auth__button {
+    height: 48px;
+    font-size: 15px;
+}
+
+.auth--login .auth__footer {
+    margin-top: 26px;
+    padding-top: 20px;
+}
+
+.auth--login .auth__message {
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .auth--login {
+        padding: 20px;
+    }
+
+    .auth--login .auth__layout {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        gap: 0;
+    }
+
+    .auth--login .auth__visual {
+        display: none;
+    }
+
+    .auth--login .auth__card {
+        width: 100%;
+        padding: 32px;
+    }
+}
+
+@media (max-width: 520px) {
+    .auth--login {
+        padding: 16px;
+    }
+
+    .auth--login .auth__card {
+        padding: 24px;
+        border-radius: 20px;
+    }
+
+    .auth--login .auth__card .auth__brand {
+        font-size: 26px;
+    }
+
+    .auth--login .auth__form-title {
+        font-size: 21px;
+    }
+
+    .auth--login .auth__input,
+    .auth--login .auth__button {
+        height: 46px;
+    }
 }
 
 /* Адаптивность */
