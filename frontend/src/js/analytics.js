@@ -47,31 +47,23 @@ class AnalyticsPage {
                 return null;
             }
 
-            // const dateQuery = this.getDateRangeQuery();
+            const dateQuery = this.getDateRangeQuery();
 
-            // const chartResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/chart-data?${dateQuery}`);
-            // const chartData = await chartResponse.json();
+            const chartResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/chart-data?${dateQuery}`);
+            const chartData = await chartResponse.json();
 
-            // const summaryResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/summary?${dateQuery}`);
-            // const summaryData = await summaryResponse.json();
+            const summaryResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/summary?${dateQuery}`);
+            const summaryData = await summaryResponse.json();
 
-            // const insightsResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/insights?${dateQuery}`);
-            // const insightsData = await insightsResponse.json();
+            const insightsResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/insights?${dateQuery}`);
+            const insightsData = await insightsResponse.json();
 
-            // return {
-            //     average_mood_index: summaryData.average_mood_index,
-            //     trend_analysis: summaryData.trend_analysis || {},
-            //     mood_chart_data: chartData.chart_data,
-            //     neural_insights: insightsData,
-            // };
-
-            const response = await fetch("./fixtures/analytics-test-data.json");
-
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки тестовой аналитики: ${response.status}`);
-            }
-
-            return await response.json();
+            return {
+                average_mood_index: summaryData.average_mood_index,
+                trend_analysis: summaryData.trend_analysis || {},
+                mood_chart_data: chartData.chart_data,
+                neural_insights: insightsData,
+            };
         } catch (error) {
             console.error("Error fetching analytics:", error);
             return null;

@@ -298,8 +298,7 @@ class HistoryPage {
                 return [];
             }
 
-            // const response = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/notes/`);
-            const response = await fetch("./fixtures/history-test-notes.json");
+            const response = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/notes/`);
 
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки данных: ${response.status}`);
@@ -518,4 +517,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
