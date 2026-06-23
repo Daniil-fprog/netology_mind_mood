@@ -123,9 +123,11 @@ class DetailsPage {
             this.insightText.textContent = this.generateInsight(note);
         }
 
+        const recommendations = note.recommendations || [];
+
         // Рендерит рекомендации
-        if (note.recommendations.length > 0) {
-            note.recommendations.forEach((recommendation) => {
+        if (recommendations.length > 0) {
+            recommendations.forEach((recommendation) => {
                 const recomendationElement = this.createRecomendation(recommendation);
                 this.recommendationList.append(recomendationElement);
             });

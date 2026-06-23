@@ -18,7 +18,7 @@ class HomePage {
     async createNewNote(evt) {
         evt.preventDefault();
 
-        const formData = new FormData(noteForm);
+        const formData = new FormData(this.noteForm);
 
         // Формирует данные
         const data = {
@@ -65,7 +65,7 @@ class HomePage {
             console.log("Запись создана:", result);
             this.showToast("Запись успешно создана", "success");
 
-            noteForm.reset();
+            this.noteForm.reset();
         } catch (err) {
             console.error("Ошибка", err)
             this.showToast(err.message || "Ошибка запроса", "error");

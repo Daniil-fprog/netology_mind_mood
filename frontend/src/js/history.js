@@ -77,7 +77,7 @@ class HistoryPage {
         // Закрытие попапа при клике вне
         document.addEventListener("click", (e) => {
             if (this.filterPopup && this.filterPopup.classList.contains("history__filter-popup--active")) {
-                const isClickInsidePopup = this.filterPopupContent.contains(e.target);
+                const isClickInsidePopup = this.filterPopupContent?.contains(e.target);
                 const isClickOnFilterBtn = e.target.closest("#filterBtn");
 
                 if (!isClickInsidePopup && !isClickOnFilterBtn) {
@@ -413,6 +413,7 @@ class HistoryPage {
 
             if (!groups[dateKey]) {
                 groups[dateKey] = {
+                    dateKey,
                     dateTitle: this.formatDateTitle(date),
                     entries: []
                 };
@@ -440,7 +441,7 @@ class HistoryPage {
         return Object.keys(groups)
             .map(key => groups[key])
             .sort((a, b) => {
-                return new Date(b.dateTitle.split(', ')[1]) - new Date(a.dateTitle.split(', ')[1]);
+                return new Date(b.dateKey) - new Date(a.dateKey);
             });
     }
 

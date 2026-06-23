@@ -50,12 +50,21 @@ class AnalyticsPage {
             const dateQuery = this.getDateRangeQuery();
 
             const chartResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/chart-data?${dateQuery}`);
+            if (!chartResponse.ok) {
+                throw new Error(`Ошибка загрузки графика: ${chartResponse.status}`);
+            }
             const chartData = await chartResponse.json();
 
             const summaryResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/summary?${dateQuery}`);
+            if (!summaryResponse.ok) {
+                throw new Error(`Ошибка загрузки сводки: ${summaryResponse.status}`);
+            }
             const summaryData = await summaryResponse.json();
 
             const insightsResponse = await Auth.authenticatedFetch(`${Auth.API_BASE_URL}/analytics/insights?${dateQuery}`);
+            if (!insightsResponse.ok) {
+                throw new Error(`Ошибка загрузки инсайтов: ${insightsResponse.status}`);
+            }
             const insightsData = await insightsResponse.json();
 
             return {
@@ -78,7 +87,7 @@ class AnalyticsPage {
         }
 
         this.renderMoodIndex(data);
-        this.renderChart(data.mood_chart_data || data.chart_data);
+        this.renderChart(data.mood_chart_data || data.chart_data || []);
         this.renderNeuralInsights(data.neural_insights);
     }
 
@@ -126,7 +135,8 @@ class AnalyticsPage {
     }
 
     renderChart(chartData) {
-        this.chartData = chartData;
+        const safeChartData = Array.isArray(chartData) ? chartData : [];
+        this.chartData = safeChartData;
 
         if (!this.chartCanvas) return;
 
@@ -135,7 +145,7 @@ class AnalyticsPage {
             this.chartInstance.destroy();
         }
 
-        if (!chartData.length) {
+        if (!safeChartData.length) {
             // Если нет данных, очищаем canvas
             const ctx = this.chartCanvas.getContext('2d');
             ctx.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
@@ -145,11 +155,11 @@ class AnalyticsPage {
         const ctx = this.chartCanvas.getContext('2d');
 
         // Преобразуем данные для Chart.js
-        const labels = chartData.map(d => d.day_name);
-        const dataPoints = chartData.map(d => d.score);
+        const labels = safeChartData.map(d => d.day_name);
+        const dataPoints = safeChartData.map(d => d.score);
 
         // Сохраняем полные данные для использования в tooltip
-        this.chartDataFull = chartData;
+        this.chartDataFull = safeChartData;
 
         this.chartInstance = new Chart(ctx, {
             type: 'line',
@@ -158,7 +168,7 @@ class AnalyticsPage {
                 datasets: [{
                     label: 'Настроение',
                     data: dataPoints,
-                    _fullData: chartData, // Сохраняем полные данные
+                    _fullData: safeChartData, // Сохраняем полные данные
                     borderColor: '#667eea',
                     backgroundColor: 'rgba(102, 126, 234, 0.1)',
                     tension: 0.4,
