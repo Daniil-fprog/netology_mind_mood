@@ -156,19 +156,23 @@
     }
 
     .mood-card {
-        width: 680px;
-        height: 320px;
+        width: 100%;
+        max-width: 720px;
+        min-height: 300px;
+        height: clamp(300px, 42vh, 360px);
         border-radius: 12px;
     }
 
     .mood-card__textarea {
-        padding: 20px;
+        min-height: 0;
+        padding: 18px 20px;
         font-size: 15px;
         line-height: 1.5;
     }
 
     .mood-card__actions {
-        padding: 16px 20px 20px;
+        flex-shrink: 0;
+        padding: 14px 20px 18px;
     }
 
     .mood-card__save-btn {

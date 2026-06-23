@@ -153,19 +153,20 @@ class DetailsPage {
                 return null;
             }
 
-            const response = await Auth.authenticatedFetch(
-                `${Auth.API_BASE_URL}/notes/${this.noteId}`
-            );
-
-            if (response.status === 404) {
-                throw new Error("Запись не найдена");
-            }
-
+            // const response = await Auth.authenticatedFetch(
+            //     `${Auth.API_BASE_URL}/notes/${this.noteId}`
+            // );
+            const response = await fetch("./fixtures/details-test-notes.json");
+            
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки записи: ${response.status}`);
             }
+            
+            // const note = await response.json();
+            const note = await response.json();
+            const newNote = note[0];
 
-            return await response.json();
+            return newNote;
         } catch (error) {
             console.error("Error:", error);
             this.renderError(error.message);
