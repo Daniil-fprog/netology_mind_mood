@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import CORS_ALLOWED_ORIGINS
 from app.db.database import Base, engine, SessionLocal
 from app.api.routers import analytics, auth, notes, recommendations, users
 from app.db.seed import seed_admin_user, seed_test_data
@@ -25,11 +26,7 @@ app = FastAPI(title="MindMOOD App")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://139.100.207.142:8080",
-        "http://127.0.0.1:8080",
-        "*",
-    ],
+    allow_origins=CORS_ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

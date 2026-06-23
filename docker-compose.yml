@@ -5,6 +5,7 @@ services:
     container_name: mindmood-backend
     environment:
       HF_HOME: /cache/huggingface
+      CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:8080,http://127.0.0.1,http://127.0.0.1:8080,http://139.100.207.142,http://139.100.207.142:8080
     ports:
       - "8000:8000"
     volumes:

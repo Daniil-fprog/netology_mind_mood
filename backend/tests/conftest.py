@@ -78,7 +78,7 @@ def test_user(db_session, test_user_data):
 
 
 @pytest.fixture
-def auth_headers(test_user, client):
+def auth_headers(test_user, test_user_data, client):
     """Получает JWT токен для тестового пользователя."""
     login_data = {
         "login": test_user.login,
