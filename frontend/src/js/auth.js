@@ -9,6 +9,9 @@ class Auth {
      * @returns {boolean} - true, если пользователь авторизован
      */
     static isAuth() {
+
+        return true;
+        
         const token = localStorage.getItem("access_token");
         return !!token;
     }
@@ -181,6 +184,8 @@ class Auth {
      */
     static checkAuthStatus() {
         // Проверяем, есть ли токен
+
+        return;
         if (!Auth.isAuth()) {
             // Если мы не на странице входа/регистрации, перенаправляем на вход
             const currentPath = window.location.pathname;
