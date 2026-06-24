@@ -29,11 +29,8 @@ venv/
 # IDE / OS
 .DS_Store
 .idea/
-.vscode/
-.qwen/
+.pytest_cache
 
 # Logs
 *.log
 logs/
-
-data/
