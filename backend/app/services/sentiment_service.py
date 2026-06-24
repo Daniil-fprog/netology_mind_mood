@@ -1,11 +1,24 @@
 """Сервис анализа настроения текста."""
 
+import re
 import joblib
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
 from app.core.config import SENTIMENT_MODEL_PATH
+
+def clean_text(text: str) -> str:
+    if not isinstance(text, str):
+        return ""
+
+    text = text.lower()
+    text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"@\w+", "", text)
+    text = re.sub(r"[^a-z\s]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
 
 
 @lru_cache(maxsize=1)
@@ -48,7 +61,8 @@ def predict_sentimental(text: str) -> tuple[str, int, int]:
     if model is None:
         return "neutral", 50, 50
 
-    probabilities = model.predict_proba([text])[0]
+    cleaned_text = clean_text(text)
+    probabilities = model.predict_proba([cleaned_text])[0]
     classes = list(model.classes_)
 
     # Твоя модель бинарная:

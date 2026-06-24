@@ -5,7 +5,6 @@ from app.core.config import CORS_ALLOWED_ORIGINS
 from app.db.database import Base, engine, SessionLocal
 from app.api.routers import analytics, auth, notes, recommendations, users
 from app.db.seed import seed_admin_user, seed_test_data
-from app import models
 
 
 # Создаём таблицы, если их ещё нет
