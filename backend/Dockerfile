@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -12,11 +12,14 @@ RUN apt-get update \
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
+    && pip install torch --index-url https://download.pytorch.org/whl/cpu \
     && pip install -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p db
+RUN mkdir -p db .cache/huggingface
+
+ENV HF_HOME=/app/.cache/huggingface
 
 EXPOSE 8000
 

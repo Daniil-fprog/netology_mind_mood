@@ -28,7 +28,7 @@ class HomePage {
         const text = data.orig_text?.trim() || "";
 
         if (!text) {
-            console.log("Введите текст записи");
+            // console.log("Введите текст записи");
             this.showToast("Введите текст записи", "error");
             return;
         }
@@ -49,7 +49,7 @@ class HomePage {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.log("API error:", errorData);
+                // console.log("API error:", errorData);
 
                 const errors = this.normalizeApiErrors(errorData);
 
@@ -62,7 +62,7 @@ class HomePage {
 
             const result = await response.json()
 
-            console.log("Запись создана:", result);
+            // console.log("Запись создана:", result);
             this.showToast("Запись успешно создана", "success");
 
             this.noteForm.reset();
@@ -192,8 +192,7 @@ class HomePage {
 // Инициализация класса после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
     // Проверяем авторизацию пользователя
-    if (!Auth.isAuth()) {
-        window.location.href = "./login.html";
+    if (!Auth.checkAuthStatus()) {
         return;
     }
 

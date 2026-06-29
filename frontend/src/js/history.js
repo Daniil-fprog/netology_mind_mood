@@ -62,8 +62,6 @@ class HistoryPage {
         if (this.filterBtn) {
             this.filterBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                console.log('КЛик');
-                
                 this.toggleFilterPopup();
             });
         }
@@ -246,8 +244,7 @@ class HistoryPage {
 
     async applyFilters() {
         try {
-            if (!Auth.isAuth()) {
-                console.error('Пользователь не авторизован');
+            if (!Auth.checkAuthStatus()) {
                 return;
             }
 
@@ -282,7 +279,7 @@ class HistoryPage {
             }
 
             const notes = await response.json();
-            console.log("Отфильтрованные заметки:", notes);
+            // console.log("Отфильтрованные заметки:", notes);
 
             this.updateFilterBadge();
             this.renderGroups(notes);
@@ -293,8 +290,7 @@ class HistoryPage {
 
     async getHistoryData() {
         try {
-            if (!Auth.isAuth()) {
-                console.error('Пользователь не авторизован');
+            if (!Auth.checkAuthStatus()) {
                 return [];
             }
 
@@ -502,8 +498,7 @@ class HistoryPage {
 // Инициализация класса после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
     // Проверяем авторизацию пользователя
-    if (!Auth.isAuth()) {
-        window.location.href = "./login.html";
+    if (!Auth.checkAuthStatus()) {
         return;
     }
 

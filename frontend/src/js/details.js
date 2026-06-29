@@ -88,7 +88,7 @@ class DetailsPage {
 
     async renderNote() {
         const note = await this.getNoteData();
-        console.log(note);
+        // console.log(note);
 
         if (!note) {
             return;
@@ -150,19 +150,18 @@ class DetailsPage {
 
     async getNoteData() {
         try {
-            if (!Auth.isAuth()) {
-                window.location.href = "../login.html";
+            if (!Auth.checkAuthStatus()) {
                 return null;
             }
 
             const response = await Auth.authenticatedFetch(
                 `${Auth.API_BASE_URL}/notes/${this.noteId}`
             );
-            
+
             if (!response.ok) {
                 throw new Error(`Ошибка загрузки записи: ${response.status}`);
             }
-            
+
             return await response.json();
         } catch (error) {
             console.error("Error:", error);
@@ -242,8 +241,7 @@ class DetailsPage {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (!Auth.isAuth()) {
-        window.location.href = "../login.html";
+    if (!Auth.checkAuthStatus()) {
         return;
     }
 

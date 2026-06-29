@@ -15,7 +15,6 @@ scikit-learn==1.8.0
 
 python-multipart
 
-torch
 transformers
 sentencepiece
 sacremoses

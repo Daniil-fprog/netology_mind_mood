@@ -42,9 +42,8 @@ class AnalyticsPage {
 
     async fetchAnalytics() {
         try {
-            if (!Auth.isAuth()) {
-                window.location.href = "./login.html";
-                return null;
+            if (!Auth.checkAuthStatus()) {
+                return;
             }
 
             const dateQuery = this.getDateRangeQuery();
@@ -349,8 +348,7 @@ class AnalyticsPage {
 
     async handleExport() {
         try {
-            if (!Auth.isAuth()) {
-                window.location.href = "./login.html";
+            if (!Auth.checkAuthStatus()) {
                 return;
             }
 
@@ -434,8 +432,7 @@ class AnalyticsPage {
 
 // Инициализация страницы аналитики
 document.addEventListener("DOMContentLoaded", () => {
-    if (!Auth.isAuth()) {
-        window.location.href = "./login.html";
+    if (!Auth.checkAuthStatus()) {
         return;
     }
 

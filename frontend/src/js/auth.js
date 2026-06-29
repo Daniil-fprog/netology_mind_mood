@@ -191,8 +191,11 @@ class Auth {
 
             if (!isAuthPage) {
                 window.location.href = "./login.html";
+                return false;
             }
         }
+
+        return true;
     }
 }
 
