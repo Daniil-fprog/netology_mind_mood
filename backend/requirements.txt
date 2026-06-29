@@ -14,3 +14,8 @@ numpy==2.4.4
 scikit-learn==1.8.0
 
 python-multipart
+
+torch
+transformers
+sentencepiece
+sacremoses
