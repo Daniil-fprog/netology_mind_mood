@@ -14,7 +14,7 @@ from app.models.recommendation import RecommendationModel
 
 
 # === Настройка тестовой БД ===
-SQLALCHEMY_DATABASE_URL = "sqlite:///./db/test_recommendations.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./db_store/test_recommendations.db"
 
 test_engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

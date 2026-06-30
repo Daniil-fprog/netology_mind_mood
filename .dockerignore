@@ -8,7 +8,7 @@ __pycache__/
 
 backend/venv/
 backend/.venv/
-backend/db/*.db
-backend/db/*.sqlite
-backend/db/*.sqlite3
+backend/db_store/*.db
+backend/db_store/*.sqlite
+backend/db_store/*.sqlite3
 backend/train/data/

@@ -14,7 +14,7 @@ from app.schemas.user import UserCreate
 
 
 # === Настройка тестовой БД ===
-SQLALCHEMY_DATABASE_URL = "sqlite:///./db/test_api.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./db_store/test_api.db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

@@ -3,11 +3,11 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Создаём папку db, если её нет
-os.makedirs("db", exist_ok=True)
+# Создаём папку db_store, если её нет
+os.makedirs("db_store", exist_ok=True)
 
 # === Настройка подключения к БД ===
-DATABASE_URL = "sqlite:///./db/mood_sync.db"
+DATABASE_URL = "sqlite:///./db_store/mood_sync.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 

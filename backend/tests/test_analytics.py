@@ -15,7 +15,7 @@ from app.models.note import NoteModel
 
 
 # === Настройка тестовой БД ===
-SQLALCHEMY_DATABASE_URL = "sqlite:///./db/test_analytics.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./db_store/test_analytics.db"
 
 test_engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
